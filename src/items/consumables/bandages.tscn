@@ -1,0 +1,17 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/items/item_entity.gd" id="1_entity"]
+[ext_resource type="Resource" path="res://src/items/consumables/bandages.tres" id="2_data"]
+[ext_resource type="Script" path="res://src/items/components/consumable_component.gd" id="3_comp"]
+[ext_resource type="Script" path="res://src/effects/effect.gd" id="4_effectbase"]
+[ext_resource type="Resource" path="res://src/effects/resources/stat/heal_1.tres" id="5_heal_1"]
+
+[node name="Bandages" type="Node3D" node_paths=PackedStringArray("component")]
+script = ExtResource("1_entity")
+data = ExtResource("2_data")
+component = NodePath("ConsumableComponent")
+
+[node name="ConsumableComponent" type="Node" parent="."]
+script = ExtResource("3_comp")
+effects = Array[ExtResource("4_effectbase")]([ExtResource("5_heal_1")])
+use_time = 0.5

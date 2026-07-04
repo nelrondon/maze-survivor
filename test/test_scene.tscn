@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://bs5becy0hfvw1"]
+
+[ext_resource type="Script" uid="uid://ck10epvduwn0m" path="res://test/test_scene.gd" id="1_test"]
+[ext_resource type="Script" uid="uid://dgjt5jft13tqc" path="res://test/test_player.gd" id="2_player"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/adrenaline.tscn" id="2_xdggk"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/bandages.tscn" id="3_mwmxg"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/steroids.tscn" id="4_fkvod"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/experimental_serum.tscn" id="5_i3afb"]
+
+[node name="TestScene" type="Node3D" unique_id=1621519389]
+script = ExtResource("1_test")
+items = Array[PackedScene]([ExtResource("2_xdggk"), ExtResource("3_mwmxg"), ExtResource("4_fkvod"), ExtResource("5_i3afb"), ExtResource("4_fkvod")])
+
+[node name="TestPlayer" type="Node3D" parent="." unique_id=1646631953]
+script = ExtResource("2_player")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=101592362]
+
+[node name="HBox" type="HBoxContainer" parent="UI" unique_id=564909112]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatsPanel" type="PanelContainer" parent="UI/HBox" unique_id=404679701]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="UI/HBox/StatsPanel" unique_id=1263799452]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/HBox/StatsPanel/VBox" unique_id=517768216]
+layout_mode = 2
+text = "STATS"
+horizontal_alignment = 1
+
+[node name="StatsLabel" type="Label" parent="UI/HBox/StatsPanel/VBox" unique_id=1682469667]
+layout_mode = 2
+text = "Cargando..."
+
+[node name="EffectsPanel" type="PanelContainer" parent="UI/HBox" unique_id=948872289]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="UI/HBox/EffectsPanel" unique_id=388659335]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/HBox/EffectsPanel/VBox" unique_id=1647598329]
+layout_mode = 2
+text = "EFECTOS ACTIVOS"
+horizontal_alignment = 1
+
+[node name="EffectsLabel" type="Label" parent="UI/HBox/EffectsPanel/VBox" unique_id=90387538]
+layout_mode = 2
+text = "Ninguno"
+
+[node name="ItemsPanel" type="PanelContainer" parent="UI/HBox" unique_id=497740718]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="UI/HBox/ItemsPanel" unique_id=1210076030]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/HBox/ItemsPanel/VBox" unique_id=1320345906]
+layout_mode = 2
+text = "ITEMS (1-9, E usar)"
+horizontal_alignment = 1
+
+[node name="ItemsLabel" type="Label" parent="UI/HBox/ItemsPanel/VBox" unique_id=1239698416]
+layout_mode = 2
+text = "Cargando..."
+
+[node name="LogPanel" type="PanelContainer" parent="UI/HBox" unique_id=2059804430]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="UI/HBox/LogPanel" unique_id=300899001]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/HBox/LogPanel/VBox" unique_id=520717452]
+layout_mode = 2
+text = "LOG"
+horizontal_alignment = 1
+
+[node name="LogLabel" type="Label" parent="UI/HBox/LogPanel/VBox" unique_id=421519303]
+layout_mode = 2
