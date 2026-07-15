@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dcgs5xnux7vb2"
+path="res://.godot/imported/madera qque se rompe.mp3-73f2fa0249001bf02932838dc250bc6c.mp3str"
+
+[deps]
+
+source_file="res://assets/palo/madera qque se rompe.mp3"
+dest_files=["res://.godot/imported/madera qque se rompe.mp3-73f2fa0249001bf02932838dc250bc6c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

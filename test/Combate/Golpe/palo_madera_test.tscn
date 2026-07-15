@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://cj7ph8e5flmx3"]
+
+[ext_resource type="Script" uid="uid://bvqjjwigidj2l" path="res://Test/Golpe/palo_test.gd" id="1_jjnnw"]
+[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://Assets/palo/wood_stick_1_lowpoly.glb" id="2_teg6o"]
+[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://Assets/palo/madera qque se rompe.mp3" id="3_nw638"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xiq3j"]
+size = Vector3(0.8, 0.7, 0.8)
+
+[sub_resource type="Animation" id="Animation_bfwqg"]
+resource_name = "Golpear"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3107, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.25), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.075, 0.15, 0.32, 0.41, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.27925268, -0.6195919, 0), Vector3(1.246165, 0.050614547, 0), Vector3(1.8221238, 3.1049407, 0), Vector3(0.9302605, 2.0699606, 0.13962634), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_p5186"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_aurh4"]
+resource_name = "desequipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.5, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -1.5707964)]
+}
+
+[sub_resource type="Animation" id="Animation_uma8f"]
+resource_name = "equipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.5, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r8oti"]
+_data = {
+&"Golpear": SubResource("Animation_bfwqg"),
+&"RESET": SubResource("Animation_p5186"),
+&"desequipar": SubResource("Animation_aurh4"),
+&"equipar": SubResource("Animation_uma8f")
+}
+
+[node name="Palo" type="Node3D" unique_id=1377804163]
+script = ExtResource("1_jjnnw")
+
+[node name="Madera" parent="." unique_id=1898829908 instance=ExtResource("2_teg6o")]
+
+[node name="Sketchfab_model" parent="Madera" index="0" unique_id=98866052]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, 0.1, 0, -0.1, -4.371139e-09, 0, 0, 0)
+
+[node name="Hitbox" type="Area3D" parent="." unique_id=179037207]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=328779944]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.06, -0.2)
+shape = SubResource("BoxShape3D_xiq3j")
+
+[node name="Madera_golpe_sonido" type="AudioStreamPlayer" parent="." unique_id=2090039213]
+stream = ExtResource("3_nw638")
+volume_db = -20.0
+pitch_scale = 2.0
+
+[node name="anim" type="AnimationPlayer" parent="." unique_id=452197888]
+libraries/ = SubResource("AnimationLibrary_r8oti")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
+[connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]
+
+[editable path="Madera"]
