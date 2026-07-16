@@ -1,7 +1,7 @@
 extends Node3D
 
 @export var items: Array[PackedScene] = []
-var player: Node3D
+var player: CharacterBody3D
 var current_item_index: int = 0
 
 @onready var stats_label: Label = $UI/HBox/StatsPanel/VBox/StatsLabel
@@ -13,13 +13,22 @@ var log_lines: Array[String] = []
 const MAX_LOG_LINES = 15
 
 func _ready():
-	player = $TestPlayer
+	player = $Player
 	player.stats_changed.connect(_on_stats_changed)
+	
+	var palo = $Player/Head/Camera3D/Palo
+	if palo and palo.has_node("anim"):
+		palo.get_node("anim").play("equipar")
+		
 	_update_items_list()
 	_update_stats_display()
-	_add_log("=== TEST DE CONSUMIBLES ===")
-	_add_log("1-9: Item | E: Usar | D: Daño")
-	_add_log("U: Veneno | I: Hambre | O: Toggle Asfixia")
+	_add_log("=== ZONAS DE ENTORNO ===")
+	_add_log("Entra a las zonas de colores:")
+	_add_log(" - Cubo AZUL: Asfixia (Se remueve al salir)")
+	_add_log(" - Cubo VERDE: Veneno (Se lleva puesto por 5s al salir)")
+	_add_log("WASD: Mover | Mouse: Mirar")
+	_add_log("K: Dañar (-30 HP) | L: Resucitar/Desbloquear")
+	_add_log("Click Izq: Atacar | E: Interactuar")
 
 
 func _process(_delta):
@@ -33,15 +42,9 @@ func _input(event):
 			KEY_3: _select_item(2)
 			KEY_4: _select_item(3)
 			KEY_5: _select_item(4)
-			KEY_6: _select_item(5)
-			KEY_7: _select_item(6)
-			KEY_8: _select_item(7)
-			KEY_9: _select_item(8)
-			KEY_E: _use_item()
-			KEY_D: _damage_player()
-			KEY_U: _apply_test_poison()
-			KEY_I: _apply_test_hunger()
-			KEY_O: _toggle_test_asphyxia()
+			KEY_C: _use_item()
+			KEY_K: _damage_player()
+			KEY_L: _resurrect_player()
 
 
 func _select_item(index: int):
@@ -65,12 +68,6 @@ func _use_item():
 	else:
 		_add_log("[ERROR] No se puede usar %s" % item.data.display_name)
 	item.queue_free()
-
-func _damage_player():
-	player.modify_stat(Stats.Type.HP, -30)
-	player.modify_stat(Stats.Type.STAMINA, -20)
-	player.modify_stat(Stats.Type.HUNGER, -25)
-	_add_log("[DAMAGE] -30 HP, -20 STA, -25 HUN")
 
 func _on_stats_changed():
 	_update_stats_display()
@@ -103,33 +100,29 @@ func _add_log(message: String):
 	if log_label:
 		log_label.text = "\n".join(log_lines)
 
-var _is_asphyxia_active: bool = false
+func _damage_player() -> void:
+	if player.has_method("hit"):
+		player.hit(30)
+		_add_log("[DAMAGE] Daño de -30 HP infligido")
+	elif player.has_method("modify_stat"):
+		player.modify_stat(Stats.Type.HP, -30)
+		_add_log("[DAMAGE] Daño de -30 HP infligido")
 
-func _apply_test_poison():
-	var poison = PoisonStatus.new()
-	poison.damage = 5.0
-	poison.max_duration = 5.0
-	poison.tick_interval = 1.0
-	player.apply_status(poison)
-	_add_log("[STATUS] Aplicado Veneno (5 HP/s por 5s)")
-
-func _apply_test_hunger():
-	var hunger = HungerStatus.new()
-	hunger.hunger_drain = 3.0
-	hunger.max_duration = 10.0
-	hunger.tick_interval = 1.0
-	player.apply_status(hunger)
-	_add_log("[STATUS] Aplicado Hambre (3 Hambre/s por 10s)")
-
-func _toggle_test_asphyxia():
-	_is_asphyxia_active = !_is_asphyxia_active
-	if _is_asphyxia_active:
-		var asphyxia = AsphyxiaStatus.new()
-		asphyxia.damage = 10.0
-		asphyxia.tick_interval = 1.0
-		player.apply_status(asphyxia)
-		_add_log("[STATUS] Entrando a zona de Asfixia (10 HP/s)")
-	else:
-		player.remove_status("asfixia")
-		_add_log("[STATUS] Saliendo de zona de Asfixia")
+func _resurrect_player() -> void:
+	if player.has_method("SetInputLocked"):
+		player.SetInputLocked(false)
+	elif player.has_method("set_movement_locked"):
+		player.set_movement_locked(false)
+		
+	# Restaurar vida al máximo
+	if player.has_method("modify_stat"):
+		player.modify_stat(Stats.Type.HP, 100.0)
+		player.modify_stat(Stats.Type.STAMINA, 100.0)
+		player.modify_stat(Stats.Type.HUNGER, 100.0)
+		
+	# Limpiar estados
+	if player.has_node("StatusManager"):
+		player.get_node("StatusManager").clear_all()
+		
+	_add_log("[RESET] Controles desbloqueados y jugador restaurado")
 

@@ -19,10 +19,25 @@ var max_stats = {
 	Stats.Type.HUNGER: 100.0,
 }
 
-var active_temp_effects: Array = []
-var active_tick_effects: Array = []
+var status_manager: StatusManager
 
-func modify_stat(stat: Stats.Type, value: float):
+func _ready() -> void:
+	status_manager = StatusManager.new()
+	status_manager.target = self
+	add_child(status_manager)
+	status_manager.status_added.connect(func(_id, _icon, _duration): stats_changed.emit())
+	status_manager.status_removed.connect(func(_id): stats_changed.emit())
+	status_manager.status_updated.connect(func(_id, _dur): stats_changed.emit())
+
+func apply_status(status_effect: StatusEffect) -> void:
+	if status_manager:
+		status_manager.apply_status(status_effect)
+
+func remove_status(status_id: String) -> void:
+	if status_manager:
+		status_manager.remove_status(status_id)
+
+func modify_stat(stat: Stats.Type, value: float) -> void:
 	if not stats.has(stat):
 		print("[ERROR] Stat no existe")
 		return
@@ -34,52 +49,7 @@ func modify_stat(stat: Stats.Type, value: float):
 	print("[STAT] %s: %s -> %s" % [name, old_value, stats[stat]])
 	stats_changed.emit()
 
-func start_temp_effect(stat: Stats.Type, value: float, duration: float):
-	var effect_data = {"stat": stat, "value": value, "remaining": duration}
-	active_temp_effects.append(effect_data)
-	var name = Stats.get_display_name(stat)
-	print("[TEMP] +%s %s por %ss" % [value, name, duration])
-	stats_changed.emit()
 
-	var timer = Timer.new()
-	timer.wait_time = duration
-	timer.one_shot = true
-	add_child(timer)
-	timer.start()
-	await timer.timeout
-	timer.queue_free()
-
-	modify_stat(stat, -value)
-	active_temp_effects.erase(effect_data)
-	print("[TEMP] Efecto de %s terminado" % name)
-	stats_changed.emit()
-
-func start_tick_effect(stat: Stats.Type, value: float, interval: float, duration: float):
-	var effect_data = {"stat": stat, "value": value, "remaining": duration}
-	active_tick_effects.append(effect_data)
-	var name = Stats.get_display_name(stat)
-	print("[TICK] %s %s cada %ss por %ss" % [value, name, interval, duration])
-	stats_changed.emit()
-
-	var ticks = int(duration / interval)
-	var timer = Timer.new()
-	timer.wait_time = interval
-	timer.one_shot = false
-	add_child(timer)
-	timer.start()
-
-	for i in range(ticks):
-		await timer.timeout
-		if stats[Stats.Type.HP] <= 0:
-			break
-		modify_stat(stat, value)
-		effect_data["remaining"] -= interval
-		stats_changed.emit()
-
-	timer.queue_free()
-	active_tick_effects.erase(effect_data)
-	print("[TICK] Efecto de %s terminado" % name)
-	stats_changed.emit()
 
 func get_stats_text() -> String:
 	var text = ""
@@ -92,13 +62,13 @@ func get_stats_text() -> String:
 	return text
 
 func get_active_effects_text() -> String:
+	if not status_manager or status_manager.active_statuses.is_empty():
+		return "Ninguno\n"
 	var text = ""
-	for e in active_temp_effects:
-		var name = Stats.get_display_name(e["stat"])
-		text += "[TEMP] %s: %+.0f (%.1fs)\n" % [name, e["value"], e["remaining"]]
-	for e in active_tick_effects:
-		var name = Stats.get_display_name(e["stat"])
-		text += "[TICK] %s: %+.0f (%.1fs)\n" % [name, e["value"], e["remaining"]]
-	if text.is_empty():
-		text = "Ninguno\n"
+	for status_id in status_manager.active_statuses:
+		var status = status_manager.active_statuses[status_id]
+		if status.is_environment_based:
+			text += "[ENV] %s (Entorno)\n" % status.id
+		else:
+			text += "[STATUS] %s: %.1fs\n" % [status.id, status.current_duration]
 	return text
