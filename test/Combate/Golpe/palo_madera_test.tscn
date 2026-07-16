@@ -1,11 +1,14 @@
 [gd_scene format=3 uid="uid://cj7ph8e5flmx3"]
 
-[ext_resource type="Script" uid="uid://bvqjjwigidj2l" path="res://Test/Golpe/palo_test.gd" id="1_jjnnw"]
-[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://Assets/palo/wood_stick_1_lowpoly.glb" id="2_teg6o"]
-[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://Assets/palo/madera qque se rompe.mp3" id="3_nw638"]
+[ext_resource type="Script" uid="uid://bvqjjwigidj2l" path="res://test/Combate/Golpe/palo_test.gd" id="1_jjnnw"]
+[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="2_teg6o"]
+[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://assets/palo/madera qque se rompe.mp3" id="3_nw638"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xiq3j"]
-size = Vector3(0.8, 0.7, 0.8)
+size = Vector3(0.48320922, 0.58188474, 0.48398438)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ge8cr"]
+size = Vector3(0.48876953, 0.5852051, 0.48706055)
 
 [sub_resource type="Animation" id="Animation_bfwqg"]
 resource_name = "Golpear"
@@ -134,14 +137,20 @@ script = ExtResource("1_jjnnw")
 
 [node name="Madera" parent="." unique_id=1898829908 instance=ExtResource("2_teg6o")]
 
-[node name="Sketchfab_model" parent="Madera" index="0" unique_id=98866052]
+[node name="Sketchfab_model" parent="Madera" index="0" unique_id=779360228]
 transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, 0.1, 0, -0.1, -4.371139e-09, 0, 0, 0)
 
 [node name="Hitbox" type="Area3D" parent="." unique_id=179037207]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=328779944]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.06, -0.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24160461, 0.011635747, 0.0014864206)
 shape = SubResource("BoxShape3D_xiq3j")
+
+[node name="PickupArea" type="Area3D" parent="." unique_id=1207308090]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea" unique_id=1678035188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013615236, 0.0060185567, 0.009682618)
+shape = SubResource("BoxShape3D_ge8cr")
 
 [node name="Madera_golpe_sonido" type="AudioStreamPlayer" parent="." unique_id=2090039213]
 stream = ExtResource("3_nw638")
@@ -153,6 +162,7 @@ libraries/ = SubResource("AnimationLibrary_r8oti")
 
 [connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
 [connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
+[connection signal="body_entered" from="PickupArea" to="." method="_on_pickup_area_body_entered"]
 [connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]
 
 [editable path="Madera"]
