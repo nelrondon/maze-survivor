@@ -1,7 +1,9 @@
 /android/
+/Scenes/
 
 .import/
 .godot/
+.agents/
 
 export_presets.cfg
 export.cfg

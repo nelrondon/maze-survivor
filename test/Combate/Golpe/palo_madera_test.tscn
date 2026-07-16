@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cj7ph8e5flmx3"]
 
-[ext_resource type="Script" uid="uid://bvqjjwigidj2l" path="res://Test/Golpe/palo_test.gd" id="1_jjnnw"]
-[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://Assets/palo/wood_stick_1_lowpoly.glb" id="2_teg6o"]
-[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://Assets/palo/madera qque se rompe.mp3" id="3_nw638"]
+[ext_resource type="Script" uid="uid://bvqjjwigidj2l" path="res://test/Combate/Golpe/palo_test.gd" id="1_jjnnw"]
+[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="2_teg6o"]
+[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://assets/palo/madera qque se rompe.mp3" id="3_nw638"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xiq3j"]
 size = Vector3(0.8, 0.7, 0.8)

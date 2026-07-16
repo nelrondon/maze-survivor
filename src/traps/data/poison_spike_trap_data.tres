@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TrapData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/traps/trap_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://src/effects/effect.gd" id="2_effectbase"]
+[ext_resource type="Resource" path="res://src/effects/resources/stat/hp_damage_1.tres" id="3_dmg"]
+[ext_resource type="Resource" path="res://src/effects/resources/tick/poison_2.tres" id="4_poison"]
+
+[resource]
+script = ExtResource("1_data")
+id = "poison_spike_trap_01"
+display_name = "Trampa de Pinchos Venenosos"
+description = "Pinchos que hacen daño y envenenan al pisarlos"
+trap_type = 0
+activation_mode = 0
+effects = Array[ExtResource("2_effectbase")]([ExtResource("3_dmg"), ExtResource("4_poison")])
+cooldown = 2.0

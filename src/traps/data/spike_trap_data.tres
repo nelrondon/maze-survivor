@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="TrapData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/traps/trap_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://src/effects/effect.gd" id="2_effectbase"]
+[ext_resource type="Resource" path="res://src/effects/resources/stat/hp_damage_2.tres" id="3_dmg"]
+
+[resource]
+script = ExtResource("1_data")
+id = "spike_trap_01"
+display_name = "Trampa de Pinchos"
+description = "Pinchos que salen del suelo e infligen daño"
+trap_type = 0
+activation_mode = 2
+effects = Array[ExtResource("2_effectbase")]([ExtResource("3_dmg")])
+cooldown = 1.5
+active_time = 1.0
+inactive_time = 1.5
+start_delay = 0.0
