@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/traps/trap_types/spike_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/traps/data/spike_trap_data.tres" id="2_data"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.5, 1, 1.5)
+
+[sub_resource type="BoxShape3D" id="2_spike_shape"]
+size = Vector3(1.2, 0.4, 1.2)
+
+[sub_resource type="BoxMesh" id="3_spike_mesh"]
+size = Vector3(1.2, 0.4, 1.2)
+
+[node name="SpikeTrap" type="Node3D"]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("1_detect_shape")
+
+[node name="Spikes" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Spikes"]
+mesh = SubResource("3_spike_mesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Spikes"]
+shape = SubResource("2_spike_shape")

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="StatEffect" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/effects/stat_effect.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+stat = 0
+value = -10.0

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="TrapData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/traps/trap_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://src/effects/effect.gd" id="2_effectbase"]
+[ext_resource type="Resource" path="res://src/effects/resources/temp/speed_debuff_2.tres" id="3_slow"]
+
+[resource]
+script = ExtResource("1_data")
+id = "cage_trap_01"
+display_name = "Trampa de Jaula"
+description = "Una red/jaula que atrapa al jugador y lo ralentiza al liberarse"
+trap_type = 2
+activation_mode = 0
+effects = Array[ExtResource("2_effectbase")]([ExtResource("3_slow")])
+cooldown = 0.5
