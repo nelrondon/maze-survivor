@@ -18,7 +18,14 @@ public partial class Player : CharacterBody3D {
 	private Vector3 _targetVelocity = Vector3.Zero;
 	private bool _isLocked = false;
 	
+	private Node _statusManager;
+	
 	public override void _Ready() {
+		_statusManager = GetNodeOrNull("StatusManager");
+		if (_statusManager == null) {
+			GD.Print("Player: Nodo StatusManager no encontrado. Se creará dinámicamente si es necesario.");
+		}
+
 		if (_gameCamera == null) _gameCamera = GetNodeOrNull<Camera3D>("Head/Camera3D");
 		if (_characterVisual == null) _characterVisual = GetNodeOrNull<Node3D>("MeshInstance3D");
 		if (_interactionRayCast == null) _interactionRayCast = GetNodeOrNull<RayCast3D>("Head/Camera3D/RayCast3D");
@@ -101,5 +108,25 @@ public partial class Player : CharacterBody3D {
 			_targetVelocity.X = 0f;
 			_targetVelocity.Z = 0f;
 		}
+	}
+
+	public void apply_status(Resource statusEffect) {
+		if (_statusManager != null) {
+			_statusManager.Call("apply_status", statusEffect);
+		}
+	}
+
+	public void ApplyStatus(Resource statusEffect) {
+		apply_status(statusEffect);
+	}
+
+	public void remove_status(string statusId) {
+		if (_statusManager != null) {
+			_statusManager.Call("remove_status", statusId);
+		}
+	}
+
+	public void RemoveStatus(string statusId) {
+		remove_status(statusId);
 	}
 }

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dgpjpqapjyifa"]
 
 [ext_resource type="Script" uid="uid://dvmjlwrj0expv" path="res://Player/Player.cs" id="1_v0iea"]
+[ext_resource type="Script" path="res://src/effects/status_manager.gd" id="2_status_mgr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
 
@@ -22,3 +23,7 @@ mesh = SubResource("CapsuleMesh_i3pqv")
 [node name="RayCast3D" type="RayCast3D" parent="Head/Camera3D" unique_id=987654321]
 target_position = Vector3(0, 0, -3)
 collide_with_areas = true
+
+[node name="StatusManager" type="Node" parent="."]
+script = ExtResource("2_status_mgr")
+

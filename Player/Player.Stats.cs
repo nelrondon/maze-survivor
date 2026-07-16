@@ -60,6 +60,28 @@ public partial class Player {
 	}
 
 	public string get_active_effects_text() {
-		return "Activo";
+		if (_statusManager == null) return "Ninguno";
+		
+		var activeStatuses = _statusManager.Get("active_statuses").AsGodotDictionary();
+		if (activeStatuses == null || activeStatuses.Count == 0) return "Ninguno";
+		
+		var statusTexts = new List<string>();
+		foreach (var key in activeStatuses.Keys) {
+			var statusObj = activeStatuses[key].AsGodotObject();
+			if (statusObj != null) {
+				string statusId = statusObj.Get("id").AsString();
+				float currentDuration = (float)statusObj.Get("current_duration").AsDouble();
+				bool isEnv = statusObj.Get("is_environment_based").AsBool();
+				
+				if (isEnv) {
+					statusTexts.Add($"{statusId} (Entorno)");
+				}
+				else {
+					statusTexts.Add($"{statusId} ({currentDuration:F1}s)");
+				}
+			}
+		}
+		
+		return string.Join("\n", statusTexts);
 	}
 }

@@ -27,6 +27,8 @@ func _ready():
 	_add_log("Click Izq: Atacar | E: Interactuar")
 	_add_log("1-5: Seleccionar Item | C: Usar Item")
 	_add_log("K: Dañar Jugador | L: Desbloquear Jugador")
+	_add_log("U: Veneno | I: Hambre | O: Toggle Asfixia")
+
 
 func _process(_delta):
 	_update_effects_display()
@@ -42,6 +44,10 @@ func _input(event):
 			KEY_C: _use_item()
 			KEY_K: _damage_player()
 			KEY_L: _unlock_player()
+			KEY_U: _apply_test_poison()
+			KEY_I: _apply_test_hunger()
+			KEY_O: _toggle_test_asphyxia()
+
 
 func _select_item(index: int):
 	if index >= items.size(): return
@@ -72,6 +78,37 @@ func _damage_player():
 func _unlock_player():
 	player.SetInputLocked(false)
 	_add_log("[RESET] Controles desbloqueados")
+
+var _is_asphyxia_active: bool = false
+
+func _apply_test_poison():
+	var poison = PoisonStatus.new()
+	poison.damage = 5.0
+	poison.max_duration = 5.0
+	poison.tick_interval = 1.0
+	player.apply_status(poison)
+	_add_log("[STATUS] Aplicado Veneno (5 HP/s por 5s)")
+
+func _apply_test_hunger():
+	var hunger = HungerStatus.new()
+	hunger.hunger_drain = 3.0
+	hunger.max_duration = 10.0
+	hunger.tick_interval = 1.0
+	player.apply_status(hunger)
+	_add_log("[STATUS] Aplicado Hambre (3 Hambre/s por 10s)")
+
+func _toggle_test_asphyxia():
+	_is_asphyxia_active = !_is_asphyxia_active
+	if _is_asphyxia_active:
+		var asphyxia = AsphyxiaStatus.new()
+		asphyxia.damage = 10.0
+		asphyxia.tick_interval = 1.0
+		player.apply_status(asphyxia)
+		_add_log("[STATUS] Entrando a zona de Asfixia (10 HP/s)")
+	else:
+		player.remove_status("asfixia")
+		_add_log("[STATUS] Saliendo de zona de Asfixia")
+
 
 func _on_stats_changed():
 	_update_stats_display()
