@@ -18,6 +18,7 @@ mesh = SubResource("CapsuleMesh_i3pqv")
 [node name="Head" type="Node3D" parent="." unique_id=1897942672]
 
 [node name="Camera3D" type="Camera3D" parent="Head" unique_id=1106950801]
+current = true
 
 [node name="RayCast3D" type="RayCast3D" parent="Head/Camera3D" unique_id=987654321]
 target_position = Vector3(0, 0, -3)
