@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="maze-survivor"
+run/main_scene="uid://bs5becy0hfvw1"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

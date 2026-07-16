@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://dapgaq80f0cwh"]
+
+[ext_resource type="Script" uid="uid://hlvxl8nstdth" path="res://src/enemies/boss/boss.gd" id="1_d0l2c"]
+[ext_resource type="Script" uid="uid://bj2qy5w7nbiwo" path="res://src/enemies/boss/boss_senses.gd" id="2_y0qss"]
+[ext_resource type="Script" uid="uid://dgle01q4bjshl" path="res://src/enemies/boss/boss_movement.gd" id="3_2ayys"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d0l2c"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3ydn5"]
+radius = 6.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_byssr"]
+radius = 2.0
+
+[node name="Boss" type="CharacterBody3D" unique_id=1356429750]
+collision_layer = 2
+collision_mask = 7
+script = ExtResource("1_d0l2c")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1627986265]
+shape = SubResource("CapsuleShape3D_d0l2c")
+debug_color = Color(0.99584323, 0, 0.20622629, 0.41960785)
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=1500246143]
+path_desired_distance = 0.5
+
+[node name="PatrolWaitTimer" type="Timer" parent="." unique_id=581638384]
+one_shot = true
+
+[node name="AttackCooldownTimer" type="Timer" parent="." unique_id=1846176395]
+wait_time = 1.5
+one_shot = true
+
+[node name="Senses" type="Node" parent="." unique_id=395596659]
+script = ExtResource("2_y0qss")
+
+[node name="HearingZone" type="Area3D" parent="Senses" unique_id=389871355]
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/HearingZone" unique_id=25219235]
+shape = SubResource("SphereShape3D_3ydn5")
+
+[node name="SmellZone" type="Area3D" parent="Senses" unique_id=405274101]
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/SmellZone" unique_id=485859256]
+shape = SubResource("SphereShape3D_byssr")
+
+[node name="Movement" type="Node" parent="." unique_id=855043645]
+script = ExtResource("3_2ayys")
