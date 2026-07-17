@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://cgob3ydjd3j21"]
+
+[ext_resource type="Script" uid="uid://di1257hxb6k0x" path="res://Multiplayer/SceneManager.cs" id="1_4qnux"]
+[ext_resource type="PackedScene" uid="uid://dgpjpqapjyifa" path="res://Player/player.tscn" id="2_h2oj0"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_c4njr"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_ygifn"]
+sky_material = SubResource("ProceduralSkyMaterial_c4njr")
+
+[sub_resource type="Environment" id="Environment_4qnux"]
+background_mode = 2
+sky = SubResource("Sky_ygifn")
+
+[sub_resource type="BoxMesh" id="BoxMesh_14kig"]
+size = Vector3(10.323303, 1, 14.035278)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_h2oj0"]
+points = PackedVector3Array(5.1606417, 0.5, 7.017639, 5.1606417, -0.5, 7.017639, 5.1606417, 0.5, -7.017639, -5.1616516, 0.5, 7.017639, -5.1616516, -0.5, 7.017639, 5.1606417, -0.5, -7.017639, -5.1616516, 0.5, -7.017639, -5.1616516, -0.5, -7.017639)
+
+[node name="TestMultiplayerScene" type="Node3D" unique_id=963662704]
+script = ExtResource("1_4qnux")
+playerScene = ExtResource("2_h2oj0")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=671684004]
+environment = SubResource("Environment_4qnux")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2127046589]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 8.85148, -2.155984)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=562618231]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32815242, -0.29728436, -2.3069968)
+mesh = SubResource("BoxMesh_14kig")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=240847326]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=1860112435]
+shape = SubResource("ConvexPolygonShape3D_h2oj0")
+
+[node name="PlayerSpawnPoints" type="Node3D" parent="." unique_id=92075014]
+
+[node name="0" type="Node3D" parent="PlayerSpawnPoints" unique_id=136862231 groups=["PlayerSpawnPoints"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9760103, 0.51607513, -4.733027)
+
+[node name="1" type="Node3D" parent="PlayerSpawnPoints" unique_id=859387011 groups=["PlayerSpawnPoints"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.433702, 0.93160224, 1.1022615)

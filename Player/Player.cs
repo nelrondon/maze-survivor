@@ -20,7 +20,7 @@ public partial class Player : CharacterBody3D {
 	
 	private Node _statusManager;
 	
-	public override void _Ready() {
+	public override void _Ready() {	
 		_statusManager = GetNodeOrNull("StatusManager");
 		if (_statusManager == null) {
 			GD.Print("Player: Nodo StatusManager no encontrado. Se creará dinámicamente si es necesario.");
@@ -43,7 +43,7 @@ public partial class Player : CharacterBody3D {
 	
 	public override void _Input(InputEvent @event) {
 		if (!IsMultiplayerAuthority() || _isLocked) return;
-		
+
 		if (@event is InputEventMouseMotion mouseMotion) {
 			RotateY(-mouseMotion.Relative.X * _mouseSensibility);
 			
@@ -74,15 +74,17 @@ public partial class Player : CharacterBody3D {
 	}
 
 	public override void _PhysicsProcess(double delta) {
+
 		if (!IsMultiplayerAuthority()) return;
 		
 		Vector3 direction = Vector3.Zero;
 
+		// NOTE (DiGiorgio-L): I changed the action constants (a.k.a: "up" to "ui_up", and so on...) due to the interpreter throwing errors related to the non-existence of those "up", "down"... constants. Dont't know if it could behave differently on other devices. Fortunately, it is pretty easy to undo. 
 		if (!_isLocked) {
-			if (Input.IsActionPressed("up")) direction -= Transform.Basis.Z;
-			if (Input.IsActionPressed("down")) direction += Transform.Basis.Z;
-			if (Input.IsActionPressed("left")) direction -= Transform.Basis.X;
-			if (Input.IsActionPressed("right")) direction += Transform.Basis.X;
+			if (Input.IsActionPressed("ui_up")) direction -= Transform.Basis.Z;
+			if (Input.IsActionPressed("ui_down")) direction += Transform.Basis.Z;
+			if (Input.IsActionPressed("ui_left")) direction -= Transform.Basis.X;
+			if (Input.IsActionPressed("ui_right")) direction += Transform.Basis.X;
 		}
 
 		if (direction != Vector3.Zero) {
