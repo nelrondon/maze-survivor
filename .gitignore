@@ -1,11 +1,14 @@
- main
-# Godot 4+ specific ignores
-=======
-/android/
 /Scenes/
 /docs/
 
-.import/
- main
-.godot/
 /android/
+
+.import/
+.godot/
+
+export_presets.cfg
+export.cfg
+
+.DS_Store
+Thumbs.db
+.vscode
