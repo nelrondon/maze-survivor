@@ -8,9 +8,12 @@ public partial class Maze : Node3D
 	[Export] public int Height = 51;
 	[Export] public float GridScale = 6.0f;
 	[Export] public PackedScene PlayerScene;
+	[Export] public PackedScene BossScene;
+	[Export] public bool DebugSpawnPlayerNearBoss = false;
 
 	public byte[,] Map;
 	private Random _random = new Random();
+	private NavigationRegion3D _navRegion;
 
 	public override void _Ready()
 	{
@@ -27,25 +30,58 @@ public partial class Maze : Node3D
 		GenerateIterative(1, 1);
 		CreateCentralRoom();
 
-		// 3. Generar Suelo y Paredes
+		// 3. Preparar región de navegación (el suelo y las paredes se agregan dentro de ella)
+		_navRegion = new NavigationRegion3D();
+		_navRegion.NavigationMesh = new NavigationMesh
+		{
+			AgentRadius = 0.6f,
+			AgentHeight = 2.0f,
+			AgentMaxClimb = 0.3f,
+			AgentMaxSlope = 45.0f,
+			CellSize = 0.25f,
+			CellHeight = 0.25f
+		};
+		AddChild(_navRegion);
+
+		// 4. Generar Suelo y Paredes
 		CreateFloorWithCollision(); 
 		DrawMapOptimized();
 		
-		// 4. Instanciar Jugador
+		// 5. Bakear el navmesh en base a la geometría recién creada (síncrono, bloquea hasta terminar)
+		_navRegion.BakeNavigationMesh(onThread: false);
+ 
+		// 6. Instanciar Jugador y Boss
 		SpawnPlayer();
+		SpawnBoss();
 	}
 
 	private void SpawnPlayer()
 	{
 		if (PlayerScene == null) return;
-		Vector2I spawnPos = FindEmptySpace();
+		// Vector2I spawnPos = FindEmptySpace();
 		
+		Vector2I center = new Vector2I(Width / 2, Height / 2);
+		Vector2I spawnPos = DebugSpawnPlayerNearBoss
+			? center + new Vector2I(2, 0) : FindEmptySpace();
+
 		var player = PlayerScene.Instantiate<Node3D>();
 		player.Position = new Vector3(spawnPos.X * GridScale, 3.0f, spawnPos.Y * GridScale); 
 		AddChild(player);
 
 		var cam = player.GetNodeOrNull<Camera3D>("Head/Camera3D");
 		if (cam != null) cam.Current = true;
+	}
+
+	private void SpawnBoss()
+	{
+		if (BossScene == null) return;
+ 
+		// El boss vive en el cuarto central que ya generamos en CreateCentralRoom()
+		Vector2I spawnPos = new Vector2I(Width / 2, Height / 2);
+ 
+		var boss = BossScene.Instantiate<Node3D>();
+		boss.Position = new Vector3(spawnPos.X * GridScale, 1.20f, spawnPos.Y * GridScale);
+		AddChild(boss);
 	}
 
 	private void CreateFloorWithCollision()
@@ -64,7 +100,7 @@ public partial class Maze : Node3D
 		
 		var mat = new StandardMaterial3D() { AlbedoColor = new Color(0.2f, 0.2f, 0.2f) };
 		meshInstance.SetSurfaceOverrideMaterial(0, mat);
-		AddChild(staticBody);
+		_navRegion.AddChild(staticBody);
 	}
 
 	private void DrawMapOptimized()
@@ -92,7 +128,7 @@ public partial class Maze : Node3D
 		
 		// CORRECCIÓN: Se usa CreateTrimeshCollision para formas complejas no convexas
 		meshInstance.CreateTrimeshCollision(); 
-		AddChild(meshInstance);
+		_navRegion.AddChild(meshInstance);
 	}
 
 	private Vector2I FindEmptySpace() { for (int x = 0; x < Width; x++) for (int z = 0; z < Height; z++) if (Map[x, z] == 0) return new Vector2I(x, z); return new Vector2I(1, 1); }
