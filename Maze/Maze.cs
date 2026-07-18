@@ -10,6 +10,7 @@ public partial class Maze : Node3D
 	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene BossScene;
 	[Export] public bool DebugSpawnPlayerNearBoss = false;
+	[Export] public PackedScene palo_de_madera;
 
 	public byte[,] Map;
 	private Random _random = new Random();
@@ -53,8 +54,22 @@ public partial class Maze : Node3D
 		// 6. Instanciar Jugador y Boss
 		SpawnPlayer();
 		SpawnBoss();
+		SpawnPalo();
 	}
-
+	
+	private void SpawnPalo()
+	{
+		if (palo_de_madera == null) return;
+		// Vector2I spawnPos = FindEmptySpace();
+		
+		Vector2I center = new Vector2I(Width / 2, Height / 2);
+		Vector2I spawnPos = DebugSpawnPlayerNearBoss
+			? center + new Vector2I(2, 0) : FindEmptySpace();
+		
+		var palo = palo_de_madera.Instantiate<Node3D>();
+		palo.Position = new Vector3(spawnPos.X * GridScale, 3.0f - 2.0f, spawnPos.Y * GridScale); 
+		AddChild(palo);
+	}
 	private void SpawnPlayer()
 	{
 		if (PlayerScene == null) return;
