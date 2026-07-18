@@ -11,10 +11,12 @@ public partial class Maze : Node3D
 	[Export] public PackedScene BossScene;
 	[Export] public bool DebugSpawnPlayerNearBoss = false;
 	[Export] public PackedScene palo_de_madera;
+	[Export] public PackedScene HudScene;
 
 	public byte[,] Map;
 	private Random _random = new Random();
 	private NavigationRegion3D _navRegion;
+	private Node3D _spawnedPlayer;
 
 	public override void _Ready()
 	{
@@ -51,16 +53,16 @@ public partial class Maze : Node3D
 		// 5. Bakear el navmesh en base a la geometría recién creada (síncrono, bloquea hasta terminar)
 		_navRegion.BakeNavigationMesh(onThread: false);
  
-		// 6. Instanciar Jugador y Boss
+		// 6. Instanciar Jugador, Boss, Arma y HUD
 		SpawnPlayer();
 		SpawnBoss();
 		SpawnPalo();
+		SpawnHUD();
 	}
 	
 	private void SpawnPalo()
 	{
 		if (palo_de_madera == null) return;
-		// Vector2I spawnPos = FindEmptySpace();
 		
 		Vector2I center = new Vector2I(Width / 2, Height / 2);
 		Vector2I spawnPos = DebugSpawnPlayerNearBoss
@@ -70,21 +72,90 @@ public partial class Maze : Node3D
 		palo.Position = new Vector3(spawnPos.X * GridScale, 3.0f - 2.0f, spawnPos.Y * GridScale); 
 		AddChild(palo);
 	}
+
 	private void SpawnPlayer()
 	{
 		if (PlayerScene == null) return;
-		// Vector2I spawnPos = FindEmptySpace();
 		
 		Vector2I center = new Vector2I(Width / 2, Height / 2);
 		Vector2I spawnPos = DebugSpawnPlayerNearBoss
 			? center + new Vector2I(2, 0) : FindEmptySpace();
 
-		var player = PlayerScene.Instantiate<Node3D>();
-		player.Position = new Vector3(spawnPos.X * GridScale, 3.0f, spawnPos.Y * GridScale); 
-		AddChild(player);
+		_spawnedPlayer = PlayerScene.Instantiate<Node3D>();
+		_spawnedPlayer.Position = new Vector3(spawnPos.X * GridScale, 3.0f, spawnPos.Y * GridScale); 
+		AddChild(_spawnedPlayer);
 
-		var cam = player.GetNodeOrNull<Camera3D>("Head/Camera3D");
+		var cam = _spawnedPlayer.GetNodeOrNull<Camera3D>("Head/Camera3D");
 		if (cam != null) cam.Current = true;
+	}
+
+	private void SpawnHUD()
+	{
+		if (HudScene == null)
+		{
+			HudScene = GD.Load<PackedScene>("res://src/ui/hud.tscn");
+		}
+		
+		if (HudScene != null)
+		{
+			var hud = HudScene.Instantiate();
+			AddChild(hud);
+			if (_spawnedPlayer != null && hud.HasMethod("setup_player"))
+			{
+				hud.Call("setup_player", _spawnedPlayer);
+			}
+		}
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
+		{
+			if (_spawnedPlayer != null && _spawnedPlayer.HasMethod("modify_stat"))
+			{
+				switch (keyEvent.Keycode)
+				{
+					case Key.Key1:
+						_spawnedPlayer.Call("modify_stat", 0, -20f); // Daño HP
+						GD.Print("Debug UI: Tecla 1 -> -20 HP");
+						break;
+					case Key.Key2:
+						_spawnedPlayer.Call("modify_stat", 0, 20f); // Curar HP
+						GD.Print("Debug UI: Tecla 2 -> +20 HP");
+						break;
+					case Key.Key3:
+						_spawnedPlayer.Call("modify_stat", 1, -25f); // Gastar Estamina
+						GD.Print("Debug UI: Tecla 3 -> -25 Estamina");
+						break;
+					case Key.Key4:
+						_spawnedPlayer.Call("modify_stat", 1, 25f); // Recuperar Estamina
+						GD.Print("Debug UI: Tecla 4 -> +25 Estamina");
+						break;
+					case Key.Key5:
+						_spawnedPlayer.Call("modify_stat", 2, -30f); // Gastar Hambre
+						GD.Print("Debug UI: Tecla 5 -> -30 Hambre");
+						break;
+					case Key.Key6:
+						_spawnedPlayer.Call("modify_stat", 2, 30f); // Comer / Hambre
+						GD.Print("Debug UI: Tecla 6 -> +30 Hambre");
+						break;
+					case Key.Key0:
+						if (_spawnedPlayer.HasMethod("SetInputLocked"))
+						{
+							_spawnedPlayer.Call("SetInputLocked", false);
+						}
+						_spawnedPlayer.Call("modify_stat", 0, 100f); // Restablecer HP
+						_spawnedPlayer.Call("modify_stat", 1, 100f); // Restablecer Estamina
+						_spawnedPlayer.Call("modify_stat", 2, 100f); // Restablecer Hambre
+						if (_spawnedPlayer.HasNode("StatusManager"))
+						{
+							_spawnedPlayer.GetNode("StatusManager").Call("clear_all");
+						}
+						GD.Print("Debug UI: Tecla 0 -> Resucitar y desbloquear jugador");
+						break;
+				}
+			}
+		}
 	}
 
 	private void SpawnBoss()

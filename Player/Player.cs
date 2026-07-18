@@ -98,7 +98,12 @@ public partial class Player : CharacterBody3D {
 		}
 
 		if (!IsOnFloor()) _targetVelocity.Y -= _gravity * (float)delta;
-		else if (!_isLocked && Input.IsActionJustPressed("jump")) _targetVelocity.Y = _jumpStrength;
+		else if (!_isLocked && Input.IsActionJustPressed("jump")) {
+			if (GetStat(1) >= 5f) {
+				_targetVelocity.Y = _jumpStrength;
+				modify_stat(1, -5f);
+			}
+		} 
 
 		Velocity = _targetVelocity;
 		MoveAndSlide();
