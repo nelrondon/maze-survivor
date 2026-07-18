@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://djm7pl8ev14p"]
 
-[ext_resource type="Script" path="res://test/test_player_integration.gd" id="1_test"]
-[ext_resource type="PackedScene" path="res://Player/player.tscn" id="2_player"]
-[ext_resource type="PackedScene" path="res://test/Combate/Golpe/palo_madera_test.tscn" id="3_weapon"]
-[ext_resource type="Script" path="res://test/test_interactable_box.gd" id="4_box"]
+[ext_resource type="Script" uid="uid://dhq4lf6ql6076" path="res://test/test_player_integration.gd" id="1_test"]
+[ext_resource type="PackedScene" uid="uid://dgpjpqapjyifa" path="res://Player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cj7ph8e5flmx3" path="res://test/Combate/Golpe/palo_madera_test.tscn" id="3_weapon"]
+[ext_resource type="Script" uid="uid://cadaradumddah" path="res://test/test_interactable_box.gd" id="4_box"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/adrenaline.tscn" id="5_item1"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/bandages.tscn" id="6_item2"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/steroids.tscn" id="7_item3"]
@@ -39,7 +39,7 @@ shadow_enabled = true
 [node name="Player" parent="." unique_id=1667481029 instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="Palo" parent="Player/Head/Camera3D" index="1" unique_id=1377804163 instance=ExtResource("3_weapon")]
+[node name="Palo" parent="Player/Head/Camera3D" parent_id_path=PackedInt32Array(1667481029, 1106950801) index="1" unique_id=1377804163 instance=ExtResource("3_weapon")]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.3, -0.4, -0.8)
 
 [node name="InteractableBox" type="StaticBody3D" parent="." unique_id=100000005]
