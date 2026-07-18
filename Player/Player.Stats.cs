@@ -55,6 +55,17 @@ public partial class Player {
 		}
 	}
 
+	public float get_stat(int stat) {
+		return _stats.TryGetValue(stat, out float val) ? val : 0f;
+	}
+
+	public float get_max_stat(int stat) {
+		return _maxStats.TryGetValue(stat, out float val) ? val : 100f;
+	}
+
+	public float GetStat(int stat) => get_stat(stat);
+	public float GetMaxStat(int stat) => get_max_stat(stat);
+
 	public string get_stats_text() {
 		return $"HP: {_stats[0]} / 100\nEstamina: {_stats[1]} / 100\nHambre: {_stats[2]} / 100\nVelocidad: {_stats[3]}";
 	}
