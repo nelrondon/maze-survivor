@@ -9,29 +9,27 @@ public partial class Maze : Node3D
 	[Export] public float GridScale = 6.0f;
 	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene BossScene;
-	[Export] public bool DebugSpawnPlayerNearBoss = false;
+	[Export] public bool DebugSpawnPlayerNearBoss = true;
 	[Export] public PackedScene palo_de_madera;
 
 	public byte[,] Map;
 	private Random _random = new Random();
 	private NavigationRegion3D _navRegion;
+	private MazeSpawner _spawner;
 
 	public override void _Ready()
 	{
 		if (Width % 2 == 0) Width++;
 		if (Height % 2 == 0) Height++;
 
-		// 1. Iluminación
 		var light = new DirectionalLight3D();
 		light.RotationDegrees = new Vector3(-60, 45, 0);
 		AddChild(light);
 
-		// 2. Generar datos
 		InitializeMap();
 		GenerateIterative(1, 1);
 		CreateCentralRoom();
 
-		// 3. Preparar región de navegación (el suelo y las paredes se agregan dentro de ella)
 		_navRegion = new NavigationRegion3D();
 		_navRegion.NavigationMesh = new NavigationMesh
 		{
@@ -44,59 +42,14 @@ public partial class Maze : Node3D
 		};
 		AddChild(_navRegion);
 
-		// 4. Generar Suelo y Paredes
 		CreateFloorWithCollision(); 
 		DrawMapOptimized();
 		
-		// 5. Bakear el navmesh en base a la geometría recién creada (síncrono, bloquea hasta terminar)
 		_navRegion.BakeNavigationMesh(onThread: false);
  
-		// 6. Instanciar Jugador y Boss
-		SpawnPlayer();
-		SpawnBoss();
-		SpawnPalo();
-	}
-	
-	private void SpawnPalo()
-	{
-		if (palo_de_madera == null) return;
-		// Vector2I spawnPos = FindEmptySpace();
-		
-		Vector2I center = new Vector2I(Width / 2, Height / 2);
-		Vector2I spawnPos = DebugSpawnPlayerNearBoss
-			? center + new Vector2I(2, 0) : FindEmptySpace();
-		
-		var palo = palo_de_madera.Instantiate<Node3D>();
-		palo.Position = new Vector3(spawnPos.X * GridScale, 3.0f - 2.0f, spawnPos.Y * GridScale); 
-		AddChild(palo);
-	}
-	private void SpawnPlayer()
-	{
-		if (PlayerScene == null) return;
-		// Vector2I spawnPos = FindEmptySpace();
-		
-		Vector2I center = new Vector2I(Width / 2, Height / 2);
-		Vector2I spawnPos = DebugSpawnPlayerNearBoss
-			? center + new Vector2I(2, 0) : FindEmptySpace();
-
-		var player = PlayerScene.Instantiate<Node3D>();
-		player.Position = new Vector3(spawnPos.X * GridScale, 3.0f, spawnPos.Y * GridScale); 
-		AddChild(player);
-
-		var cam = player.GetNodeOrNull<Camera3D>("Head/Camera3D");
-		if (cam != null) cam.Current = true;
-	}
-
-	private void SpawnBoss()
-	{
-		if (BossScene == null) return;
- 
-		// El boss vive en el cuarto central que ya generamos en CreateCentralRoom()
-		Vector2I spawnPos = new Vector2I(Width / 2, Height / 2);
- 
-		var boss = BossScene.Instantiate<Node3D>();
-		boss.Position = new Vector3(spawnPos.X * GridScale, 1.20f, spawnPos.Y * GridScale);
-		AddChild(boss);
+		_spawner = new MazeSpawner();
+		AddChild(_spawner); 
+		_spawner.SpawnEntities();
 	}
 
 	private void CreateFloorWithCollision()
@@ -140,13 +93,12 @@ public partial class Maze : Node3D
 		st.SetMaterial(wallMaterial);
 		
 		var meshInstance = new MeshInstance3D { Mesh = st.Commit() };
-		
-		// CORRECCIÓN: Se usa CreateTrimeshCollision para formas complejas no convexas
 		meshInstance.CreateTrimeshCollision(); 
 		_navRegion.AddChild(meshInstance);
 	}
 
-	private Vector2I FindEmptySpace() { for (int x = 0; x < Width; x++) for (int z = 0; z < Height; z++) if (Map[x, z] == 0) return new Vector2I(x, z); return new Vector2I(1, 1); }
+	public Vector2I FindEmptySpace() { for (int x = 0; x < Width; x++) for (int z = 0; z < Height; z++) if (Map[x, z] == 0) return new Vector2I(x, z); return new Vector2I(1, 1); }
+	
 	private void InitializeMap() { Map = new byte[Width, Height]; for (int z = 0; z < Height; z++) for (int x = 0; x < Width; x++) Map[x, z] = 1; }
 	private void GenerateIterative(int startX, int startZ) { 
 		var stack = new Stack<Vector2I>();
