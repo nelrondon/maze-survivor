@@ -33,7 +33,7 @@ public partial class Maze : Node3D
 		GenerateIterative(1, 1);
 		CreateCentralRoom();
 
-		// 3. Preparar región de navegación (el suelo y las paredes se agregan dentro de ella)
+		// 3. Preparar región de navegación
 		_navRegion = new NavigationRegion3D();
 		_navRegion.NavigationMesh = new NavigationMesh
 		{
@@ -46,47 +46,25 @@ public partial class Maze : Node3D
 		};
 		AddChild(_navRegion);
 
-		// 4. Generar Suelo y Paredes
+		// 4. Generar Suelo y Paredes visibles
 		CreateFloorWithCollision(); 
 		DrawMapOptimized();
 		
-		// 5. Bakear el navmesh en base a la geometría recién creada (síncrono, bloquea hasta terminar)
+		// 5. Bakear el navmesh
 		_navRegion.BakeNavigationMesh(onThread: false);
  
-		// 6. Instanciar Jugador, Boss, Arma y HUD
-		SpawnPlayer();
-		SpawnBoss();
-		SpawnPalo();
+		// 6. Instanciamos dinámicamente tu Spawner
+		var spawner = new MazeSpawner();
+		AddChild(spawner);
+		spawner.SpawnEntities();
+
+		// 7. Tu HUD intacto en la esquina superior izquierda
 		SpawnHUD();
 	}
-	
-	private void SpawnPalo()
+
+	public void SetSpawnedPlayer(Node3D player)
 	{
-		if (palo_de_madera == null) return;
-		
-		Vector2I center = new Vector2I(Width / 2, Height / 2);
-		Vector2I spawnPos = DebugSpawnPlayerNearBoss
-			? center + new Vector2I(2, 0) : FindEmptySpace();
-		
-		var palo = palo_de_madera.Instantiate<Node3D>();
-		palo.Position = new Vector3(spawnPos.X * GridScale, 3.0f - 2.0f, spawnPos.Y * GridScale); 
-		AddChild(palo);
-	}
-
-	private void SpawnPlayer()
-	{
-		if (PlayerScene == null) return;
-		
-		Vector2I center = new Vector2I(Width / 2, Height / 2);
-		Vector2I spawnPos = DebugSpawnPlayerNearBoss
-			? center + new Vector2I(2, 0) : FindEmptySpace();
-
-		_spawnedPlayer = PlayerScene.Instantiate<Node3D>();
-		_spawnedPlayer.Position = new Vector3(spawnPos.X * GridScale, 3.0f, spawnPos.Y * GridScale); 
-		AddChild(_spawnedPlayer);
-
-		var cam = _spawnedPlayer.GetNodeOrNull<Camera3D>("Head/Camera3D");
-		if (cam != null) cam.Current = true;
+		_spawnedPlayer = player;
 	}
 
 	private void SpawnHUD()
@@ -100,6 +78,13 @@ public partial class Maze : Node3D
 		{
 			var hud = HudScene.Instantiate();
 			AddChild(hud);
+			
+			// Si no se asignó desde el spawner, buscamos cualquier hijo que tenga estadísticas
+			if (_spawnedPlayer == null)
+			{
+				_spawnedPlayer = BuscarJugadorEnHijos();
+			}
+
 			if (_spawnedPlayer != null && hud.HasMethod("setup_player"))
 			{
 				hud.Call("setup_player", _spawnedPlayer);
@@ -107,36 +92,55 @@ public partial class Maze : Node3D
 		}
 	}
 
+	// Método auxiliar infalible para encontrar al jugador en base a sus métodos únicos
+	private Node3D BuscarJugadorEnHijos()
+	{
+		foreach (var child in GetChildren())
+		{
+			if (child is Node3D node && node.HasMethod("modify_stat"))
+			{
+				return node;
+			}
+		}
+		return null;
+	}
+
 	public override void _Input(InputEvent @event)
 	{
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && !keyEvent.Echo)
 		{
-			if (_spawnedPlayer != null && _spawnedPlayer.HasMethod("modify_stat"))
+			// Re-verificación si la referencia se perdió
+			if (_spawnedPlayer == null)
+			{
+				_spawnedPlayer = BuscarJugadorEnHijos();
+			}
+
+			if (_spawnedPlayer != null)
 			{
 				switch (keyEvent.Keycode)
 				{
 					case Key.Key1:
-						_spawnedPlayer.Call("modify_stat", 0, -20f); // Daño HP
+						_spawnedPlayer.Call("modify_stat", 0, -20f);
 						GD.Print("Debug UI: Tecla 1 -> -20 HP");
 						break;
 					case Key.Key2:
-						_spawnedPlayer.Call("modify_stat", 0, 20f); // Curar HP
+						_spawnedPlayer.Call("modify_stat", 0, 20f);
 						GD.Print("Debug UI: Tecla 2 -> +20 HP");
 						break;
 					case Key.Key3:
-						_spawnedPlayer.Call("modify_stat", 1, -25f); // Gastar Estamina
+						_spawnedPlayer.Call("modify_stat", 1, -25f);
 						GD.Print("Debug UI: Tecla 3 -> -25 Estamina");
 						break;
 					case Key.Key4:
-						_spawnedPlayer.Call("modify_stat", 1, 25f); // Recuperar Estamina
+						_spawnedPlayer.Call("modify_stat", 1, 25f);
 						GD.Print("Debug UI: Tecla 4 -> +25 Estamina");
 						break;
 					case Key.Key5:
-						_spawnedPlayer.Call("modify_stat", 2, -30f); // Gastar Hambre
+						_spawnedPlayer.Call("modify_stat", 2, -30f);
 						GD.Print("Debug UI: Tecla 5 -> -30 Hambre");
 						break;
 					case Key.Key6:
-						_spawnedPlayer.Call("modify_stat", 2, 30f); // Comer / Hambre
+						_spawnedPlayer.Call("modify_stat", 2, 30f);
 						GD.Print("Debug UI: Tecla 6 -> +30 Hambre");
 						break;
 					case Key.Key0:
@@ -144,9 +148,9 @@ public partial class Maze : Node3D
 						{
 							_spawnedPlayer.Call("SetInputLocked", false);
 						}
-						_spawnedPlayer.Call("modify_stat", 0, 100f); // Restablecer HP
-						_spawnedPlayer.Call("modify_stat", 1, 100f); // Restablecer Estamina
-						_spawnedPlayer.Call("modify_stat", 2, 100f); // Restablecer Hambre
+						_spawnedPlayer.Call("modify_stat", 0, 100f);
+						_spawnedPlayer.Call("modify_stat", 1, 100f);
+						_spawnedPlayer.Call("modify_stat", 2, 100f);
 						if (_spawnedPlayer.HasNode("StatusManager"))
 						{
 							_spawnedPlayer.GetNode("StatusManager").Call("clear_all");
@@ -155,19 +159,11 @@ public partial class Maze : Node3D
 						break;
 				}
 			}
+			else
+			{
+				GD.PrintErr("Debug UI Error: ¡No se encontró ningún jugador con el método 'modify_stat' en la escena!");
+			}
 		}
-	}
-
-	private void SpawnBoss()
-	{
-		if (BossScene == null) return;
- 
-		// El boss vive en el cuarto central que ya generamos en CreateCentralRoom()
-		Vector2I spawnPos = new Vector2I(Width / 2, Height / 2);
- 
-		var boss = BossScene.Instantiate<Node3D>();
-		boss.Position = new Vector3(spawnPos.X * GridScale, 1.20f, spawnPos.Y * GridScale);
-		AddChild(boss);
 	}
 
 	private void CreateFloorWithCollision()
@@ -211,13 +207,11 @@ public partial class Maze : Node3D
 		st.SetMaterial(wallMaterial);
 		
 		var meshInstance = new MeshInstance3D { Mesh = st.Commit() };
-		
-		// CORRECCIÓN: Se usa CreateTrimeshCollision para formas complejas no convexas
 		meshInstance.CreateTrimeshCollision(); 
 		_navRegion.AddChild(meshInstance);
 	}
 
-	private Vector2I FindEmptySpace() { for (int x = 0; x < Width; x++) for (int z = 0; z < Height; z++) if (Map[x, z] == 0) return new Vector2I(x, z); return new Vector2I(1, 1); }
+	public Vector2I FindEmptySpace() { for (int x = 0; x < Width; x++) for (int z = 0; z < Height; z++) if (Map[x, z] == 0) return new Vector2I(x, z); return new Vector2I(1, 1); }
 	private void InitializeMap() { Map = new byte[Width, Height]; for (int z = 0; z < Height; z++) for (int x = 0; x < Width; x++) Map[x, z] = 1; }
 	private void GenerateIterative(int startX, int startZ) { 
 		var stack = new Stack<Vector2I>();
