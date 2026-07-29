@@ -3,11 +3,13 @@
 [ext_resource type="Script" uid="uid://mkgiu1uwi84t" path="res://Maze/Maze.cs" id="1_h41xc"]
 [ext_resource type="PackedScene" uid="uid://dgpjpqapjyifa" path="res://Player/player.tscn" id="2_u11kd"]
 [ext_resource type="PackedScene" uid="uid://ta25gl41cvnm" path="res://assets/palo/palo_de_madera.tscn" id="3_u11kd"]
-[ext_resource type="PackedScene" path="res://src/ui/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" uid="uid://dapgaq80f0cwh" path="res://src/enemies/boss/boss.tscn" id="3_ugm30"]
+[ext_resource type="PackedScene" uid="uid://c8n4y2b3u1h5d" path="res://src/ui/hud.tscn" id="4_hud"]
 
 [node name="Node3D" type="Node3D" unique_id=882580129]
 script = ExtResource("1_h41xc")
 PlayerScene = ExtResource("2_u11kd")
+BossScene = ExtResource("3_ugm30")
 palo_de_madera = ExtResource("3_u11kd")
 HudScene = ExtResource("4_hud")
 
