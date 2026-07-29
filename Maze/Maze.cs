@@ -53,11 +53,10 @@ public partial class Maze : Node3D
 		// 5. Bakear el navmesh en base a la geometría recién creada (síncrono, bloquea hasta terminar)
 		_navRegion.BakeNavigationMesh(onThread: false);
  
-		// 6. Instanciar Jugador, Boss, Arma y HUD
+		// 6. Instanciar Jugador, Boss y Arma
 		SpawnPlayer();
 		SpawnBoss();
 		SpawnPalo();
-		SpawnHUD();
 	}
 	
 	private void SpawnPalo()

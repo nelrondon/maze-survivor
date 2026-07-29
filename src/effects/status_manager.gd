@@ -64,17 +64,24 @@ func apply_status(new_status: StatusEffect) -> void:
 		status_instance.on_start(target)
 		status_added.emit(status_id, status_instance.icon, status_instance.max_duration)
 
+	if target and target.has_signal("stats_changed"):
+		target.emit_signal("stats_changed")
+
 func remove_status(status_id: String) -> void:
 	if active_statuses.has(status_id):
 		var status: StatusEffect = active_statuses[status_id]
 		status.on_end(target)
 		active_statuses.erase(status_id)
 		status_removed.emit(status_id)
+		if target and target.has_signal("stats_changed"):
+			target.emit_signal("stats_changed")
 
 func clear_all() -> void:
 	var keys = active_statuses.keys()
 	for status_id in keys:
 		remove_status(status_id)
+	if target and target.has_signal("stats_changed"):
+		target.emit_signal("stats_changed")
 
 func pause_status_duration(status_id: String, paused: bool) -> void:
 	if active_statuses.has(status_id):

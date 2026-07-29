@@ -19,6 +19,7 @@ public partial class Player : CharacterBody3D {
 	private bool _isLocked = false;
 	
 	private Node _statusManager;
+	private CanvasLayer _hud;
 	
 	public override void _Ready() {	
 		_statusManager = GetNodeOrNull("StatusManager");
@@ -26,6 +27,7 @@ public partial class Player : CharacterBody3D {
 			GD.Print("Player: Nodo StatusManager no encontrado. Se creará dinámicamente si es necesario.");
 		}
 
+		_hud = GetNodeOrNull<CanvasLayer>("HUD");
 		if (_gameCamera == null) _gameCamera = GetNodeOrNull<Camera3D>("Head/Camera3D");
 		if (_characterVisual == null) _characterVisual = GetNodeOrNull<Node3D>("MeshInstance3D");
 		if (_interactionRayCast == null) _interactionRayCast = GetNodeOrNull<RayCast3D>("Head/Camera3D/RayCast3D");
@@ -33,11 +35,13 @@ public partial class Player : CharacterBody3D {
 		if (IsMultiplayerAuthority()) {
 			if (_gameCamera != null) _gameCamera.Current = true;
 			if (_characterVisual != null) _characterVisual.Visible = false;
+			if (_hud != null) _hud.Visible = true;
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 		}
 		else {
 			if (_gameCamera != null) _gameCamera.Current = false;
 			if (_characterVisual != null) _characterVisual.Visible = true;
+			if (_hud != null) _hud.Visible = false;
 		}
 	}
 	
@@ -77,9 +81,11 @@ public partial class Player : CharacterBody3D {
 
 		if (!IsMultiplayerAuthority()) return;
 		
+		// Procesar la regeneración pasiva de estamina
+		ProcessStaminaRegen(delta);
+		
 		Vector3 direction = Vector3.Zero;
 
-		// NOTE (DiGiorgio-L): I changed the action constants (a.k.a: "up" to "ui_up", and so on...) due to the interpreter throwing errors related to the non-existence of those "up", "down"... constants. Dont't know if it could behave differently on other devices. Fortunately, it is pretty easy to undo. 
 		if (!_isLocked) {
 			if (Input.IsActionPressed("up")) direction -= Transform.Basis.Z;
 			if (Input.IsActionPressed("down")) direction += Transform.Basis.Z;
@@ -87,10 +93,20 @@ public partial class Player : CharacterBody3D {
 			if (Input.IsActionPressed("right")) direction += Transform.Basis.X;
 		}
 
+		// Mecánica de Carrera (Sprint con Shift)
+		bool isSprintingRequested = !_isLocked && (Input.IsKeyPressed(Key.Shift) || (InputMap.HasAction("sprint") && Input.IsActionPressed("sprint")));
+		float currentSpeed = _speed;
+
 		if (direction != Vector3.Zero) {
 			direction = direction.Normalized();
-			_targetVelocity.X = direction.X * _speed;
-			_targetVelocity.Z = direction.Z * _speed;
+
+			if (isSprintingRequested && GetStat(1) > 0f) {
+				currentSpeed *= 1.4f; // 40% más rápido al correr
+				modify_stat(1, -12.0f * (float)delta); // Consumir 12 de estamina por segundo al correr
+			}
+
+			_targetVelocity.X = direction.X * currentSpeed;
+			_targetVelocity.Z = direction.Z * currentSpeed;
 		} 
 		else {
 			_targetVelocity.X = 0f;

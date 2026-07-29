@@ -20,6 +20,11 @@ public partial class Player {
 		{ 2, 100f }
 	};
 
+	private float _timeSinceLastStaminaUse = 0f;
+	private float _staminaRegenDelay = 1.5f;
+	private float _staminaRegenRate = 20.0f;
+	public bool CanRegenStamina = true;
+
 	public void modify_stat(int stat, float value) {
 		if (!_stats.ContainsKey(stat)) return;
 
@@ -28,10 +33,38 @@ public partial class Player {
 
 		if (_maxStats.ContainsKey(stat)) _stats[stat] = Mathf.Clamp(_stats[stat], 0f, _maxStats[stat]);
 
+		if (stat == 1 && value < 0f) {
+			_timeSinceLastStaminaUse = 0f;
+		}
+
 		if (stat == 3) _speed = _stats[stat];
 		else if (stat == 0 && _stats[stat] <= 0f) TakeDamage();
 
 		EmitSignal(SignalName.stats_changed);
+	}
+
+	public void ProcessStaminaRegen(double delta) {
+		_timeSinceLastStaminaUse += (float)delta;
+
+		if (_timeSinceLastStaminaUse >= _staminaRegenDelay && CanRegenStamina) {
+			float currentStamina = _stats[1];
+			float maxStamina = _maxStats[1];
+
+			if (currentStamina < maxStamina) {
+				float regenRate = _staminaRegenRate;
+
+				// Si el hambre es baja (< 20), reducimos la velocidad de regeneración a la mitad
+				if (_stats.ContainsKey(2) && _stats[2] < 20f) {
+					regenRate *= 0.5f;
+				}
+
+				float newStamina = Mathf.Min(maxStamina, currentStamina + (regenRate * (float)delta));
+				if (newStamina != currentStamina) {
+					_stats[1] = newStamina;
+					EmitSignal(SignalName.stats_changed);
+				}
+			}
+		}
 	}
 
 	public async void start_temp_effect(int stat, float value, float duration) {

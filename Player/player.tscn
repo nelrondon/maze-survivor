@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Player/Player.cs" id="1_v0iea"]
 [ext_resource type="Script" path="res://src/effects/status_manager.gd" id="2_status_mgr"]
+[ext_resource type="PackedScene" path="res://src/ui/hud.tscn" id="3_hud"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
 
@@ -36,6 +37,8 @@ collide_with_areas = true
 
 [node name="StatusManager" type="Node" parent="." unique_id=1812853408]
 script = ExtResource("2_status_mgr")
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1233248879]
 replication_config = SubResource("SceneReplicationConfig_4ntmi")
