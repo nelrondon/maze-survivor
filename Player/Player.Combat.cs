@@ -6,7 +6,7 @@ public partial class Player {
 	}
 
 	public void TakeDamage() {
-		if (!IsMultiplayerAuthority()) return;
+		if (!_IsLocallyControlled()) return;
 		
 		SetInputLocked(true);
 		

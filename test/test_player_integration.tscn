@@ -8,16 +8,45 @@
 [ext_resource type="PackedScene" path="res://src/items/consumables/bandages.tscn" id="6_item2"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/steroids.tscn" id="7_item3"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/experimental_serum.tscn" id="8_item4"]
+[ext_resource type="Script" uid="uid://cbn0b4nagfqlw" path="res://src/effects/environment_zone.gd" id="9_zone"]
+[ext_resource type="Resource" path="res://src/effects/resources/zone_asphyxia.tres" id="10_asphyxia"]
+[ext_resource type="Resource" path="res://src/effects/resources/zone_poison.tres" id="11_poison"]
+[ext_resource type="PackedScene" uid="uid://c8n4y2b3u1h5d" path="res://src/ui/hud.tscn" id="12_hud"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ground"]
 size = Vector3(60, 2, 60)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.18, 0.2, 0.25, 1)
+roughness = 0.8
+
 [sub_resource type="BoxMesh" id="BoxMesh_ground"]
+material = SubResource("StandardMaterial3D_ground")
 size = Vector3(60, 2, 60)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_box"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_box"]
+albedo_color = Color(0.8, 0.5, 0.2, 1)
+
 [sub_resource type="BoxMesh" id="BoxMesh_box"]
+material = SubResource("StandardMaterial3D_box")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
+size = Vector3(6, 4, 6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_zone"]
+size = Vector3(6, 4, 6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blue"]
+transparency = 1
+albedo_color = Color(0.1, 0.4, 0.9, 0.35)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_green"]
+transparency = 1
+albedo_color = Color(0.1, 0.9, 0.1, 0.35)
+roughness = 0.5
 
 [node name="TestPlayerIntegration" type="Node3D" unique_id=100000000]
 script = ExtResource("1_test")
@@ -33,17 +62,57 @@ shape = SubResource("BoxShape3D_ground")
 mesh = SubResource("BoxMesh_ground")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=100000004]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 15, 0)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 15, 0)
 shadow_enabled = true
 
 [node name="Player" parent="." unique_id=1667481029 instance=ExtResource("2_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="Palo" parent="Player/Head/Camera3D" parent_id_path=PackedInt32Array(1667481029, 1106950801) index="1" unique_id=1377804163 instance=ExtResource("3_weapon")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.3, -0.4, -0.8)
+[node name="rig" parent="Player/CharacterVisual" parent_id_path=PackedInt32Array(1667481029, 1418595808) index="0" unique_id=1682123830]
+transform = Transform3D(100.00001, 0, 0, 0, 100, 0, 0, 0, 99.99999, 0, 0, 0)
+
+[node name="Skeleton3D" parent="Player/CharacterVisual/rig" index="0" unique_id=931753365]
+bones/1/rotation = Quaternion(-0.10133815, 1.1859558e-07, -1.2080463e-08, 0.99485207)
+bones/2/rotation = Quaternion(-0.07435399, -1.18879356e-07, -8.86367e-09, 0.9972319)
+bones/3/rotation = Quaternion(0.2788436, -1.14481e-07, -3.324076e-08, 0.9603365)
+bones/4/rotation = Quaternion(-0.15708424, -5.0588077e-14, 3.7451816e-08, 0.9875852)
+bones/6/rotation = Quaternion(-0.5482486, -0.3858701, -0.5043444, 0.5442099)
+bones/7/rotation = Quaternion(-0.3957827, 0.6255665, -0.39808592, 0.54180276)
+bones/8/rotation = Quaternion(0.18051888, 0.0979545, -0.019780457, 0.97848177)
+bones/9/rotation = Quaternion(-0.058245502, -0.12290992, 0.0038760805, 0.9906995)
+bones/10/rotation = Quaternion(0.20150845, 0.9061054, 0.34664652, -0.13492031)
+bones/11/rotation = Quaternion(0.24037135, -0.0743289, -0.026991034, 0.96745455)
+bones/13/rotation = Quaternion(0.1807217, 0.98212856, 0.015550569, -0.05021297)
+bones/15/rotation = Quaternion(-0.5482486, 0.3858701, 0.5043444, 0.5442099)
+bones/16/rotation = Quaternion(-0.3957827, -0.6255665, 0.39808592, 0.54180276)
+bones/17/rotation = Quaternion(0.18051888, -0.0979545, 0.019780457, 0.97848177)
+bones/18/rotation = Quaternion(-0.058245502, 0.12290992, -0.0038760805, 0.9906995)
+bones/19/rotation = Quaternion(-0.20150845, 0.9061054, 0.34664652, 0.13492031)
+bones/20/rotation = Quaternion(0.24037135, 0.0743289, 0.026991034, 0.96745455)
+bones/22/rotation = Quaternion(-0.1807217, 0.98212856, 0.015550569, 0.05021297)
+bones/24/rotation = Quaternion(0.9949549, 0.050404552, -0.012434398, 0.0858462)
+bones/25/rotation = Quaternion(-0.022358349, 0.0077429162, 0.017427491, 0.9995681)
+bones/26/rotation = Quaternion(-0.5706435, -0.021708747, 0.02462682, 0.82054144)
+bones/28/rotation = Quaternion(0.9949549, -0.050404552, 0.012434398, 0.0858462)
+bones/29/rotation = Quaternion(-0.022358349, -0.0077429162, -0.017427491, 0.9995681)
+bones/30/rotation = Quaternion(-0.5706435, 0.021708747, -0.02462682, 0.82054144)
+
+[node name="Head" parent="Player/CharacterVisual/rig/Skeleton3D" index="0" unique_id=994903866]
+transform = Transform3D(1, -2.1316282e-14, -2.384188e-07, -2.3573641e-07, -0.1495789, -0.9887495, -3.56624e-08, 0.9887495, -0.14957887, 1.0805929e-16, 6.0982595e-05, 0.017055042)
+
+[node name="RightHand" parent="Player/CharacterVisual/rig/Skeleton3D" index="2" unique_id=1321897371]
+transform = Transform3D(-0.97650665, -0.18696588, -0.10714042, 0.12881209, -0.10787268, -0.98578423, 0.17275041, -0.97642595, 0.12942183, -0.0033788772, 0.00026365538, 0.009907035)
+
+[node name="AnimationTree" parent="Player" index="5" unique_id=688195636]
+parameters/TransitionStrafeJumping/current_index = -1
+parameters/TransitionStrafeHolding/current_state = ""
+parameters/TransitionStrafeHolding/current_index = -1
+
+[node name="PaloSuelo" parent="." unique_id=1377804163 instance=ExtResource("3_weapon")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 1.5, 0.2, -1.5)
 
 [node name="InteractableBox" type="StaticBody3D" parent="." unique_id=100000005]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -4)
 script = ExtResource("4_box")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractableBox" unique_id=100000006]
@@ -52,76 +121,144 @@ shape = SubResource("BoxShape3D_box")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="InteractableBox" unique_id=100000007]
 mesh = SubResource("BoxMesh_box")
 
+[node name="AsphyxiaZone" type="Area3D" parent="." unique_id=100000008]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2, -8)
+script = ExtResource("9_zone")
+status_effect = ExtResource("10_asphyxia")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AsphyxiaZone" unique_id=100000009]
+shape = SubResource("BoxShape3D_zone")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AsphyxiaZone" unique_id=100000010]
+mesh = SubResource("BoxMesh_zone")
+surface_material_override/0 = SubResource("StandardMaterial3D_blue")
+
+[node name="PoisonZone" type="Area3D" parent="." unique_id=100000011]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, -8)
+script = ExtResource("9_zone")
+status_effect = ExtResource("11_poison")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PoisonZone" unique_id=100000012]
+shape = SubResource("BoxShape3D_zone")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PoisonZone" unique_id=100000013]
+mesh = SubResource("BoxMesh_zone")
+surface_material_override/0 = SubResource("StandardMaterial3D_green")
+
+[node name="MinimapViewport" type="Node" parent="." unique_id=100000020]
+
+[node name="SubViewport" type="SubViewport" parent="MinimapViewport" unique_id=100000021]
+size = Vector2i(280, 280)
+
+[node name="MinimapCamera3D" type="Camera3D" parent="MinimapViewport/SubViewport" unique_id=100000022]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 4, 5)
+current = true
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=101592362]
 
-[node name="HBox" type="HBoxContainer" parent="UI" unique_id=564909112]
-anchors_preset = 15
+[node name="PlayerHUD" parent="UI" unique_id=394150513 instance=ExtResource("12_hud")]
+
+[node name="MinimapContainer" type="SubViewportContainer" parent="UI" unique_id=100000030]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 300.0
+grow_horizontal = 0
+
+[node name="SubViewport" type="SubViewport" parent="UI/MinimapContainer" unique_id=100000031]
+handle_input_locally = false
+size = Vector2i(280, 280)
+render_target_update_mode = 4
+
+[node name="CameraLink" type="Camera3D" parent="UI/MinimapContainer/SubViewport" unique_id=100000032]
+
+[node name="MinimapTitle" type="Label" parent="UI/MinimapContainer" unique_id=100000033]
+layout_mode = 2
+text = "VISTA 3ª PERSONA (MINIMAPA)"
+horizontal_alignment = 1
+
+[node name="TestLayout" type="MarginContainer" parent="UI" unique_id=100000040]
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -220.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
-[node name="StatsPanel" type="PanelContainer" parent="UI/HBox" unique_id=404679701]
+[node name="HBox" type="HBoxContainer" parent="UI/TestLayout" unique_id=564909112]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatsPanel" type="PanelContainer" parent="UI/TestLayout/HBox" unique_id=404679701]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="UI/HBox/StatsPanel" unique_id=1263799452]
+[node name="VBox" type="VBoxContainer" parent="UI/TestLayout/HBox/StatsPanel" unique_id=1263799452]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="UI/HBox/StatsPanel/VBox" unique_id=517768216]
+[node name="Title" type="Label" parent="UI/TestLayout/HBox/StatsPanel/VBox" unique_id=517768216]
 layout_mode = 2
 text = "STATS DEL JUGADOR"
 horizontal_alignment = 1
 
-[node name="StatsLabel" type="Label" parent="UI/HBox/StatsPanel/VBox" unique_id=1682469667]
+[node name="StatsLabel" type="Label" parent="UI/TestLayout/HBox/StatsPanel/VBox" unique_id=1682469667]
 layout_mode = 2
 text = "Cargando..."
 
-[node name="EffectsPanel" type="PanelContainer" parent="UI/HBox" unique_id=948872289]
+[node name="EffectsPanel" type="PanelContainer" parent="UI/TestLayout/HBox" unique_id=948872289]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="UI/HBox/EffectsPanel" unique_id=388659335]
+[node name="VBox" type="VBoxContainer" parent="UI/TestLayout/HBox/EffectsPanel" unique_id=388659335]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="UI/HBox/EffectsPanel/VBox" unique_id=1647598329]
+[node name="Title" type="Label" parent="UI/TestLayout/HBox/EffectsPanel/VBox" unique_id=1647598329]
 layout_mode = 2
 text = "EFECTOS ACTIVOS"
 horizontal_alignment = 1
 
-[node name="EffectsLabel" type="Label" parent="UI/HBox/EffectsPanel/VBox" unique_id=90387538]
+[node name="EffectsLabel" type="Label" parent="UI/TestLayout/HBox/EffectsPanel/VBox" unique_id=90387538]
 layout_mode = 2
 text = "Ninguno"
 
-[node name="ItemsPanel" type="PanelContainer" parent="UI/HBox" unique_id=497740718]
+[node name="ItemsPanel" type="PanelContainer" parent="UI/TestLayout/HBox" unique_id=497740718]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="UI/HBox/ItemsPanel" unique_id=1210076030]
+[node name="VBox" type="VBoxContainer" parent="UI/TestLayout/HBox/ItemsPanel" unique_id=1210076030]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="UI/HBox/ItemsPanel/VBox" unique_id=1320345906]
+[node name="Title" type="Label" parent="UI/TestLayout/HBox/ItemsPanel/VBox" unique_id=1320345906]
 layout_mode = 2
 text = "ITEMS (1-5, C usar)"
 horizontal_alignment = 1
 
-[node name="ItemsLabel" type="Label" parent="UI/HBox/ItemsPanel/VBox" unique_id=1239698416]
+[node name="ItemsLabel" type="Label" parent="UI/TestLayout/HBox/ItemsPanel/VBox" unique_id=1239698416]
 layout_mode = 2
 text = "Cargando..."
 
-[node name="LogPanel" type="PanelContainer" parent="UI/HBox" unique_id=2059804430]
+[node name="LogPanel" type="PanelContainer" parent="UI/TestLayout/HBox" unique_id=2059804430]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBox" type="VBoxContainer" parent="UI/HBox/LogPanel" unique_id=300899001]
+[node name="VBox" type="VBoxContainer" parent="UI/TestLayout/HBox/LogPanel" unique_id=300899001]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="UI/HBox/LogPanel/VBox" unique_id=520717452]
+[node name="Title" type="Label" parent="UI/TestLayout/HBox/LogPanel/VBox" unique_id=520717452]
 layout_mode = 2
 text = "LOGS DE TESTEO"
 horizontal_alignment = 1
 
-[node name="LogLabel" type="Label" parent="UI/HBox/LogPanel/VBox" unique_id=421519303]
+[node name="LogLabel" type="Label" parent="UI/TestLayout/HBox/LogPanel/VBox" unique_id=421519303]
 layout_mode = 2
 
 [editable path="Player"]
+[editable path="Player/CharacterVisual"]

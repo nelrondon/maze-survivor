@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c8playermat01"]
+
+[ext_resource type="Texture2D" uid="uid://bvlf8retv2p2t" path="res://assets/player_models/character_model_1/textures/man_t256.png" id="1_tex"]
+
+[resource]
+albedo_texture = ExtResource("1_tex")
+texture_filter = 0

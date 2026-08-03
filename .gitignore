@@ -12,3 +12,4 @@ export.cfg
 .DS_Store
 Thumbs.db
 .vscode
+.agents/

@@ -1,76 +1,84 @@
 extends Node3D
 
-#definimos el daño que hará el arma
-#Esta variable aparece en el inspector de Godot y está como 5.0 su valor
+# Daño configurado para el ataque con el palo
 @export var damage = 1.0
 
-#Referencia directa al nodo hijo anim (AnimationPlayer)
-@onready var anim = $anim
-#Referencia del nodo que reproduce el sonido del golpe del arma
+# Referencia opcional al AnimationPlayer propio (si existe)
+@onready var anim = $anim if has_node("anim") else null
+# Sonido ejecutado al conectar o realizar un golpe
 @onready var Madera_golpe_sonido = $Madera_golpe_sonido
-#Referencia al nuevo nodo Area3D para recoger el arma del suelo
+# Área de detección para la recolección en el escenario
 @onready var pickup_area = $PickupArea
 
-#Para determinar si el jugador ataca o no
+# Control de disponibilidad para volver a atacar
 var can_attack = false
 
-#Para almacenar una lista de enemigos que entran en el
-#area de alcance del arma
+# Enemigos actualmente dentro de la zona de impacto
 var enemies_in_range = []
 
-# Esta función de inicio conecta la señal del área de recogida automáticamente al empezar
 func _ready() -> void:
-	if pickup_area:
+	if pickup_area and not pickup_area.body_entered.is_connected(_on_pickup_area_body_entered):
 		pickup_area.body_entered.connect(_on_pickup_area_body_entered)
 
-#Esta funcion se encarga de revisar constantemente si se quiere atacar
+# Procesa la solicitud de ataque si hay un AnimationPlayer local
 func _process(_delta: float) -> void:
-	#Detecta si se presiona el boton de atacar o shoot (click izquierdo(
-	if Input.is_action_pressed("shoot") and can_attack and not anim.is_playing():
+	if anim and Input.is_action_pressed("shoot") and can_attack and not anim.is_playing():
 		anim.play("Golpear")
-		Madera_golpe_sonido.play()
+		if Madera_golpe_sonido:
+			Madera_golpe_sonido.play()
 		can_attack = false
 		if not enemies_in_range.is_empty():
 			for e in enemies_in_range:
-				e.hit(damage)
+				if e.has_method("hit"):
+					e.hit(damage)
 
-#Estas son funciones para detectar la colision entre el arma y los personajes
+# Registra impactos ignorando al propio jugador que sostiene el arma
 func _on_hitbox_body_entered(body: Node3D) -> void:
-	#Reemplazar "player" por el nombre del nodo real de los personajes, le puse ese nombre de forma provisional
-	if body.is_in_group("player") and  not enemies_in_range.has(body):
+	var owner_player = get_parent()
+	while owner_player and not owner_player.is_in_group("player"):
+		owner_player = owner_player.get_parent()
+	
+	if body != owner_player and not enemies_in_range.has(body):
 		enemies_in_range.append(body)
 
 func _on_hitbox_body_exited(body: Node3D) -> void:
 	if enemies_in_range.has(body):
 		enemies_in_range.erase(body)
 
-# Esta función maneja la lógica cuando el jugador pasa por encima del arma para recogerla
+# Punto de entrada cuando el jugador presiona la tecla de interacción
+func interact(user: Node3D) -> void:
+	_pickup(user)
+
 func _on_pickup_area_body_entered(body: Node3D) -> void:
-	# Comprobamos si es el jugador quien entra al área de recogida
 	if body.is_in_group("player"):
-		# Busca el nodo de la mano del jugador para acoplar el arma.
-		# Quien programe el personaje del jugador solo debe cambiar "Mano" por el nombre real de su nodo de agarre.
+		_pickup(body)
+
+# Transfiere el arma al jugador y deshabilita temporalmente el área del suelo
+func _pickup(body: Node3D) -> void:
+	if body.has_method("EquipWeapon"):
+		body.EquipWeapon(self)
+	else:
 		var mano_jugador = body.get_node_or_null("Mano")
-		
 		if mano_jugador:
-			# Desengancha el arma de su posición en el suelo y la vuelve hija de la mano del jugador
 			reparent(mano_jugador)
-			
-			# Resetea la posición y rotación relativas para que encaje perfectamente en la mano
 			position = Vector3.ZERO
 			rotation = Vector3.ZERO
-			
-			# Borra el área de recogida de la memoria ya que el arma ya ha sido equipada
-			pickup_area.queue_free()
-			
-			# Habilita el estado para que el jugador ya pueda empezar a atacar con ella
-			can_attack = true
 
-#Esta es la funcion de control de estado, sirve para que el jugador pueda volver a atacar
+	if pickup_area:
+		pickup_area.set_deferred("monitoring", false)
+		pickup_area.set_deferred("monitorable", false)
+	can_attack = true
+	if anim and anim.has_animation("equipar"):
+		anim.play("equipar")
+
+# Reactiva la detección de recolección cuando el jugador suelta el arma
+func on_drop() -> void:
+	if pickup_area:
+		pickup_area.set_deferred("monitoring", true)
+		pickup_area.set_deferred("monitorable", true)
+
 func _on_anim_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Golpear":
-		can_attack = true
-	elif anim_name == "equipar":
+	if anim_name == "Golpear" or anim_name == "equipar":
 		can_attack = true
 	elif anim_name == "desequipar":
 		visible = false
