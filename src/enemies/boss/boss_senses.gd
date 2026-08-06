@@ -1,4 +1,4 @@
-extends Node
+extends Node3D
 class_name BossSenses
 
 signal player_detected(player: Node3D, reason: String)
@@ -36,15 +36,15 @@ func _check_for_noise():
 			break
 
 func _on_smell_zone_entered(body):
-	if body.is_in_group("Player"):
+	if body.is_in_group("player") or body.is_in_group("Players"):
 		player_detected.emit(body, "¡EL OYENTE SINTIÓ TU OLOR A MUY CORTA DISTANCIA!")
 
 func _on_hearing_zone_entered(body):
-	if body.is_in_group("Player"):
+	if body.is_in_group("player") or body.is_in_group("Players"):
 		if not players_in_hearing.has(body):
 			players_in_hearing.append(body)
 
 func _on_hearing_zone_exited(body):
-	if body.is_in_group("Player"):
+	if body.is_in_group("player") or body.is_in_group("Players"):
 		players_in_hearing.erase(body)
 		player_lost.emit(body)
