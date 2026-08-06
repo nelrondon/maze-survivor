@@ -54,9 +54,9 @@ public partial class MazeSpawner : Node
 		_occupiedPositions.Clear();
 
 		Vector2I bossSpawnPos = SpawnBoss();
-		SpawnPlayer();
+		SpawnPlayer(bossSpawnPos);
 		SpawnPalo();
-		SpawnKey(bossSpawnPos);   
+		SpawnKey(bossSpawnPos);    
 		SpawnDoorOnWall();
 	}
 
@@ -156,7 +156,7 @@ public partial class MazeSpawner : Node
 		return ObtenerEspacioVacioAleatorio();
 	}
 
-	private void SpawnPlayer()
+	private void SpawnPlayer(Vector2I bossSpawnPos)
 	{
 		if (_maze.PlayerScene == null) return;
 
@@ -188,7 +188,9 @@ public partial class MazeSpawner : Node
 		else
 		{
 			// Offline / single-player fallback también usa esquina
-			Vector2I spawnPos = FindCornerSpace(0);
+			Vector2I spawnPos = _maze.DebugSpawnPlayerNearBoss
+			? FindSpaceNearBoss(bossSpawnPos)
+			: FindCornerSpace(0);
 
 			var player = _maze.PlayerScene.Instantiate<Node3D>();
 			player.Position = new Vector3(spawnPos.X * _maze.GridScale, 3.0f, spawnPos.Y * _maze.GridScale); 
@@ -321,5 +323,26 @@ public partial class MazeSpawner : Node
 			}
 		}
 		return _maze.FindEmptySpace();
+	}
+	
+	private Vector2I FindSpaceNearBoss(Vector2I bossPos)
+	{
+		int radius = 3;
+		for (int r = 1; r <= radius; r++)
+		{
+			for (int dx = -r; dx <= r; dx++)
+			{
+				for (int dz = -r; dz <= r; dz++)
+				{
+					int x = bossPos.X + dx;
+					int z = bossPos.Y + dz;
+					if (x <= 0 || x >= _maze.Width - 1 || z <= 0 || z >= _maze.Height - 1) continue;
+
+					Vector2I pos = new Vector2I(x, z);
+					if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(pos)) return pos;
+				}
+			}
+		}
+		return FindCornerSpace(0);
 	}
 }

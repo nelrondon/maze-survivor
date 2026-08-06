@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class Maze : Node3D
 {
@@ -25,50 +26,107 @@ public partial class Maze : Node3D
 
 	public byte[,] Map;
 	private Random _random = new Random();
-	private NavigationRegion3D _navRegion;
+	private Node3D _geometryRoot;
+	private AStarGrid2D _pathGrid;
 	private Node3D _spawnedPlayer;
 	private Map _mapUIInstance;
 
 	public override void _Ready()
 	{
+		AddToGroup("Maze");
+
 		if (Width % 2 == 0) Width++;
 		if (Height % 2 == 0) Height++;
 
 		InitializeMap();
-		
-		// GENERACIÓN EXTREMA DE PASILLOS TORTUOSOS
 		GenerateExtremeTortuousMaze(1, 1);
-		
-		// ELIMINAR CALLEJONES MANTENIENDO EL LABERINTO ENREDADO
 		EliminateAllDeadEnds();
-
 		CreateCentralRoom();
-		
-		// ASEGURAR CAMBIO DE RUTA VÁLIDO DESDE CUALQUIER ESQUINA AL CENTRO
 		EnsureAllCornersCanReachCenter();
 
-		_navRegion = new NavigationRegion3D();
-		_navRegion.NavigationMesh = new NavigationMesh
-		{
-			AgentRadius = 0.6f,
-			AgentHeight = 2.0f,
-			AgentMaxClimb = 0.3f,
-			AgentMaxSlope = 45.0f,
-			CellSize = 0.25f,
-			CellHeight = 0.25f
-		};
-		AddChild(_navRegion);
+		BuildPathGrid();
+
+		_geometryRoot = new Node3D { Name = "Geometry" };
+		AddChild(_geometryRoot);
 
 		CreateFloorWithCollision(); 
 		DrawMapOptimized();
-		
-		_navRegion.BakeNavigationMesh(onThread: false);
 
 		var spawner = new MazeSpawner();
 		AddChild(spawner);
 		spawner.SpawnEntities();
 
 		SetupMapUI();
+	}
+
+	private void BuildPathGrid()
+	{
+		_pathGrid = new AStarGrid2D();
+		_pathGrid.Region = new Rect2I(0, 0, Width, Height);
+		_pathGrid.CellSize = Vector2.One;
+		_pathGrid.DiagonalMode = AStarGrid2D.DiagonalModeEnum.OnlyIfNoObstacles;
+		_pathGrid.Update();
+
+		for (int z = 0; z < Height; z++)
+			for (int x = 0; x < Width; x++)
+				_pathGrid.SetPointSolid(new Vector2I(x, z), Map[x, z] == 1);
+
+		GD.Print("[DEBUG] AStarGrid2D listo: ", Width, "x", Height, " celdas");
+	}
+
+	public Vector3[] FindPath(Vector3 fromWorld, Vector3 toWorld)
+	{
+		if (_pathGrid == null) return Array.Empty<Vector3>();
+
+		Vector2I from = WorldToCell(fromWorld);
+		Vector2I to = WorldToCell(toWorld);
+
+		from.X = Mathf.Clamp(from.X, 0, Width - 1);
+		from.Y = Mathf.Clamp(from.Y, 0, Height - 1);
+		to.X = Mathf.Clamp(to.X, 0, Width - 1);
+		to.Y = Mathf.Clamp(to.Y, 0, Height - 1);
+
+		if (Map[from.X, from.Y] == 1) from = FindNearestOpenCell(from);
+		if (Map[to.X, to.Y] == 1) to = FindNearestOpenCell(to);
+
+		Vector2I[] cellPath = _pathGrid.GetIdPath(from, to).ToArray();
+		var worldPath = new Vector3[cellPath.Length];
+		for (int i = 0; i < cellPath.Length; i++)
+			worldPath[i] = CellToWorld(cellPath[i], fromWorld.Y);
+
+		return worldPath;
+	}
+
+	private Vector2I WorldToCell(Vector3 worldPos)
+	{
+		return new Vector2I(
+			Mathf.RoundToInt(worldPos.X / GridScale),
+			Mathf.RoundToInt(worldPos.Z / GridScale)
+		);
+	}
+
+	private Vector3 CellToWorld(Vector2I cell, float y)
+	{
+		return new Vector3(cell.X * GridScale, y, cell.Y * GridScale);
+	}
+
+	private Vector2I FindNearestOpenCell(Vector2I from)
+	{
+		int maxRadius = Math.Max(Width, Height);
+		for (int r = 1; r < maxRadius; r++)
+		{
+			for (int dx = -r; dx <= r; dx++)
+			{
+				for (int dz = -r; dz <= r; dz++)
+				{
+					int x = from.X + dx;
+					int z = from.Y + dz;
+					if (x < 0 || x >= Width || z < 0 || z >= Height) continue;
+					if (Map[x, z] == 0) return new Vector2I(x, z);
+				}
+			}
+		}
+		return from;
 	}
 
 	public override void _Process(double delta)
@@ -150,7 +208,7 @@ public partial class Maze : Node3D
 		}
 
 		meshInstance.SetSurfaceOverrideMaterial(0, mat);
-		_navRegion.AddChild(staticBody);
+		_geometryRoot.AddChild(staticBody);
 	}
 
 	private void DrawMapOptimized()
@@ -205,8 +263,8 @@ public partial class Maze : Node3D
 		var multiMeshInstance = new MultiMeshInstance3D();
 		multiMeshInstance.Multimesh = multiMesh;
 		
-		_navRegion.AddChild(multiMeshInstance);
-		_navRegion.AddChild(staticBody);
+		_geometryRoot.AddChild(multiMeshInstance);
+		_geometryRoot.AddChild(staticBody);
 	}
 
 	public Vector2I FindEmptySpace() { 
@@ -316,7 +374,6 @@ public partial class Maze : Node3D
 		}
 	}
 
-	// --- VERIFICACIÓN Y GARANTÍA DE RUTA DESDE CADA ESQUINA HASTA EL CENTRO ---
 	private void EnsureAllCornersCanReachCenter()
 	{
 		Vector2I[] corners = new Vector2I[]
@@ -333,7 +390,6 @@ public partial class Maze : Node3D
 		{
 			if (!HasPathToCenter(corner, center))
 			{
-				// Si por alguna razón la esquina quedó totalmente aislada, se fuerza un pasillo directo al centro respetando el laberinto
 				CarveDirectPath(corner, center);
 			}
 		}
@@ -355,7 +411,7 @@ public partial class Maze : Node3D
 
 			if (Math.Abs(current.X - target.X) <= 3 && Math.Abs(current.Y - target.Y) <= 3)
 			{
-				return true; // Ya conecta con la sala central o sus adyacencias
+				return true; 
 			}
 
 			foreach (var dir in dirs)
