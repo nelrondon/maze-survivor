@@ -83,8 +83,16 @@ public partial class Door : Node3D
 			if (_timeIsReady)
 			{
 				GD.Print("🎉 ¡VICTORIA! Abriendo puerta definitivamente...");
-				Input.MouseMode = Input.MouseModeEnum.Visible;
-				GetTree().Quit();
+				long winnerPeerId = Multiplayer.HasMultiplayerPeer() ? interactor.GetMultiplayerAuthority() : 1;
+
+				if (Multiplayer.HasMultiplayerPeer())
+				{
+					Rpc(nameof(RpcOnDoorOpened), winnerPeerId);
+				}
+				else
+				{
+					RpcOnDoorOpened(winnerPeerId);
+				}
 			}
 			// Si el temporizador ya empezó pero sigue corriendo
 			else if (_isTimerStarted)
@@ -105,6 +113,22 @@ public partial class Door : Node3D
 		else
 		{
 			GD.Print("🔒 Se necesita la llave.");
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RpcOnDoorOpened(long winnerId)
+	{
+		long localPeerId = Multiplayer.HasMultiplayerPeer() ? Multiplayer.GetUniqueId() : 1;
+		bool isWinner = (localPeerId == winnerId);
+
+		if (isWinner)
+		{
+			EndGameUI.ShowResult(this, true, "¡VICTORIA!", "¡Felicidades! Has logrado escapar del laberinto a través de la puerta.");
+		}
+		else
+		{
+			EndGameUI.ShowResult(this, false, "¡HAS PERDIDO!", "Otro jugador ha logrado escapar por la puerta antes que tú.");
 		}
 	}
 }

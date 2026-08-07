@@ -5,7 +5,7 @@ public partial class Player : CharacterBody3D {
 	[Signal] public delegate void stats_changedEventHandler();
 
 	[ExportGroup("Movimiento")]
-	[Export] private float _speed = 9.0f;
+	[Export] private float _speed = 100.0f;
 	[Export] private float _gravity = 9.8f;
 	[Export] private float _jumpStrength = 4.0f;
 	[Export] private float _mouseSensibility = 0.003f;
@@ -124,9 +124,18 @@ public partial class Player : CharacterBody3D {
 		}
 	}
 
+	private bool _isDead = false;
+
 	public void Die() {
+		if (_isDead) return;
+		_isDead = true;
+
 		DropKey();
 		SetInputLocked(true);
+
+		if (_IsLocallyControlled()) {
+			EndGameUI.ShowResult(this, false, "¡HAS MUERTO!", "Has sido eliminado en el laberinto.");
+		}
 	}
 
 	#endregion

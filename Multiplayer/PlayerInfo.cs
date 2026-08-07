@@ -21,4 +21,4 @@ public class PlayerInfo
 	{
 		return Id.GetHashCode();
 	}
-}
+}

@@ -38,7 +38,10 @@ public partial class Player {
 		}
 
 		if (stat == 3) _speed = _stats[stat];
-		else if (stat == 0 && _stats[stat] <= 0f) TakeDamage();
+		else if (stat == 0 && _stats[stat] <= 0f) {
+			TakeDamage();
+			Die();
+		}
 
 		EmitSignal(SignalName.stats_changed);
 	}

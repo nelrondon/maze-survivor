@@ -211,6 +211,12 @@ public partial class LobbyHandler : Control
 		ReturnToLobby("Status: Disconnected");
 	}
 
+	public void _on_back_to_menu_button_down()
+	{
+		ReturnToLobby("Status: Disconnected");
+		GetTree().ChangeSceneToFile("res://LoginInterface/menu.tscn");
+	}
+
 	public void ReturnToLobby(string statusMessage = "Status: Disconnected")
 	{
 		// 1. Clean up active game scenes

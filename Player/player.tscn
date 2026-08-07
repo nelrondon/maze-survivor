@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://bprm1awupcf6w" path="res://src/inventory/inventory.gd" id="10_inv"]
 [ext_resource type="Script" uid="uid://cj3avc6q8co8l" path="res://src/inventory/item_use_handler.gd" id="11_item"]
 [ext_resource type="Script" uid="uid://vgtsypb7hiy4" path="res://src/inventory/hand_handler.gd" id="12_hand"]
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5htga"]
 _data = {
 &"fall": ExtResource("4_od3ui"),
@@ -129,19 +130,14 @@ animation = &"mixamo_com"
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_p5o4e"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_od3ui")
 blend_point_0/pos = Vector2(0, 1)
-blend_point_0/name = &"0"
 blend_point_1/node = SubResource("AnimationNodeAnimation_00tjw")
 blend_point_1/pos = Vector2(1, 0)
-blend_point_1/name = &"1"
 blend_point_2/node = SubResource("AnimationNodeAnimation_x3vf3")
 blend_point_2/pos = Vector2(0, -1)
-blend_point_2/name = &"2"
 blend_point_3/node = SubResource("AnimationNodeAnimation_apopc")
 blend_point_3/pos = Vector2(-1, 0)
-blend_point_3/name = &"3"
 blend_point_4/node = SubResource("AnimationNodeAnimation_5htga")
 blend_point_4/pos = Vector2(0, 0)
-blend_point_4/name = &"4"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gu6f8"]
 animation = &"CharLib/holdidle"
@@ -161,19 +157,14 @@ animation = &"CharLib/holdwalk"
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_o28un"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_gu6f8")
 blend_point_0/pos = Vector2(0, 0)
-blend_point_0/name = &"0"
 blend_point_1/node = SubResource("AnimationNodeAnimation_dkpta")
 blend_point_1/pos = Vector2(0, 1)
-blend_point_1/name = &"1"
 blend_point_2/node = SubResource("AnimationNodeAnimation_lfmf2")
 blend_point_2/pos = Vector2(1, 0)
-blend_point_2/name = &"2"
 blend_point_3/node = SubResource("AnimationNodeAnimation_pisgm")
 blend_point_3/pos = Vector2(0, -1)
-blend_point_3/name = &"3"
 blend_point_4/node = SubResource("AnimationNodeAnimation_b1ygp")
 blend_point_4/pos = Vector2(-1, 0)
-blend_point_4/name = &"4"
 
 [sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_x3vf3"]
 xfade_time = 0.15
@@ -198,7 +189,7 @@ input_1/break_loop_at_end = false
 input_1/reset = true
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_gu6f8"]
-graph_offset = Vector2(-279.30298, -93.31334)
+graph_offset = Vector2(-366.8979, -63.902893)
 nodes/output/position = Vector2(800, 260)
 nodes/Strafe/node = SubResource("AnimationNodeBlendSpace2D_p5o4e")
 nodes/Strafe/position = Vector2(-160, -20)
@@ -235,42 +226,42 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.3, -0.5)
 [node name="CharacterVisual" parent="." unique_id=1418595808 instance=ExtResource("2_btcbx")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1, 0)
 
-[node name="rig" parent="CharacterVisual" index="0" unique_id=822358709]
-transform = Transform3D(73.007904, 68.11602, 5.481945, 0.14012147, -8.171219, 99.66549, 68.3361, -72.756035, -6.061081, -0.08196331, -0.06038038, 0.08393024)
+[node name="rig" parent="CharacterVisual" index="0" unique_id=41799666]
+transform = Transform3D(72.83877, 68.27916, 5.698202, 0.13355207, -8.45801, 99.64157, 68.516365, -72.57011, -6.251898, -0.08620072, -0.05637821, 0.094011255)
 
-[node name="Skeleton3D" parent="CharacterVisual/rig" index="0" unique_id=1008225758]
-bones/1/rotation = Quaternion(-0.017549489, 0.06311747, -0.023827154, 0.99756736)
-bones/2/rotation = Quaternion(0.09349899, 0.13467745, -0.026841016, 0.9861032)
-bones/3/rotation = Quaternion(0.26773465, -0.0035425457, 0.0012068484, 0.9634854)
-bones/4/rotation = Quaternion(-0.16847567, -0.0033646638, 0.0016385941, 0.98569876)
-bones/6/rotation = Quaternion(-0.5064981, -0.42454362, -0.47561672, 0.58052665)
-bones/7/rotation = Quaternion(-0.35623002, 0.4933755, -0.48605534, 0.6272408)
-bones/8/rotation = Quaternion(0.40820974, 0.14922893, 0.01770073, 0.90043455)
-bones/9/rotation = Quaternion(0.014379397, 0.01679299, 0.12838699, 0.99147767)
-bones/10/rotation = Quaternion(0.29380813, 0.91277355, 0.17371973, -0.22437195)
-bones/11/rotation = Quaternion(0.0013004608, -0.07490514, -0.004831897, 0.99717814)
-bones/13/rotation = Quaternion(0.04875827, 0.99624145, 0.056863863, -0.043499965)
-bones/15/rotation = Quaternion(-0.48008907, 0.4517061, 0.52761865, 0.53581214)
-bones/16/rotation = Quaternion(-0.48617202, -0.53746974, 0.29394153, 0.6231866)
-bones/17/rotation = Quaternion(0.36076537, -0.070641994, 0.043076765, 0.92897934)
+[node name="Skeleton3D" parent="CharacterVisual/rig" index="0" unique_id=1448541856]
+bones/1/rotation = Quaternion(-0.023047544, 0.062411025, -0.023116125, 0.9975167)
+bones/2/rotation = Quaternion(0.08231778, 0.133144, -0.025379652, 0.9873462)
+bones/3/rotation = Quaternion(0.27291715, -0.0036448985, 0.00062622566, 0.96203053)
+bones/4/rotation = Quaternion(-0.16315602, -0.003550602, 0.0010604075, 0.98659337)
+bones/6/rotation = Quaternion(-0.5013545, -0.4286007, -0.46173564, 0.59308136)
+bones/7/rotation = Quaternion(-0.36537245, 0.49570003, -0.49158883, 0.61573124)
+bones/8/rotation = Quaternion(0.41862935, 0.15563881, 0.0129764, 0.8946271)
+bones/9/rotation = Quaternion(0.015457271, 0.017131595, 0.15515949, 0.98761994)
+bones/10/rotation = Quaternion(0.2900242, 0.9142926, 0.17034929, -0.2256907)
+bones/11/rotation = Quaternion(0.0010639825, -0.075565845, -0.0064236554, 0.99711967)
+bones/13/rotation = Quaternion(0.05128213, 0.99605113, 0.057220634, -0.044475175)
+bones/15/rotation = Quaternion(-0.47520718, 0.4576703, 0.50785756, 0.5538924)
+bones/16/rotation = Quaternion(-0.487286, -0.5411089, 0.3023064, 0.61511326)
+bones/17/rotation = Quaternion(0.36601, -0.07940346, 0.057230253, 0.9254494)
 bones/18/position = Vector3(2.223541e-10, 0.0030301495, -2.387154e-10)
-bones/18/rotation = Quaternion(0.09806602, 0.05943749, 0.107968174, 0.98751867)
+bones/18/rotation = Quaternion(0.052394476, 0.085151955, 0.09921646, 0.99003035)
 bones/18/scale = Vector3(1, 0.9999998, 1)
-bones/19/rotation = Quaternion(-0.2057373, 0.9488336, 0.22349736, 0.08623189)
-bones/20/rotation = Quaternion(0.18116887, 0.07627509, -0.009454067, 0.9804441)
-bones/22/rotation = Quaternion(-0.050284114, 0.99785566, -0.010610823, 0.04053406)
-bones/24/rotation = Quaternion(0.94077176, 0.095626585, -0.0995999, 0.30965135)
-bones/25/rotation = Quaternion(0.29643592, 0.12696832, 0.05147378, 0.9451748)
-bones/26/rotation = Quaternion(-0.62050635, -0.032899927, 0.036271702, 0.78267103)
-bones/28/rotation = Quaternion(0.9746127, -0.11109422, 0.14770776, 0.12637535)
-bones/29/rotation = Quaternion(0.29664367, 0.06638181, 0.0058151768, 0.9526607)
-bones/30/rotation = Quaternion(-0.7170619, 0.08265312, -0.107769184, 0.6836494)
+bones/19/rotation = Quaternion(-0.2060565, 0.94840395, 0.22503299, 0.08620249)
+bones/20/rotation = Quaternion(0.18017927, 0.07666334, -0.01045743, 0.98058605)
+bones/22/rotation = Quaternion(-0.03935717, 0.9983191, -0.011828266, 0.04086917)
+bones/24/rotation = Quaternion(0.9433769, 0.093933776, -0.10149599, 0.30152148)
+bones/25/rotation = Quaternion(0.29117125, 0.12701957, 0.051383935, 0.9468078)
+bones/26/rotation = Quaternion(-0.6208893, -0.031947523, 0.034947775, 0.782467)
+bones/28/rotation = Quaternion(0.9760188, -0.11274874, 0.14810464, 0.112871885)
+bones/29/rotation = Quaternion(0.2764754, 0.06662347, 0.0035945582, 0.9587022)
+bones/30/rotation = Quaternion(-0.7105446, 0.08321119, -0.108434774, 0.6902494)
 
-[node name="male_player" parent="CharacterVisual/rig/Skeleton3D" index="0" unique_id=363552989]
+[node name="male_player" parent="CharacterVisual/rig/Skeleton3D" index="0" unique_id=1283789036]
 surface_material_override/0 = ExtResource("3_gwnis")
 
 [node name="RightHand" type="BoneAttachment3D" parent="CharacterVisual/rig/Skeleton3D" index="1" unique_id=1321897371]
-transform = Transform3D(-0.9234831, 0.0063725635, 0.3835864, -0.36984974, -0.28045058, -0.88575286, 0.10193248, -0.9598472, 0.2613486, -0.003947652, -0.0014738359, 0.010558559)
+transform = Transform3D(-0.94119644, -0.036724444, 0.3358582, -0.31678307, -0.24968748, -0.91504335, 0.11746402, -0.96762973, 0.22337162, -0.003991673, -0.0015624014, 0.010708981)
 bone_name = "hand_right"
 bone_idx = 18
 
@@ -282,7 +273,7 @@ root_bone = &"upper_arm_left"
 tip_bone = &"hand_left"
 magnet = Vector3(-0.5, -0.2, -0.5)
 
-[node name="AnimationPlayer" parent="CharacterVisual" index="1" unique_id=278942098]
+[node name="AnimationPlayer" parent="CharacterVisual" index="1" unique_id=1485269362]
 libraries/CharLib = SubResource("AnimationLibrary_5htga")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1388348036]

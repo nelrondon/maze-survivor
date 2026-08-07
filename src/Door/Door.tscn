@@ -1,20 +1,20 @@
 [gd_scene format=3 uid="uid://cbtnpuk5sprdd"]
 
 [ext_resource type="Script" uid="uid://dmdfah50bquaf" path="res://src/Door/Door.cs" id="1_b7hbx"]
+[ext_resource type="PackedScene" uid="uid://beiyx03i0p8b1" path="res://assets/door/Door.fbx" id="2_door"]
+[ext_resource type="Material" uid="uid://b123doormat01" path="res://assets/door/Door_material.tres" id="3_mat"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uj04i"]
-size = Vector3(3, 3, 1)
+size = Vector3(3, 5.516823, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_p5viw"]
 size = Vector3(3, 3, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_p5viw"]
-size = Vector3(6, 6, 0.5)
 
 [node name="Door" type="Area3D" unique_id=1354687392]
 script = ExtResource("1_b7hbx")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=605628040]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3488274, 0)
 shape = SubResource("BoxShape3D_uj04i")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1182921331]
@@ -22,5 +22,19 @@ shape = SubResource("BoxShape3D_uj04i")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1613966539]
 shape = SubResource("BoxShape3D_p5viw")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=801054523]
-mesh = SubResource("BoxMesh_p5viw")
+[node name="DoorModel" parent="." unique_id=958585840 instance=ExtResource("2_door")]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0.091780186, 0)
+
+[node name="Fr" parent="DoorModel/Door" parent_id_path=PackedInt32Array(958585840, 782848416) index="0" unique_id=153403886]
+material_override = ExtResource("3_mat")
+material_overlay = ExtResource("3_mat")
+
+[node name="R" parent="DoorModel/Door" parent_id_path=PackedInt32Array(958585840, 782848416) index="1" unique_id=1565748041]
+material_override = ExtResource("3_mat")
+material_overlay = ExtResource("3_mat")
+
+[node name="L" parent="DoorModel/Door" parent_id_path=PackedInt32Array(958585840, 782848416) index="2" unique_id=166435142]
+material_override = ExtResource("3_mat")
+material_overlay = ExtResource("3_mat")
+
+[editable path="DoorModel"]
