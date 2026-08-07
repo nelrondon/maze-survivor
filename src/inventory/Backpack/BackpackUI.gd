@@ -94,7 +94,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if not is_open:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_ESCAPE or event.keycode == KEY_TAB:
+		if event.keycode == KEY_E or event.keycode == KEY_TAB:
 			close()
 			get_viewport().set_input_as_handled()
 
