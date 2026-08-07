@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://e5kdsac6tyh1"
-path="res://.godot/imported/rife (mp3cut.net).mp3-f3574b95e8c2f900ed2af4ca4ffc700e.mp3str"
+path="res://.godot/imported/rife (mp3cut.net).mp3-b3b39036e658b3c493d0c40277edf623.mp3str"
 
 [deps]
 
-source_file="res://rifle/rife (mp3cut.net).mp3"
-dest_files=["res://.godot/imported/rife (mp3cut.net).mp3-f3574b95e8c2f900ed2af4ca4ffc700e.mp3str"]
+source_file="res://assets/RIFLE/rife (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/rife (mp3cut.net).mp3-b3b39036e658b3c493d0c40277edf623.mp3str"]
 
 [params]
 

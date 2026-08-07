@@ -3,12 +3,12 @@
 importer="mp3"
 type="AudioStreamMP3"
 uid="uid://cpiq3n6vjb5h2"
-path="res://.godot/imported/rifle reloading.mp3-e0c6fe57e04c909a5a2caf2bb1dc96ed.mp3str"
+path="res://.godot/imported/rifle reloading.mp3-f19c7644b6484fadf8b419889ad1c305.mp3str"
 
 [deps]
 
-source_file="res://rifle/rifle reloading.mp3"
-dest_files=["res://.godot/imported/rifle reloading.mp3-e0c6fe57e04c909a5a2caf2bb1dc96ed.mp3str"]
+source_file="res://assets/RIFLE/rifle reloading.mp3"
+dest_files=["res://.godot/imported/rifle reloading.mp3-f19c7644b6484fadf8b419889ad1c305.mp3str"]
 
 [params]
 

@@ -67,7 +67,22 @@ func _register(id: String, scene_path: String) -> void:
 	var entity: ItemEntity = instance as ItemEntity
 	_scenes[id] = scene
 	_data[id] = entity.data
-	if entity.component != null:
-		_components[id] = entity.component
-		entity.remove_child(entity.component)
+	
+	var comp: ComponentBase = entity.component
+	if comp == null:
+		print("[DEBUG] ItemRegistry: entity.component is null for ", id, ". Searching children...")
+		for child in entity.get_children():
+			print("[DEBUG] ItemRegistry: checking child ", child.name, " (", child.get_class(), ")")
+			if child is ComponentBase or "Component" in child.name:
+				print("[DEBUG] ItemRegistry: Found ComponentBase (or matched name): ", child.name)
+				comp = child
+				break
+				
+	if comp != null:
+		print("[DEBUG] ItemRegistry: Registered component for ", id)
+		_components[id] = comp
+		entity.remove_child(comp)
+		add_child(comp)
+	else:
+		print("[DEBUG] ItemRegistry: FAILED to find component for ", id)
 	entity.queue_free()

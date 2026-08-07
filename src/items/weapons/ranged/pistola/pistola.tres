@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/armas/tokarev_Tt-33.png" id="2_icon"]
+[ext_resource type="PackedScene" path="res://assets/armas/Pistola_mejora.tscn" id="3_viewmodel"]
+
+[resource]
+script = ExtResource("1_data")
+id = "tokarev_pistol"
+display_name = "Pistola Tokarev"
+description = "Arma corta confiable. Munición estándar."
+item_type = 2
+icon = ExtResource("2_icon")
+view_model = ExtResource("3_viewmodel")

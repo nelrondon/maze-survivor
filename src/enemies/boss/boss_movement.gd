@@ -81,10 +81,12 @@ func _follow_current_path(delta: float, state: int, target: Node3D = null) -> vo
 			_move_directly_to(delta, target.global_position)
 			return
 		
-		# --- MODIFICADO: Si está patrullando (0), busca un nuevo destino inmediatamente ---
+		# --- MODIFICADO: Si está patrullando (0) ---
 		if state == 0:
-			choose_new_destination()
-			
+			if not waiting_on_point:
+				waiting_on_point = true
+				patrol_wait_timer.wait_time = randf_range(1.0, 2.0)
+				patrol_wait_timer.start()
 		return
 
 	var next_point = current_path[path_index]
@@ -144,15 +146,12 @@ func choose_new_destination():
 	# Al sumar offset a initial_pos, su patrulla será una correa invisible atada al centro
 	var raw_point = initial_pos + offset 
 	_request_path_to(raw_point)
-	print("[DEBUG] Nuevo destino de patrulla: ", raw_point)
 
 func _request_path_to(world_pos: Vector3) -> void:
 	if maze == null:
 		return
 	current_path = maze.FindPath(boss.global_position, world_pos)
 	path_index = 0
-	if current_path.is_empty():
-		print("[DEBUG] No se encontró camino hacia ", world_pos)
 
 func reset_patrol_origin():
 	initial_pos = boss.global_position

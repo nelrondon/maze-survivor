@@ -41,7 +41,7 @@ func _process(_delta: float) -> void:
 func _on_hitbox_body_entered(body: Node3D) -> void:
 	#Reemplazar "player" por el nombre del nodo real de los personajes, le puse ese nombre de forma provisional
 	#Detecta a cualquier jugador, PERO ignora al que sostiene el arma (portador)
-	if body.is_in_group("player") and body != portador and not enemies_in_range.has(body):
+	if body.has_method("hit") and body != portador and not enemies_in_range.has(body):
 		enemies_in_range.append(body)
 
 func _on_hitbox_body_exited(body: Node3D) -> void:

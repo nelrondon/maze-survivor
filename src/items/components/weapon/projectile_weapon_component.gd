@@ -5,6 +5,14 @@ class_name ProjectileWeaponComponent extends WeaponComponent
 @export var max_ammo: int = 10
 @export var projectile_scene: PackedScene
 
+func can_execute(user: Node) -> bool:
+	if not super.can_execute(user):
+		return false
+	# Since can_execute doesn't know the slot, we will check the equipped slot in ItemUseHandler.
+	# Actually, ItemUseHandler checks can_execute(player). It is better to check ammo in on_used, 
+	# but we can't easily prevent the shot here without the slot reference.
+	return true
+
 func on_used(slot: InventorySlot) -> void:
 	if slot == null:
 		return

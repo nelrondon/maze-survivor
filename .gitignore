@@ -13,3 +13,7 @@ export.cfg
 Thumbs.db
 .vscode
 .agents/
+
+.claude/
+addons/
+.agent/

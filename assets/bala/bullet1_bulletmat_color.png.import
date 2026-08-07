@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://j8h4ldsu2evx"
-path.s3tc="res://.godot/imported/bullet1_bulletmat_color.png-44b1180a1c7633e775455973cb486de1.s3tc.ctex"
+path.s3tc="res://.godot/imported/bullet1_bulletmat_color.png-134f468bc5aa9db13f63b68cd7683717.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://bala/bullet1_bulletmat_color.png"
-dest_files=["res://.godot/imported/bullet1_bulletmat_color.png-44b1180a1c7633e775455973cb486de1.s3tc.ctex"]
+source_file="res://assets/bala/bullet1_bulletmat_color.png"
+dest_files=["res://.godot/imported/bullet1_bulletmat_color.png-134f468bc5aa9db13f63b68cd7683717.s3tc.ctex"]
 
 [params]
 

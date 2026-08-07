@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cylm1atin71ep"
-path.s3tc="res://.godot/imported/tokarev_Tt-33.png-837c6d5c29b06f376319579e8d7d64c8.s3tc.ctex"
+path.s3tc="res://.godot/imported/tokarev_Tt-33.png-00099f18bdc9b2208c8552fbcc05f7ec.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://pistola/tokarev_Tt-33.png"
-dest_files=["res://.godot/imported/tokarev_Tt-33.png-837c6d5c29b06f376319579e8d7d64c8.s3tc.ctex"]
+source_file="res://assets/armas/tokarev_Tt-33.png"
+dest_files=["res://.godot/imported/tokarev_Tt-33.png-00099f18bdc9b2208c8552fbcc05f7ec.s3tc.ctex"]
 
 [params]
 

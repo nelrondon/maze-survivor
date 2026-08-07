@@ -11,5 +11,5 @@ component = NodePath("MeleeWeaponComponent")
 
 [node name="MeleeWeaponComponent" type="Node" parent="." unique_id=447004212]
 script = ExtResource("3_comp")
-damage = 1.0
+damage = 15.0
 use_time = 0.5

@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://c7kuxgamwiqp5" path="res://assets/cuchillo/Sonido_cuchillo.mp3" id="2_btqv8"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8vwre"]
-size = Vector3(0.32447663, 0.54980624, 0.62714845)
+size = Vector3(1.0, 1.0, 1.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_jadd5"]
 size = Vector3(0.15679932, 0.5370178, 0.1643982)
@@ -141,9 +141,11 @@ transform = Transform3D(-0.00083641754, 0.069995, 0, -0.069995, -0.00083641754, 
 
 [node name="Hitbox" type="Area3D" parent="." unique_id=1632571041]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5436274, 0, 0)
+collision_layer = 0
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=534439972]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4307888, -0.004403513, -0.07009562)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4307888, 0, -0.75)
 shape = SubResource("BoxShape3D_8vwre")
 debug_color = Color(1.4920532e-06, 0.51448345, 0.601427, 0.42)
 
@@ -162,3 +164,7 @@ pitch_scale = 2.0
 
 [node name="anim" type="AnimationPlayer" parent="." unique_id=820586203]
 libraries/ = SubResource("AnimationLibrary_taois")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
+[connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]

@@ -32,7 +32,7 @@ func _ready() -> void:
 	_panel.visible = false
 
 
-func setup(p_inventory: Inventory) -> void:
+func setup(p_inventory: Node) -> void:
 	inventory = p_inventory
 	# Inicializar inventory slots
 	for i: int in _hotbar_slots.size():
@@ -48,10 +48,13 @@ func setup(p_inventory: Inventory) -> void:
 
 
 ## Llamado por backpack.gd: ui.call("open", container, inv)
-func open(container: ItemContainer, _inv: Inventory) -> void:
+func open(container: ItemContainer, _inv: Node) -> void:
 	if is_open:
 		return
 	backpack_container = container
+	if inventory != _inv and _inv != null:
+		setup(_inv)
+
 	# Inicializar backpack slots
 	for i: int in _bp_slots.size():
 		_bp_slots[i].init(i, backpack_container, PLACEHOLDER)

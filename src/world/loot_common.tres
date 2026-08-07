@@ -79,6 +79,11 @@ script = ExtResource("2")
 item_id = "palo_de_madera"
 probability = 0.4
 
+[sub_resource type="Resource" id="entry_cuchillo"]
+script = ExtResource("2")
+item_id = "cuchillo"
+probability = 0.3
+
 [resource]
 script = ExtResource("1")
-entries = Array[ExtResource("2")]([SubResource("entry_bandages"), SubResource("entry_medkit_small"), SubResource("entry_medkit_large"), SubResource("entry_water"), SubResource("entry_energy_bar"), SubResource("entry_energy_drink"), SubResource("entry_coffee"), SubResource("entry_food_ration"), SubResource("entry_regen_pills"), SubResource("entry_adrenaline"), SubResource("entry_steroids"), SubResource("entry_experimental_serum"), SubResource("entry_canned_feast"), SubResource("entry_palo")])
+entries = Array[ExtResource("2")]([SubResource("entry_bandages"), SubResource("entry_medkit_small"), SubResource("entry_medkit_large"), SubResource("entry_water"), SubResource("entry_energy_bar"), SubResource("entry_energy_drink"), SubResource("entry_coffee"), SubResource("entry_food_ration"), SubResource("entry_regen_pills"), SubResource("entry_adrenaline"), SubResource("entry_steroids"), SubResource("entry_experimental_serum"), SubResource("entry_canned_feast"), SubResource("entry_palo"), SubResource("entry_cuchillo")])

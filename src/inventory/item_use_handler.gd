@@ -40,25 +40,32 @@ func _ready() -> void:
 
 
 func _on_use_requested(slot_index: int) -> void:
+	print("[DEBUG] ItemUseHandler: use requested for slot ", slot_index)
 	if is_using:
+		print("[DEBUG] ItemUseHandler: is_using is true, ignoring")
 		return
 
 	var slot: InventorySlot = inventory.get_item(slot_index)
 	if slot.is_empty():
+		print("[DEBUG] ItemUseHandler: slot is empty, ignoring")
 		return
 
 	var comp: ComponentBase = ItemRegistry.get_component(slot.item_data.id)
 	if comp == null:
+		print("[DEBUG] ItemUseHandler: component is null, ignoring")
 		return
 
 	var player: Node = get_parent()
 	if not comp.can_execute(player):
+		print("[DEBUG] ItemUseHandler: component can_execute returned false, ignoring")
 		return
 
 	is_using = true
 	using_slot = slot
 	_using_slot_index = slot_index
 	_using_component = comp
+
+	print("[DEBUG] ItemUseHandler: executing use for component ", comp.name)
 
 	# Reproducir sonido de uso
 	if slot.item_data.use_sound != null:

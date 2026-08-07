@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://qqy73qx0wyia"]
+[gd_scene format=3 uid="uid://cgla6vx83qy2t"]
 
 [ext_resource type="Script" uid="uid://br7slrcj6cy2p" path="res://Bala_3d.cs" id="1_jql1f"]
 [ext_resource type="PackedScene" uid="uid://cbs3ay7guttfe" path="res://bullet1.glb" id="1_pu3jq"]

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d03epbji06mkm"
-path.s3tc="res://.godot/imported/sks_sks.png-b956fd021a30a7d26c12e813e1a1ee3b.s3tc.ctex"
+path.s3tc="res://.godot/imported/sks_sks.png-2cac9a8ceea1498d94fb409ad6fa10d4.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://rifle/sks_sks.png"
-dest_files=["res://.godot/imported/sks_sks.png-b956fd021a30a7d26c12e813e1a1ee3b.s3tc.ctex"]
+source_file="res://assets/RIFLE/sks_sks.png"
+dest_files=["res://.godot/imported/sks_sks.png-2cac9a8ceea1498d94fb409ad6fa10d4.s3tc.ctex"]
 
 [params]
 

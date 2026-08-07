@@ -20,7 +20,7 @@ var _selected_slot: SlotUI = null
 ]
 
 
-func setup(p_inventory: Inventory) -> void:
+func setup(p_inventory: Node) -> void:
 	inventory = p_inventory
 	# Inicializar hotbar slots (indices 0-4)
 	for i: int in _hotbar_slots.size():

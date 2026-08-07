@@ -5,7 +5,7 @@ public partial class Player : CharacterBody3D {
 	[Signal] public delegate void stats_changedEventHandler();
 
 	[ExportGroup("Movimiento")]
-	[Export] private float _speed = 100.0f;
+	[Export] private float _speed = 9.0f;
 	[Export] private float _gravity = 9.8f;
 	[Export] private float _jumpStrength = 4.0f;
 	[Export] private float _mouseSensibility = 0.003f;
@@ -85,11 +85,48 @@ public partial class Player : CharacterBody3D {
 			if (_characterVisual != null) _characterVisual.Visible = false;
 			if (_hud != null) _hud.Visible = true;
 			Input.MouseMode = Input.MouseModeEnum.Captured;
+
+			// Iniciar efecto de hambre natural gestionado por Stats
+
+
+			// DEBUG: Give weapons
+			CallDeferred("DebugGiveWeapons");
 		}
 		else {
 			if (_gameCamera != null) _gameCamera.Current = false;
 			if (_characterVisual != null) _characterVisual.Visible = true;
 			if (_hud != null) _hud.Visible = false;
+		}
+	}
+
+	private void DebugGiveWeapons() {
+		var registry = GetNodeOrNull("/root/ItemRegistry");
+		var inv = GetNodeOrNull("Inventory");
+		if (registry != null && inv != null) {
+			string[] weapons = { "palo_de_madera", "cuchillo" };
+			foreach (string w in weapons) {
+				var data = registry.Call("get_data", w);
+				if (data.AsGodotObject() != null) {
+					var comp = registry.Call("get_component", w);
+					var dict = new Godot.Collections.Dictionary();
+					if (comp.AsGodotObject() != null) {
+						var maxDur = comp.AsGodotObject().Get("max_durability");
+						if (maxDur.VariantType != Variant.Type.Nil) dict["durability"] = maxDur;
+						
+						var maxAmmo = comp.AsGodotObject().Get("max_ammo");
+						if (maxAmmo.VariantType != Variant.Type.Nil) dict["ammo"] = maxAmmo;
+					}
+					inv.Call("add_item", data, 1, dict);
+				}
+			}
+		}
+
+		// Spawn backpack in front of player instead of knife
+		var backpackScene = GD.Load<PackedScene>("res://src/world/backpack.tscn");
+		if (backpackScene != null) {
+			var backpack = (Node3D)backpackScene.Instantiate();
+			GetParent().AddChild(backpack);
+			backpack.GlobalPosition = GlobalPosition + GlobalTransform.Basis.Z * -1.5f + Vector3.Down * 1.0f;
 		}
 	}
 
@@ -274,6 +311,17 @@ public partial class Player : CharacterBody3D {
 					else if (node.HasMethod("Interact")) {
 						node.Call("Interact", this);
 					}
+					else {
+						Node parent = node.GetParent();
+						if (parent != null) {
+							if (parent.HasMethod("interact")) {
+								parent.Call("interact", this);
+							} 
+							else if (parent.HasMethod("Interact")) {
+								parent.Call("Interact", this);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -283,6 +331,8 @@ public partial class Player : CharacterBody3D {
 		if (!_IsLocallyControlled()) return;
 
 		ProcessStaminaRegen(delta);
+		ProcessHunger(delta);
+		ProcessStarvation(delta);
 
 		Vector3 direction = Vector3.Zero;
 		Vector2 localInput = Vector2.Zero;
@@ -302,7 +352,7 @@ public partial class Player : CharacterBody3D {
 
 			if (isSprintingRequested && GetStat(1) > 0f) {
 				currentSpeed *= 1.3f; 
-				modify_stat(1, -12.0f * (float)delta); 
+				modify_stat(1, -15.0f * (float)delta); 
 			}
 
 			_targetVelocity.X = direction.X * currentSpeed;
@@ -322,9 +372,9 @@ public partial class Player : CharacterBody3D {
 		else {
 			_airTime = 0.0f;
 			if (Input.IsActionJustPressed("jump") && !_isLocked) {
-				if (GetStat(1) >= 5f) {
+				if (GetStat(1) >= 8f) {
 					_targetVelocity.Y = _jumpStrength;
-					modify_stat(1, -5f);
+					modify_stat(1, -8f);
 				}
 			}
 		} 

@@ -27,10 +27,19 @@ func _generate_loot() -> void:
 
 ## Llamado por el RayCast del Player al presionar E
 func interact(player: Node) -> void:
-	var inv: Inventory = player.get_node_or_null("Inventory") as Inventory
+	var inv = player.get_node_or_null("Inventory")
 	if inv == null:
+		print("Backpack interact: No se encontro nodo 'Inventory'")
 		return
-	for child: Node in player.get_children():
-		if child is BackpackUI:
+		
+	var ui = player.get_node_or_null("BackpackUI")
+	if ui != null and ui.has_method("open"):
+		ui.open(container, inv)
+		return
+		
+	for child in player.get_children():
+		if child.has_method("open") and ("BackpackUI" in child.name or "backpack" in child.name.to_lower()):
 			child.open(container, inv)
 			return
+			
+	print("Backpack interact: No se encontro BackpackUI en el jugador")

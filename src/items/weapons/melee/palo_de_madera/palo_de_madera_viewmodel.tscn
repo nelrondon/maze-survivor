@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://ffyty1nc37ei" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="3_sound"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hitbox"]
-size = Vector3(0.48320922, 0.58188474, 0.48398438)
+size = Vector3(1.0, 1.0, 1.5)
 
 [sub_resource type="Animation" id="Animation_golpear"]
 resource_name = "Golpear"
@@ -138,9 +138,11 @@ script = ExtResource("1_script")
 transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, 0.1, 0, -0.1, -4.371139e-09, 0, 0, 0)
 
 [node name="Hitbox" type="Area3D" parent="." unique_id=489178713]
+collision_layer = 0
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=1219302102]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24160461, 0.011635747, 0.0014864206)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24160461, 0.011635747, -0.75)
 shape = SubResource("BoxShape3D_hitbox")
 
 [node name="palo_de_madera_sound" type="AudioStreamPlayer" parent="." unique_id=978559778]

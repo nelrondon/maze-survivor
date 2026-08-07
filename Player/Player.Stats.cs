@@ -21,9 +21,18 @@ public partial class Player {
 	};
 
 	private float _timeSinceLastStaminaUse = 0f;
-	private float _staminaRegenDelay = 1.5f;
-	private float _staminaRegenRate = 20.0f;
+	private float _staminaRegenDelay = 2.0f;
+	private float _staminaRegenRate = 2.0f;
 	public bool CanRegenStamina = true;
+
+	private float _hungerTickTimer = 0f;
+	private float _hungerTickInterval = 15.0f;
+	private float _hungerDrainAmount = 5.0f;
+
+	private float _starvationDamageInterval = 3.0f;
+	private float _starvationDamageTimer = 0f;
+	private float _starvationLingeringTimer = 0f;
+	private bool _isStarving = false;
 
 	public void modify_stat(int stat, float value) {
 		if (!_stats.ContainsKey(stat)) return;
@@ -67,6 +76,42 @@ public partial class Player {
 					EmitSignal(SignalName.stats_changed);
 				}
 			}
+		}
+	}
+
+	public void ProcessHunger(double delta) {
+		if (_stats.ContainsKey(2) && _stats[0] > 0f) {
+			_hungerTickTimer += (float)delta;
+			if (_hungerTickTimer >= _hungerTickInterval) {
+				_hungerTickTimer = 0f;
+				modify_stat(2, -_hungerDrainAmount);
+			}
+		}
+	}
+
+	public void ProcessStarvation(double delta) {
+		if (!_stats.ContainsKey(2) || _stats[0] <= 0f) return;
+
+		if (_stats[2] <= 0f) {
+			_isStarving = true;
+			_starvationLingeringTimer = 3.0f; 
+		} else {
+			if (_starvationLingeringTimer > 0f) {
+				_starvationLingeringTimer -= (float)delta;
+			} else {
+				_isStarving = false;
+			}
+		}
+
+		if (_isStarving) {
+			_starvationDamageTimer += (float)delta;
+			if (_starvationDamageTimer >= _starvationDamageInterval) {
+				_starvationDamageTimer = 0f;
+				modify_stat(0, -5f); // Daño por inanición
+				GD.Print("¡Inanición! Jugador pierde vida por hambre.");
+			}
+		} else {
+			_starvationDamageTimer = 0f;
 		}
 	}
 

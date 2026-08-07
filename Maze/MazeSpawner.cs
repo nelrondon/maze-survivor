@@ -59,12 +59,7 @@ public partial class MazeSpawner : Node
 		SpawnKey(bossSpawnPos);   
 		SpawnDoorOnWall();
 		SpawnBackpacks();
-		
-		// Test temporal — quitar cuando todo funcione
-		var loader = new Node();
-		loader.SetScript(GD.Load<GDScript>("res://test/test_inventory_loader.gd"));
-		_maze.AddChild(loader);
-			}
+	}
 
 	private Vector2I SpawnBoss()
 	{
@@ -112,7 +107,7 @@ public partial class MazeSpawner : Node
 	{
 		if (_maze.BackpackScene == null) return;
 
-		int cantidad = _random.Next(5, 11); // 5-10 mochilas
+		int cantidad = _random.Next(5, 11) * 3; // 15-30 mochilas
 
 		// Dividir el mapa en 4 cuadrantes (uno por esquina donde spawnean jugadores)
 		// y distribuir equitativamente
@@ -259,7 +254,6 @@ public partial class MazeSpawner : Node
 			{
 				var playerInfo = activePlayers[i];
 				
-				// Todos los jugadores (incluyendo el ID 1) aparecen en las esquinas por igual
 				Vector2I spawnPos = FindCornerSpace(i);
 
 				var player = _maze.PlayerScene.Instantiate<Node3D>();
@@ -273,12 +267,11 @@ public partial class MazeSpawner : Node
 				{
 					_maze.SetSpawnedPlayer(player);
 				}
-				GD.Print($"[MazeSpawner] Spawning player '{playerInfo.Name}' (ID: {playerInfo.Id}) at corner pos {spawnPos}");
+				GD.Print($"[MazeSpawner] Spawning player '{playerInfo.Name}' (ID: {playerInfo.Id}) at center pos {spawnPos}");
 			}
 		}
 		else
 		{
-			// Offline / single-player fallback también usa esquina
 			Vector2I spawnPos = FindCornerSpace(0);
 
 			var player = _maze.PlayerScene.Instantiate<Node3D>();

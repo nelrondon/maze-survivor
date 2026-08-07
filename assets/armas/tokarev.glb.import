@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://d4no8hw6vq1ep"
-path="res://.godot/imported/tokarev.glb-557bebcb5e6a686559dd1168240d508c.scn"
+path="res://.godot/imported/tokarev.glb-72d372134f2f80c4cb6dee4635e5b964.scn"
 
 [deps]
 
-source_file="res://pistola/tokarev.glb"
-dest_files=["res://.godot/imported/tokarev.glb-557bebcb5e6a686559dd1168240d508c.scn"]
+source_file="res://assets/armas/tokarev.glb"
+dest_files=["res://.godot/imported/tokarev.glb-72d372134f2f80c4cb6dee4635e5b964.scn"]
 
 [params]
 

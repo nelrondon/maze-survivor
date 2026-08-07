@@ -15,8 +15,11 @@ func use() -> void:
 	_anim.play("Golpear")
 	_sound.play()
 	can_use = false
-	for enemy: Node3D in enemies_in_range:
-		if enemy.has_method("hit"):
+	get_tree().create_timer(0.25).timeout.connect(_deal_damage)
+
+func _deal_damage() -> void:
+	for enemy: Node3D in enemies_in_range.duplicate():
+		if is_instance_valid(enemy) and enemy.has_method("hit"):
 			enemy.hit(damage)
 
 
@@ -33,7 +36,7 @@ func unequip() -> void:
 
 
 func _on_hitbox_body_entered(body: Node3D) -> void:
-	if body.is_in_group("player") and not enemies_in_range.has(body):
+	if body.has_method("hit") and not body.is_ancestor_of(self) and not enemies_in_range.has(body):
 		enemies_in_range.append(body)
 
 

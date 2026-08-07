@@ -20,13 +20,13 @@ func _ready() -> void:
 	_item_name.modulate.a = 0.0
 
 
-func setup(p_inventory: Inventory, p_use_handler: ItemUseHandler = null) -> void:
+func setup(p_inventory: Node, p_handler: Node) -> void:
 	if p_inventory == null:
 		push_warning("HotbarUI.setup(): inventory is null")
 		return
 
 	inventory = p_inventory
-	use_handler = p_use_handler
+	use_handler = p_handler
 
 	var placeholder: Texture2D = preload("res://src/inventory/icons/placeholder.png")
 	for i: int in _slots.size():
@@ -64,7 +64,10 @@ func _input(event: InputEvent) -> void:
 			inventory.select_hotbar(
 				(inventory.selected_hotbar + 1) % Inventory.COLUMNS)
 		elif event.button_index == MOUSE_BUTTON_LEFT and not _is_ui_open():
+			print("[DEBUG] HotbarUI: Left click detected, NOT UI open. Requesting use item.")
 			inventory.request_use_item()
+		elif event.button_index == MOUSE_BUTTON_LEFT and _is_ui_open():
+			print("[DEBUG] HotbarUI: Left click detected but UI is open. IGNORING.")
 
 
 func _is_ui_open() -> bool:
