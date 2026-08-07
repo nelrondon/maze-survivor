@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://mcy0mlubk56y"]
+
+[ext_resource type="Script" uid="uid://bovf5675fjpvs" path="res://Reglas.cs" id="1_axl31"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fdm2o"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=1439369861]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_axl31")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=125799805]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -400.0
+offset_right = 200.0
+offset_bottom = 400.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=704458243]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=1886017255]
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
+text = "REGLAS DEL JUEGO
+\"JUGADOR\"
+PAGA TU ENTRADA E INTENTA A SOBREVIVIR AL LABERINTO
+APRENDE CUANDO UTILIZAR TUS ARMAS
+Y ESCAPA EN EL MENOR TIEMPO POSIBLE
+PARA QUE TE LLEVES LA RECOMPENSA :)
+
+\"EXPECTADOR\"
+ELIGE AL MEJOR SOBREVIVIENTE
+Y SE EL MAGNATE DE LAS APUESTAS"
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1762406292]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_fdm2o")
+text = "VOLVER AL MENÚ"

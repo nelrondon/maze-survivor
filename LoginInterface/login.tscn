@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://caec01uduioip"]
+
+[ext_resource type="Script" uid="uid://bitupo64hlo1h" path="res://Login.cs" id="1_cau7c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syemq"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6wcbk"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=595983067]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cau7c")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1623714372]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -104.0
+offset_right = 150.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1489367648]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=268837882]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+text = "					INICIO DE SESIÓN"
+
+[node name="LineEdit" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=1467050200]
+custom_minimum_size = Vector2(200, 30)
+layout_mode = 2
+placeholder_text = "CORREO ELECTRÓNICO"
+
+[node name="LineEdit2" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=371039076]
+layout_mode = 2
+placeholder_text = "CONTRASEÑA"
+secret = true
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=611927339]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_syemq")
+text = "INICIAR SESIÓN"
+
+[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer" unique_id=45179046]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6wcbk")
+text = "VOLVER AL MENÚ"

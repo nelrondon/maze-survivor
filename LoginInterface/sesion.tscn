@@ -1,0 +1,103 @@
+[gd_scene format=3 uid="uid://dq6rn3qej05h7"]
+
+[ext_resource type="Texture2D" uid="uid://bad3x3s1rcxso" path="res://icon.svg" id="1_wplry"]
+[ext_resource type="Script" uid="uid://dwqiyqbkt4h1n" path="res://Sesion.cs" id="1_wqgd8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syemq"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6wcbk"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tjjhq"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=1064523860]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_wqgd8")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1640198770]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=418929873]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=1095482375]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+texture = ExtResource("1_wplry")
+
+[node name="CenterContainer2" type="CenterContainer" parent="." unique_id=1387481250]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -444.0
+offset_right = -19.0
+offset_bottom = 124.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer2" unique_id=493082708]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer2/VBoxContainer" unique_id=1129254009]
+custom_minimum_size = Vector2(300, 20)
+layout_mode = 2
+text = "USERNAME"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="CenterContainer2/VBoxContainer" unique_id=781300837]
+custom_minimum_size = Vector2(400, 20)
+layout_mode = 2
+text = "Nombre del sobreviviente | ID: 12345678"
+
+[node name="CenterContainer3" type="CenterContainer" parent="." unique_id=78060649]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -118.0
+offset_right = 150.0
+offset_bottom = 118.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer3" unique_id=923759218]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=2039898101]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_syemq")
+text = "ENTRAR COMO JUGADOR"
+
+[node name="Control" type="Control" parent="CenterContainer3/VBoxContainer" unique_id=1843739341]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Button2" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=86797253]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6wcbk")
+text = "ENTRAR COMO EXPECTADOR"
+
+[node name="Control2" type="Control" parent="CenterContainer3/VBoxContainer" unique_id=700364840]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Button3" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=1492393379]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_tjjhq")
+text = "CERRAR SESIÓN"

@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://b86rtae56r2rb"]
+
+[ext_resource type="Script" uid="uid://r7t1sk12u4qg" path="res://Espera.cs" id="1_ngdpy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fdm2o"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=438274476]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ngdpy")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1984232779]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=686307394]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=205399564]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+text = "CONECTAR AL LABERINTO Y AL SISTEMA DE PAGO
+
+O AL SISTEMA DE APUESTAS"
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=455476409]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_fdm2o")
+text = "VOLVER AL MENÚ DE INICIO"

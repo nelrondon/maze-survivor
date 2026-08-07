@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://cmqbr8i7e7hly"]
+
+[ext_resource type="Script" uid="uid://ctrt6d00ufiqd" path="res://Registro.cs" id="1_il02f"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syemq"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6wcbk"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=887190262]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_il02f")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1391991946]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -121.5
+offset_right = 150.0
+offset_bottom = 121.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1356468167]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=2032372217]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+text = "REGISTRO DE SUPERVIVIENTE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=1671998554]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+placeholder_text = "Nombre y Apellido"
+
+[node name="LineEdit2" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=88009706]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+placeholder_text = "Cédula"
+
+[node name="LineEdit3" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=2119865717]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+placeholder_text = "Correo Electrónico"
+
+[node name="LineEdit4" type="LineEdit" parent="CenterContainer/VBoxContainer" unique_id=1070685450]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+placeholder_text = "Nombre de Usuario"
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=298870747]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_syemq")
+text = "INICIAR SESIÓN"
+
+[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer" unique_id=528765022]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6wcbk")
+text = "VOLVER AL MENÚ"

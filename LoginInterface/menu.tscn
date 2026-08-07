@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://3q6jp1r86vhf"]
+
+[ext_resource type="Texture2D" uid="uid://cuxjyo6y0f7xo" path="res://LoginInterface/LOGO_MAZE_SURVIVOR.png" id="1_lti8b"]
+[ext_resource type="Script" uid="uid://bumladwjmfgcq" path="res://LoginInterface/Menu.cs" id="1_ouk20"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u840f"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_osicj"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3c2fn"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fdm2o"]
+bg_color = Color(0.46666667, 0, 0.05882353, 1)
+
+[node name="Control" type="Control" unique_id=1402574637]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ouk20")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1412260520]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -93.75
+offset_top = -99.0
+offset_right = 106.25
+offset_bottom = 266.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=397513628]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1807359965]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_u840f")
+text = "INICIAR SESIÓN"
+
+[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer" unique_id=687444804]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_osicj")
+text = "REGÍSTRATE"
+
+[node name="Button3" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1186280118]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_3c2fn")
+text = "REGLAS DEL JUEGO"
+
+[node name="Button4" type="Button" parent="CenterContainer/VBoxContainer" unique_id=319068554]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_fdm2o")
+text = "SALIR DEL MENÚ"
+
+[node name="CenterContainer2" type="CenterContainer" parent="." unique_id=869577608]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -272.0
+offset_top = 61.0
+offset_right = 288.0
+offset_bottom = 278.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer2" unique_id=1697847980]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="CenterContainer2/VBoxContainer" unique_id=1798906883]
+custom_minimum_size = Vector2(300, 180)
+layout_mode = 2
+texture = ExtResource("1_lti8b")
+expand_mode = 1
