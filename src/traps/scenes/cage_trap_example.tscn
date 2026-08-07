@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/traps/trap_types/cage_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/traps/data/cage_trap_data.tres" id="2_data"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.5, 1, 1.5)
+
+[sub_resource type="BoxShape3D" id="2_cage_shape"]
+size = Vector3(1.3, 2.0, 1.3)
+
+[sub_resource type="BoxMesh" id="3_cage_mesh"]
+size = Vector3(1.3, 2.0, 1.3)
+
+[node name="CageTrap" type="Node3D"]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("1_detect_shape")
+
+[node name="Cage" type="StaticBody3D" parent="."]
+position = Vector3(0, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Cage"]
+mesh = SubResource("3_cage_mesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Cage"]
+shape = SubResource("2_cage_shape")

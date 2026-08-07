@@ -1,19 +1,5 @@
 class_name TrapBase extends Node3D
 
-## Estructura de nodos esperada dentro de la escena de la trampa (hijos, opcionales
-## según el activation_mode que uses):
-##   - DetectionArea (Area3D + CollisionShape3D)  -> requerido para AREA_TRIGGER y
-##                                                    PRESSURE_PLATE, y también se
-##                                                    usa en TIMED_PATTERN para saber
-##                                                    si el jugador está encima cuando
-##                                                    la trampa se activa.
-##   - PlateVisual (Node3D)                        -> opcional, solo si quieres que
-##                                                    una placa se hunda visualmente
-##                                                    en modo PRESSURE_PLATE.
-##
-## El jugador debe pertenecer al grupo "player" (body.add_to_group("player")) para
-## que la trampa lo detecte.
-
 signal trap_triggered(body: Node3D)
 signal trap_activated
 signal trap_deactivated
