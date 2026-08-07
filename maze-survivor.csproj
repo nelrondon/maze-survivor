@@ -5,11 +5,11 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>mazesurvivor</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="Exists('use_mcp.local')">
     <PackageReference Include="com.IvanMurzak.ReflectorNet" Version="5.4.0" />
     <PackageReference Include="com.IvanMurzak.McpPlugin" Version="7.5.2" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="Exists('use_mcp.local')">
     <EmbeddedResource Include="addons/godot_mcp/extensions.catalog.json" LogicalName="Godot-MCP.extensions.catalog.json" />
   </ItemGroup>
 </Project>
