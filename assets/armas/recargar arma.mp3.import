@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://clkvkf3004gby"
+path="res://.godot/imported/recargar arma.mp3-e861edfe6b4d3a151e2c289f84d2e6a8.mp3str"
+
+[deps]
+
+source_file="res://pistola/recargar arma.mp3"
+dest_files=["res://.godot/imported/recargar arma.mp3-e861edfe6b4d3a151e2c289f84d2e6a8.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

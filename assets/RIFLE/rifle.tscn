@@ -84,7 +84,7 @@ _data = {
 size = Vector3(2.7039566, 1.3956223, 3.5035515)
 
 [node name="rifle" type="Node3D" unique_id=901842793]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+transform = Transform3D(17, 0, 0, 0, 17, 0, 0, 0, 17, 0, 0, 0)
 script = ExtResource("1_amdq0")
 EscenaBala = ExtResource("2_msqsb")
 

@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://qqy73qx0wyia"]
+
+[ext_resource type="Script" uid="uid://br7slrcj6cy2p" path="res://Bala_3d.cs" id="1_jql1f"]
+[ext_resource type="PackedScene" uid="uid://cbs3ay7guttfe" path="res://bullet1.glb" id="1_pu3jq"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ti8w2"]
+height = 0.008739833
+radius = 0.0014648438
+
+[node name="Bala_armas" type="Area3D" unique_id=1624439645]
+transform = Transform3D(25, 0, 0, 0, 0.44646165, 24.996012, 0, -24.996012, 0.44646165, 0, 0, 0)
+collision_layer = 4
+script = ExtResource("1_jql1f")
+Velocidad = 30.0
+TiempoVida = 1.6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=369931638]
+shape = SubResource("CylinderShape3D_ti8w2")
+
+[node name="bullet13" parent="." unique_id=895387741 instance=ExtResource("1_pu3jq")]
+transform = Transform3D(2.3, 0, 0, 0, 2.3, 0, 0, 0, 2.3, 0, 0, 0)

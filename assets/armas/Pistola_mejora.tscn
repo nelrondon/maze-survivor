@@ -81,10 +81,10 @@ _data = {
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_k0h2g"]
-size = Vector3(23.808537, 12.36528, 20.308939)
+size = Vector3(18.52739, 7.0817986, 18.351246)
 
 [node name="Pistola" type="Node3D" unique_id=116122884]
-transform = Transform3D(0.7, 0, 0, 0, 0.6999999, 0, 0, 0, 0.6999999, 0, 0, 0)
+transform = Transform3D(17, 0, 0, 0, 17, 0, 0, 0, 17, 0, 0, 0)
 script = ExtResource("1_fov6t")
 EscenaBala = ExtResource("5_djdja")
 CadenciaDisparo = 0.2
@@ -111,5 +111,5 @@ stream = ExtResource("4_v1btw")
 [node name="Area3D" type="Area3D" parent="." unique_id=498161308]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=496871391]
-transform = Transform3D(1, 0, 0, 0, 0.9999913, 1.2218952e-06, 0, -1.2218952e-06, 0.9999913, 0.659279, -1.3534873, 2.04951)
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 1.2219209e-06, 0, -1.2219209e-06, 1.0000001, 0.45137033, -1.8821721, 3.028359)
 shape = SubResource("BoxShape3D_k0h2g")
