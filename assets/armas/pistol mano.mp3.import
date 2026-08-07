@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cx8acix6ry3ds"
+path="res://.godot/imported/pistol mano.mp3-935ef1370383d063643c869fdd4c2f2e.mp3str"
+
+[deps]
+
+source_file="res://pistola/pistol mano.mp3"
+dest_files=["res://.godot/imported/pistol mano.mp3-935ef1370383d063643c869fdd4c2f2e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

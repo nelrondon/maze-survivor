@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://e5kdsac6tyh1"
+path="res://.godot/imported/rife (mp3cut.net).mp3-f3574b95e8c2f900ed2af4ca4ffc700e.mp3str"
+
+[deps]
+
+source_file="res://rifle/rife (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/rife (mp3cut.net).mp3-f3574b95e8c2f900ed2af4ca4ffc700e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

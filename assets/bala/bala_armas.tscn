@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://ceee5saklcpto"]
+
+[ext_resource type="PackedScene" uid="uid://cbs3ay7guttfe" path="res://bullet1.glb" id="1_h0dqp"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ti8w2"]
+height = 0.028526101
+radius = 0.0126953125
+
+[node name="Bala_armas" type="Area3D" unique_id=1624439645]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=369931638]
+transform = Transform3D(-0.9998552, -0.011812299, -0.012211767, 0.012072659, -0.9996964, -0.021499012, -0.011953887, -0.02164325, 0.9996942, -0.0031140551, 0.004542368, 0.00024211682)
+shape = SubResource("CylinderShape3D_ti8w2")
+
+[node name="Timer" type="Timer" parent="." unique_id=847266359]
+wait_time = 3.0
+autostart = true
+
+[node name="bullet13" parent="." unique_id=895387741 instance=ExtResource("1_h0dqp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00030762702, -0.00049215555, -0.0038033426)
+
+[node name="RayCast3D" type="RayCast3D" parent="." unique_id=1634047933]
