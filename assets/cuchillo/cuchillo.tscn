@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://y4fuoiixvx5"]
+
+[ext_resource type="PackedScene" uid="uid://cglv3n8yj0cxg" path="res://assets/cuchillo/knife.glb" id="1_7eppx"]
+[ext_resource type="Script" uid="uid://cckc6bbalmvd1" path="res://assets/cuchillo/cuchillo.gd" id="1_8vwre"]
+[ext_resource type="AudioStream" uid="uid://c7kuxgamwiqp5" path="res://assets/cuchillo/Sonido_cuchillo.mp3" id="2_btqv8"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8vwre"]
+size = Vector3(0.32447663, 0.54980624, 0.62714845)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jadd5"]
+size = Vector3(0.15679932, 0.5370178, 0.1643982)
+
+[sub_resource type="Animation" id="Animation_x20y6"]
+resource_name = "Desequipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sketchfab_Scene:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.30979532, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sketchfab_Scene:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5692837), Vector3(0, 0, -0.013550878)]
+}
+
+[sub_resource type="Animation" id="Animation_5d6hp"]
+resource_name = "Equipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sketchfab_Scene:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.30979532, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sketchfab_Scene:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -0.013550877), Vector3(0, 0, -1.5692837)]
+}
+
+[sub_resource type="Animation" id="Animation_w6yvd"]
+resource_name = "Golpear"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sketchfab_Scene:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.31, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.25), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sketchfab_Scene:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.06999999, 0.15, 0.32, 0.41, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5692837), Vector3(0.9302605, 2.0699606, 0.13962634), Vector3(1.8221238, 3.1049407, 0), Vector3(0.27925268, -0.6195919, 0), Vector3(1.246165, 0.050614547, 0), Vector3(0, 0, -1.5827454)]
+}
+
+[sub_resource type="Animation" id="Animation_7eilx"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sketchfab_Scene:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.06326914, -0.026792929, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sketchfab_Scene:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5827454)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_taois"]
+_data = {
+&"Desequipar": SubResource("Animation_x20y6"),
+&"Equipar": SubResource("Animation_5d6hp"),
+&"Golpear": SubResource("Animation_w6yvd"),
+&"RESET": SubResource("Animation_7eilx")
+}
+
+[node name="cuchillo" type="Node3D" unique_id=1885593947]
+script = ExtResource("1_8vwre")
+damage = 7.6
+
+[node name="Sketchfab_Scene" parent="." unique_id=59234191 instance=ExtResource("1_7eppx")]
+transform = Transform3D(-0.00083641754, 0.069995, 0, -0.069995, -0.00083641754, 0, 0, 0, 0.06999999, -0.06326914, -0.026792929, 0)
+
+[node name="Hitbox" type="Area3D" parent="." unique_id=1632571041]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5436274, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=534439972]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4307888, -0.004403513, -0.07009562)
+shape = SubResource("BoxShape3D_8vwre")
+debug_color = Color(1.4920532e-06, 0.51448345, 0.601427, 0.42)
+
+[node name="PickupArea" type="Area3D" parent="." unique_id=829858244]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42277515, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea" unique_id=1008376938]
+transform = Transform3D(0.9998942, 0.014547578, 0, -0.014547578, 0.9998942, 0, 0, 0, 1, -0.3768605, -0.0072286204, 0.0011850521)
+visible = false
+shape = SubResource("BoxShape3D_jadd5")
+
+[node name="Sonido_cuchillo" type="AudioStreamPlayer" parent="." unique_id=1983691124]
+stream = ExtResource("2_btqv8")
+volume_db = 1.561
+pitch_scale = 2.0
+
+[node name="anim" type="AnimationPlayer" parent="." unique_id=820586203]
+libraries/ = SubResource("AnimationLibrary_taois")

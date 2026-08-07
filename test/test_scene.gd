@@ -18,7 +18,9 @@ func _ready():
 	_update_items_list()
 	_update_stats_display()
 	_add_log("=== TEST DE CONSUMIBLES ===")
-	_add_log("1-9: Seleccionar | E: Usar | D: Daño")
+	_add_log("1-9: Item | E: Usar | D: Daño")
+	_add_log("U: Veneno | I: Hambre | O: Toggle Asfixia")
+
 
 func _process(_delta):
 	_update_effects_display()
@@ -37,6 +39,10 @@ func _input(event):
 			KEY_9: _select_item(8)
 			KEY_E: _use_item()
 			KEY_D: _damage_player()
+			KEY_U: _apply_test_poison()
+			KEY_I: _apply_test_hunger()
+			KEY_O: _toggle_test_asphyxia()
+
 
 func _select_item(index: int):
 	if index >= items.size(): return
@@ -96,3 +102,34 @@ func _add_log(message: String):
 		log_lines.pop_front()
 	if log_label:
 		log_label.text = "\n".join(log_lines)
+
+var _is_asphyxia_active: bool = false
+
+func _apply_test_poison():
+	var poison = PoisonStatus.new()
+	poison.damage = 5.0
+	poison.max_duration = 5.0
+	poison.tick_interval = 1.0
+	player.apply_status(poison)
+	_add_log("[STATUS] Aplicado Veneno (5 HP/s por 5s)")
+
+func _apply_test_hunger():
+	var hunger = HungerStatus.new()
+	hunger.hunger_drain = 3.0
+	hunger.max_duration = 10.0
+	hunger.tick_interval = 1.0
+	player.apply_status(hunger)
+	_add_log("[STATUS] Aplicado Hambre (3 Hambre/s por 10s)")
+
+func _toggle_test_asphyxia():
+	_is_asphyxia_active = !_is_asphyxia_active
+	if _is_asphyxia_active:
+		var asphyxia = AsphyxiaStatus.new()
+		asphyxia.damage = 10.0
+		asphyxia.tick_interval = 1.0
+		player.apply_status(asphyxia)
+		_add_log("[STATUS] Entrando a zona de Asfixia (10 HP/s)")
+	else:
+		player.remove_status("asfixia")
+		_add_log("[STATUS] Saliendo de zona de Asfixia")
+

@@ -1,0 +1,269 @@
+[gd_scene format=3 uid="uid://dxd886hu4yepx"]
+
+[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="1_gvfwa"]
+[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://assets/palo/madera qque se rompe.mp3" id="2_8iiw5"]
+
+[sub_resource type="GDScript" id="GDScript_rvd8w"]
+script/source = "extends Node3D
+
+#definimos el daño que hará el arma
+#Esta variable aparece en el inspector de Godot y está como 5.0 su valor
+@export var damage = 1.0
+
+#Referencia directa al nodo hijo anim (AnimationPlayer)
+@onready var anim = $anim
+#Referencia del nodo que reproduce el sonido del golpe del arma
+@onready var Madera_golpe_sonido = $Madera_golpe_sonido
+#Referencia al nuevo nodo Area3D para recoger el arma del suelo
+@onready var pickup_area = $PickupArea
+
+# Multiplicador de daño. 1.0 es el daño normal, 2.0 será el buff.
+var damage_multiplier: float = 1.0
+
+# Almacena quién es el dueño actual del arma para evitar auto-daño en PvP
+var portador: Node3D = null
+
+#Para determinar si el jugador ataca o no
+var can_attack = false
+
+#Para almacenar una lista de enemigos que entran en el
+#area de alcance del arma
+var enemies_in_range = []
+
+# Esta función de inicio conecta la señal del área de recogida automáticamente al empezar
+func _ready() -> void:
+	if pickup_area:
+		pickup_area.body_entered.connect(_on_pickup_area_body_entered)
+
+#Esta funcion se encarga de revisar constantemente si se quiere atacar
+func _process(_delta: float) -> void:
+	#Detecta si se presiona el boton de atacar o shoot (click izquierdo(
+	if Input.is_action_pressed(\"shoot\") and can_attack and not anim.is_playing():
+		anim.play(\"Golpear\")
+		Madera_golpe_sonido.play()
+		can_attack = false
+		if not enemies_in_range.is_empty():
+			for e in enemies_in_range:
+				# Se aplica el daño base multiplicado por el buff actual
+				e.hit(damage * damage_multiplier)
+
+#Estas son funciones para detectar la colision entre el arma y los personajes
+func _on_hitbox_body_entered(body: Node3D) -> void:
+	#Reemplazar \"player\" por el nombre del nodo real de los personajes, le puse ese nombre de forma provisional
+	#Detecta a cualquier jugador, PERO ignora al que sostiene el arma (portador)
+	if body.is_in_group(\"player\") and body != portador and not enemies_in_range.has(body):
+		enemies_in_range.append(body)
+
+func _on_hitbox_body_exited(body: Node3D) -> void:
+	if enemies_in_range.has(body):
+		enemies_in_range.erase(body)
+
+# Esta función maneja la lógica cuando el jugador pasa por encima del arma para recogerla
+func _on_pickup_area_body_entered(body: Node3D) -> void:
+	# Comprobamos si es el jugador quien entra al área de recogida
+	if body.is_in_group(\"player\"):
+		# Busca el nodo de la mano del jugador usando la ruta exacta de la cámara
+		var mano_jugador = body.get_node_or_null(\"Head/Camera3D/Hand\")
+		
+		if mano_jugador:
+			# Guardamos en la memoria del arma quién es su dueño para el sistema PvP
+			portador = body
+			
+			# Desengancha el arma de su posición en el suelo y la vuelve hija de la mano del jugador
+			reparent(mano_jugador)
+			
+			# Resetea la posición y rotación relativas para que encaje perfectamente en la cámara
+			position = Vector3.ZERO
+			rotation = Vector3.ZERO
+			
+			# Borra el área de recogida de la memoria ya que el arma ya ha sido equipada
+			pickup_area.queue_free()
+			
+			# Habilita el estado para que el jugador ya pueda empezar a atacar con ella
+			can_attack = true
+
+#Esta es la funcion de control de estado, sirve para que el jugador pueda volver a atacar
+func _on_anim_animation_finished(anim_name: StringName) -> void:
+	if anim_name == \"Golpear\":
+		can_attack = true
+	elif anim_name == \"equipar\":
+		can_attack = true
+	elif anim_name == \"desequipar\":
+		visible = false
+		can_attack = false
+
+# Función que el ítem de mejora llamará cuando el jugador lo recoja
+func activar_buff_damage() -> void:
+	damage_multiplier = 2.0
+	print(\"¡Buff de daño activado! x2\")
+
+# Función para regresar el arma a la normalidad (si el buff se acaba)
+func desactivar_buff_damage() -> void:
+	damage_multiplier = 1.0
+	print(\"El arma ha vuelto a su daño normal x1\")
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xiq3j"]
+size = Vector3(0.48320922, 0.58188474, 0.48398438)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ge8cr"]
+size = Vector3(0.48876953, 0.5852051, 0.48706055)
+
+[sub_resource type="Animation" id="Animation_bfwqg"]
+resource_name = "Golpear"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3107, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.25), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.075, 0.15, 0.32, 0.41, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.27925268, -0.6195919, 0), Vector3(1.246165, 0.050614547, 0), Vector3(1.8221238, 3.1049407, 0), Vector3(0.9302605, 2.0699606, 0.13962634), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_p5186"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_aurh4"]
+resource_name = "desequipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.5, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -1.5707964)]
+}
+
+[sub_resource type="Animation" id="Animation_uma8f"]
+resource_name = "equipar"
+length = 0.5
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Madera:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.5, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Madera:rotation")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -1.5707964), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r8oti"]
+_data = {
+&"Golpear": SubResource("Animation_bfwqg"),
+&"RESET": SubResource("Animation_p5186"),
+&"desequipar": SubResource("Animation_aurh4"),
+&"equipar": SubResource("Animation_uma8f")
+}
+
+[node name="Palo" type="Node3D" unique_id=1377804163]
+script = SubResource("GDScript_rvd8w")
+damage = 5.0
+
+[node name="Madera" parent="." unique_id=1898829908 instance=ExtResource("1_gvfwa")]
+
+[node name="Sketchfab_model" parent="Madera" index="0" unique_id=779360228]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, 0.1, 0, -0.1, -4.371139e-09, 0, 0, 0)
+
+[node name="Hitbox" type="Area3D" parent="." unique_id=179037207]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" unique_id=328779944]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24160461, 0.011635747, 0.0014864206)
+shape = SubResource("BoxShape3D_xiq3j")
+
+[node name="PickupArea" type="Area3D" parent="." unique_id=1207308090]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickupArea" unique_id=1678035188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013615236, 0.0060185567, 0.009682618)
+shape = SubResource("BoxShape3D_ge8cr")
+
+[node name="Madera_golpe_sonido" type="AudioStreamPlayer" parent="." unique_id=2090039213]
+stream = ExtResource("2_8iiw5")
+volume_db = -20.0
+pitch_scale = 2.0
+
+[node name="anim" type="AnimationPlayer" parent="." unique_id=452197888]
+libraries/ = SubResource("AnimationLibrary_r8oti")
+
+[connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="Hitbox" to="." method="_on_hitbox_body_exited"]
+[connection signal="body_entered" from="PickupArea" to="." method="_on_pickup_area_body_entered"]
+[connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]
+
+[editable path="Madera"]

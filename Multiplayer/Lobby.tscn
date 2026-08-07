@@ -1,0 +1,146 @@
+[gd_scene format=3 uid="uid://b47ff7dw1thdc"]
+
+[ext_resource type="Script" uid="uid://ce1vsgsugnf7q" path="res://Multiplayer/LobbyHandler.cs" id="1_y6mww"]
+
+[node name="Lobby" type="Control" unique_id=1762284812 groups=["Players"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y6mww")
+metadata/_edit_lock_ = true
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=890343815]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=1834638150]
+custom_minimum_size = Vector2(600, 360)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=801108888]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="MainHBox" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=372931750]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="LeftVBox" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox" unique_id=564028841]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox" unique_id=1541123074]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Status: Disconnected"
+
+[node name="ConnectionContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox" unique_id=910521163]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Host" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=1518817669]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Host"
+
+[node name="Join" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=441146064]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Join"
+
+[node name="JoinSpectator" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=162568938]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Join as Spectator"
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=795773652]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Player Name"
+
+[node name="LineEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=1559253385]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Enter player name..."
+
+[node name="IpLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=1900211532]
+layout_mode = 2
+text = "Server IP"
+
+[node name="IpLineEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=2056896122]
+unique_name_in_owner = true
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="PortLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=423001510]
+layout_mode = 2
+text = "Port"
+
+[node name="PortLineEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=232311789]
+unique_name_in_owner = true
+layout_mode = 2
+text = "8910"
+
+[node name="LobbyActionContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox" unique_id=1164264875]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StartGame" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/LobbyActionContainer" unique_id=2010404163]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Start Game"
+
+[node name="Leave" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/LobbyActionContainer" unique_id=1315823490]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Leave Lobby"
+
+[node name="RightVBox" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox" unique_id=298765153]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PlayerListTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=836716744]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Connected Players:"
+
+[node name="PlayerList" type="ItemList" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1117480212]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SpectatorListTitle" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1242311576]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Spectators:"
+
+[node name="SpectatorList" type="ItemList" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1516426011]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[connection signal="button_down" from="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/Host" to="." method="_on_host_button_down"]
+[connection signal="button_down" from="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/Join" to="." method="_on_join_button_down"]
+[connection signal="button_down" from="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/JoinSpectator" to="." method="_on_join_spectator_button_down"]
+[connection signal="button_down" from="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/LobbyActionContainer/StartGame" to="." method="_on_start_game_button_down"]
+[connection signal="button_down" from="CenterContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/LobbyActionContainer/Leave" to="." method="_on_leave_button_down"]
