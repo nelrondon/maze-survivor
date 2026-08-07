@@ -16,7 +16,7 @@ public partial class LobbyHandler : Control
 	private int MAX_PLAYERS = 4;
 
 	[Export]
-	private int MAX_SPECTATORS = 4;
+	private int MAX_SPECTATORS = 0;
 
 	private int HOST_ID = 1;
 
