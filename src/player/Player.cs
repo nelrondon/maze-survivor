@@ -353,7 +353,7 @@ public partial class Player : CharacterBody3D {
 		}
 
 		// Rotación de Cámara por Mouse
-		if (@event is InputEventMouseMotion mouseMotion) {
+		if (@event is InputEventMouseMotion mouseMotion && Input.MouseMode == Input.MouseModeEnum.Captured) {
 			RotateY(-mouseMotion.Relative.X * _mouseSensibility);
 
 			_pitch -= mouseMotion.Relative.Y * _mouseSensibility;
@@ -369,31 +369,42 @@ public partial class Player : CharacterBody3D {
 			Input.MouseMode = Input.MouseModeEnum.Visible;
 		}
 
-		// Interacción (Tecla E / Acción "interact")
-		bool isInteractPressed = (@event is InputEventKey interactKey && interactKey.Pressed && interactKey.Keycode == Key.E) || 
-			(InputMap.HasAction("interact") && @event.IsActionPressed("interact"));
+		// Interacción (Tecla E / Acción "interact") - solo interactuar en el mundo si no hay menús abiertos (mouse capturado)
+		bool isInteractPressed = Input.MouseMode == Input.MouseModeEnum.Captured && (
+			(@event is InputEventKey interactKey && interactKey.Pressed && !interactKey.Echo && interactKey.Keycode == Key.E) || 
+			(InputMap.HasAction("interact") && @event.IsActionPressed("interact"))
+		);
 
 		if (isInteractPressed) {
 			if (_interactionRayCast != null && _interactionRayCast.IsColliding()) {
 				GodotObject collider = _interactionRayCast.GetCollider();
 
 				if (collider is Node node) {
+					bool handled = false;
 					if (node.HasMethod("interact")) {
 						node.Call("interact", this);
+						handled = true;
 					} 
 					else if (node.HasMethod("Interact")) {
 						node.Call("Interact", this);
+						handled = true;
 					}
 					else {
 						Node parent = node.GetParent();
 						if (parent != null) {
 							if (parent.HasMethod("interact")) {
 								parent.Call("interact", this);
+								handled = true;
 							} 
 							else if (parent.HasMethod("Interact")) {
 								parent.Call("Interact", this);
+								handled = true;
 							}
 						}
+					}
+
+					if (handled) {
+						GetViewport().SetInputAsHandled();
 					}
 				}
 			}

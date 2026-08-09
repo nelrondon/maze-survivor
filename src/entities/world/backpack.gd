@@ -41,5 +41,10 @@ func interact(player: Node) -> void:
 		if child.has_method("open") and ("BackpackUI" in child.name or "backpack" in child.name.to_lower()):
 			child.open(container, inv)
 			return
+
+	for node in player.get_tree().get_nodes_in_group("container_ui"):
+		if node.has_method("open"):
+			node.open(container, inv)
+			return
 			
-	print("Backpack interact: No se encontro BackpackUI en el jugador")
+	print("Backpack interact: No se encontro BackpackUI en el jugador ni en el arbol")

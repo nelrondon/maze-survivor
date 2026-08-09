@@ -9,6 +9,7 @@ const PLACEHOLDER: Texture2D = preload("res://src/inventory/icons/placeholder.pn
 var backpack_container: ItemContainer = null
 var inventory: Inventory = null
 var is_open: bool = false
+var _just_opened: bool = false
 var _selected_slot: SlotUI = null
 
 @onready var _panel: Control = %BackpackPanel
@@ -64,6 +65,8 @@ func open(container: ItemContainer, _inv: Node) -> void:
 			_bp_slots[i].slot_shift_clicked.connect(_on_shift_click_bp)
 
 	is_open = true
+	_just_opened = true
+	call_deferred("_reset_just_opened")
 	backpack_container.changed.connect(_refresh)
 	_refresh()
 	_panel.visible = true
@@ -72,6 +75,10 @@ func open(container: ItemContainer, _inv: Node) -> void:
 		hb.visible = false
 	if inventory:
 		inventory.inventory_opened.emit()
+
+
+func _reset_just_opened() -> void:
+	_just_opened = false
 
 
 func close() -> void:
@@ -91,10 +98,10 @@ func close() -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if not is_open:
+	if not is_open or _just_opened:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_E or event.keycode == KEY_TAB:
+		if event.keycode == KEY_E or event.keycode == KEY_TAB or event.keycode == KEY_ESCAPE:
 			close()
 			get_viewport().set_input_as_handled()
 
