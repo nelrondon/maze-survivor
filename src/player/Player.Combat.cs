@@ -2,17 +2,33 @@ using Godot;
 
 public partial class Player {
 	public void hit(float damage, Node3D attacker = null) {
+		int targetPeer = GetMultiplayerAuthority();
 		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
-			Rpc(nameof(RpcTakeDamage), damage);
+			RpcId(targetPeer, nameof(RpcReceiveDamage), damage);
 		} else {
-			RpcTakeDamage(damage);
+			RpcReceiveDamage(damage);
 		}
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-	private void RpcTakeDamage(float damage) {
+	public void RpcReceiveDamage(float damage) {
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected && !IsMultiplayerAuthority()) {
+			return;
+		}
+
 		modify_stat(0, -damage);
 		TakeDamage();
+
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && IsMultiplayerAuthority()) {
+			float currentHp = get_stat(0);
+			Rpc(nameof(RpcSyncHealth), currentHp);
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false)]
+	private void RpcSyncHealth(float newHp) {
+		_stats[0] = newHp;
+		EmitSignal(SignalName.stats_changed);
 	}
 
 	public void TakeDamage() {
