@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://ovpot854ijdc"]
+
+[ext_resource type="Script" uid="uid://bmoknmgqm5tqi" path="res://src/traps/trap_types/arrow_projectile.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://odckqbbnxr1u" path="res://src/traps/models/arrow.glb" id="2_8uo0s"]
+
+[sub_resource type="BoxShape3D" id="1_shape"]
+size = Vector3(0.15, 0.15, 0.8362793)
+
+[node name="ArrowProjectile" type="Area3D" unique_id=1335928918]
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1250203057]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.118139625)
+shape = SubResource("1_shape")
+
+[node name="Sketchfab_Scene" parent="." unique_id=316814958 instance=ExtResource("2_8uo0s")]
+transform = Transform3D(-8.742278e-09, 0, -0.2, 0, 0.2, 0, 0.2, 0, -8.742278e-09, 0, 0, -0.1914064)

@@ -1,12 +1,5 @@
 class_name ArrowTrap extends TrapBase
 
-## Estructura de nodos esperada, además de los de TrapBase:
-##   - SpawnPoint (Node3D) -> opcional, punto y rotación desde donde sale la flecha.
-##     Si no existe, se usa la posición/rotación de la propia trampa.
-##
-## Requiere asignar arrow_scene con una escena raíz de tipo ArrowProjectile
-## (ver arrow_projectile.gd).
-
 @export var arrow_scene: PackedScene
 @export var spawn_point_path: NodePath = ^"SpawnPoint"
 ## Dirección de disparo en espacio LOCAL de la trampa (se rota con ella).
@@ -15,10 +8,8 @@ class_name ArrowTrap extends TrapBase
 
 @onready var _spawn_point: Node3D = get_node_or_null(spawn_point_path)
 
-
 func _on_trigger(_body: Node3D) -> void:
 	_shoot_arrow()
-
 
 func _shoot_arrow() -> void:
 	if arrow_scene == null:

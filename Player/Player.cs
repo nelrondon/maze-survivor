@@ -53,6 +53,10 @@ public partial class Player : CharacterBody3D {
 	public override void _Ready() {        
 		// Registrar en grupo global para ser detectado por el mapa u otros sistemas
 		AddToGroup("Players");
+		// Grupo "player" (minúscula) usado por el sistema de trampas y efectos de
+		// entorno (TrapBase, EnvironmentZone, armas). No renombrar "Players": lo usan
+		// MazeSpawner/GameManager para el spectator y demás lógica multiplayer.
+		AddToGroup("player");
 
 		_statusManager = GetNodeOrNull("StatusManager");
 		_hud = GetNodeOrNull<CanvasLayer>("HUD");
@@ -403,6 +407,10 @@ public partial class Player : CharacterBody3D {
 			_targetVelocity.Z = 0f;
 		}
 	}
+
+	// Alias en snake_case para que scripts de GDScript (como CageTrap) puedan
+	// detectarlo con has_method("set_movement_locked") e inmovilizar al jugador.
+	public void set_movement_locked(bool locked) => SetInputLocked(locked);
 
 	#region Status Manager Wrappers
 

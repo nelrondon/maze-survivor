@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://c44v1mbbtjkcd"]
+
+[ext_resource type="Script" uid="uid://cnwhqk7344wq0" path="res://src/traps/trap_types/arrow_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/traps/data/arrow_trap_data.tres" id="2_data"]
+[ext_resource type="PackedScene" uid="uid://ovpot854ijdc" path="res://src/traps/scenes/arrow_projectile.tscn" id="3_arrow"]
+[ext_resource type="Texture2D" uid="uid://dh172ywtco5w8" path="res://src/traps/textures/metal_plate_diff_4k.jpg" id="4_rbvgw"]
+[ext_resource type="Texture2D" uid="uid://bx0rg2fnqd5t3" path="res://src/traps/textures/rusty_metal_04_diff_4k.png" id="5_ugtll"]
+
+[sub_resource type="BoxMesh" id="3_plate_mesh"]
+size = Vector3(1.3, 1.3, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnql1"]
+albedo_texture = ExtResource("4_rbvgw")
+uv1_scale = Vector3(2.5, 2.5, 2.5)
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.6, 2.5, 10.049316)
+
+[sub_resource type="BoxMesh" id="2_hole_mesh"]
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p0ix1"]
+albedo_texture = ExtResource("5_ugtll")
+uv1_scale = Vector3(3, 2.1, 2.5)
+uv1_offset = Vector3(1, 0, 0)
+uv2_scale = Vector3(1.5, 1.5, 1.5)
+
+[node name="ArrowTrap" type="Node3D" unique_id=2029886257]
+script = ExtResource("1_script")
+arrow_scene = ExtResource("3_arrow")
+data = ExtResource("2_data")
+
+[node name="MountPlate" type="MeshInstance3D" parent="." unique_id=2111151379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("3_plate_mesh")
+surface_material_override/0 = SubResource("StandardMaterial3D_lnql1")
+
+[node name="DetectionArea" type="Area3D" parent="." unique_id=2128809941]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -3)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea" unique_id=1260428050]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.0246582)
+shape = SubResource("1_detect_shape")
+
+[node name="SpawnPoint" type="Node3D" parent="." unique_id=1171106337]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpawnPoint" unique_id=12086948]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0.22113669)
+mesh = SubResource("2_hole_mesh")
+surface_material_override/0 = SubResource("StandardMaterial3D_p0ix1")

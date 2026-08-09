@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://llhhgexma6jp"]
+
+[ext_resource type="Script" uid="uid://273m0opk1nkc" path="res://src/traps/trap_types/spike_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/traps/data/poison_spike_trap_data.tres" id="2_data"]
+[ext_resource type="PackedScene" uid="uid://b20vl8q2kak3g" path="res://src/traps/models/spike_trap_01.glb" id="3_08cb6"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(5.6, 1, 5.6)
+
+[sub_resource type="BoxShape3D" id="2_spike_shape"]
+size = Vector3(5.4, 0.4, 5.4)
+
+[node name="PoisonSpikeTrap" type="Node3D" unique_id=761372054]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+
+[node name="DetectionArea" type="Area3D" parent="." unique_id=59905424]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea" unique_id=1603772260]
+shape = SubResource("1_detect_shape")
+
+[node name="Spikes" type="StaticBody3D" parent="." unique_id=110506365]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Spikes" unique_id=29126364]
+shape = SubResource("2_spike_shape")
+
+[node name="Sketchfab_Scene" parent="Spikes" unique_id=1515329204 instance=ExtResource("3_08cb6")]
+transform = Transform3D(8.5, 0, 0, 0, 8.5, 0, 0, 0, 8.5, 0, -0.705, 0)

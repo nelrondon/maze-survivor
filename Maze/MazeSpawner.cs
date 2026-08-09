@@ -59,6 +59,166 @@ public partial class MazeSpawner : Node
 		SpawnKey(bossSpawnPos);   
 		SpawnDoorOnWall();
 		SpawnBackpacks();
+		SpawnTraps();
+	}
+
+	private void SpawnTraps()
+	{
+		SpawnSpikeClusters();
+		SpawnArrowClusters();
+		SpawnCageTraps();
+	}
+
+	private void SpawnSpikeClusters()
+	{
+		var spikeScenes = new List<PackedScene>();
+		if (_maze.SpikeTrapScene != null) spikeScenes.Add(_maze.SpikeTrapScene);
+		if (_maze.PoisonSpikeTrapScene != null) spikeScenes.Add(_maze.PoisonSpikeTrapScene);
+		if (spikeScenes.Count == 0) return;
+
+		int largo = Math.Max(1, _maze.SpikeClusterSize);
+
+		for (int c = 0; c < _maze.SpikeClusterCount; c++)
+		{
+			if (_random.NextDouble() > _maze.SpikeClusterChance) continue; // este intento no tuvo suerte
+
+			var fila = ObtenerLineaLibre(largo);
+			if (fila == null)
+			{
+				GD.Print($"No hay pasillo libre de {largo} celdas seguidas para otro cluster de pinchos, se omite.");
+				continue;
+			}
+
+			foreach (var pos in fila)
+			{
+				var scene = spikeScenes[_random.Next(spikeScenes.Count)];
+				var trap = scene.Instantiate<Node3D>();
+				trap.Position = new Vector3(pos.X * _maze.GridScale, 0.0f, pos.Y * _maze.GridScale);
+				_maze.AddChild(trap);
+				_occupiedPositions.Add(pos);
+			}
+			GD.Print($"Fila de {fila.Count} pinchos colocada en pasillo, inicio {fila[0]}");
+		}
+	}
+
+	private List<Vector2I> ObtenerLineaLibre(int largo)
+	{
+		var inicios = new List<(Vector2I pos, bool horizontal)>();
+
+		bool FilaLibre(int x, int z, bool horizontal)
+		{
+			for (int i = 0; i < largo; i++)
+			{
+				var pos = horizontal ? new Vector2I(x + i, z) : new Vector2I(x, z + i);
+				if (_maze.Map[pos.X, pos.Y] != 0 || _occupiedPositions.Contains(pos)) return false;
+			}
+			return true;
+		}
+
+		for (int x = 1; x < _maze.Width - 1; x++)
+		{
+			for (int z = 1; z < _maze.Height - 1; z++)
+			{
+				if (x + largo - 1 < _maze.Width - 1 && FilaLibre(x, z, true))
+					inicios.Add((new Vector2I(x, z), true));
+
+				if (z + largo - 1 < _maze.Height - 1 && FilaLibre(x, z, false))
+					inicios.Add((new Vector2I(x, z), false));
+			}
+		}
+
+		if (inicios.Count == 0) return null;
+
+		var (inicio, horiz) = inicios[_random.Next(inicios.Count)];
+		var fila = new List<Vector2I>();
+		for (int i = 0; i < largo; i++)
+			fila.Add(horiz ? new Vector2I(inicio.X + i, inicio.Y) : new Vector2I(inicio.X, inicio.Y + i));
+
+		return fila;
+	}
+
+	private void SpawnArrowClusters()
+	{
+		if (_maze.ArrowTrapScene == null) return;
+
+		const float espaciado = 1.6f; // distancia entre disparadores del mismo grupo
+
+		for (int c = 0; c < _maze.ArrowClusterCount; c++)
+		{
+			var (pos, rotationY, wallOffset) = ObtenerEspacioConParedYRotacion();
+			if (_occupiedPositions.Contains(pos)) continue;
+
+			Vector2 ejeLateral = (Mathf.Abs(rotationY) == 90f) ? new Vector2(0, 1) : new Vector2(1, 0);
+
+			int n = Math.Max(1, _maze.ArrowClusterSize);
+			for (int i = 0; i < n; i++)
+			{
+				float lateral = (i - (n - 1) / 2.0f) * espaciado;
+				Vector2 offsetFinal = wallOffset + ejeLateral * lateral;
+
+				var trap = _maze.ArrowTrapScene.Instantiate<Node3D>();
+				trap.Position = new Vector3(
+					pos.X * _maze.GridScale + offsetFinal.X,
+					0.0f,
+					pos.Y * _maze.GridScale + offsetFinal.Y
+				);
+				trap.RotationDegrees = new Vector3(0, rotationY, 0);
+				_maze.AddChild(trap);
+			}
+
+			_occupiedPositions.Add(pos);
+			GD.Print($"Grupo de {n} disparadores de flecha en {pos}, rot Y={rotationY}");
+		}
+	}
+
+	private void SpawnCageTraps()
+	{
+		if (_maze.CageTrapScene == null) return;
+
+		for (int i = 0; i < _maze.CageTrapCount; i++)
+		{
+			Vector2I spawnPos = ObtenerEspacioVacioAleatorio();
+			var trap = _maze.CageTrapScene.Instantiate<Node3D>();
+			trap.Position = new Vector3(spawnPos.X * _maze.GridScale, 0.0f, spawnPos.Y * _maze.GridScale);
+			_maze.AddChild(trap);
+			_occupiedPositions.Add(spawnPos);
+		}
+	}
+
+	private bool HayParedAdyacente(Vector2I pos, float rotationY)
+	{
+		if (rotationY == -90f) return _maze.Map[pos.X - 1, pos.Y] == 1; // pared al oeste
+		if (rotationY == 90f) return _maze.Map[pos.X + 1, pos.Y] == 1;  // pared al este
+		if (rotationY == 180f) return _maze.Map[pos.X, pos.Y - 1] == 1; // pared al norte
+		return _maze.Map[pos.X, pos.Y + 1] == 1;                        // pared al sur (rotationY == 0)
+	}
+
+	private (Vector2I pos, float rotationY, Vector2 wallOffset) ObtenerEspacioConParedYRotacion()
+	{
+		float offset = _maze.GridScale * 0.47f;
+		var candidatos = new List<(Vector2I pos, float rot, Vector2 off)>();
+
+		for (int x = 1; x < _maze.Width - 1; x++)
+		{
+			for (int z = 1; z < _maze.Height - 1; z++)
+			{
+				var pos = new Vector2I(x, z);
+				if (_maze.Map[x, z] != 0 || _occupiedPositions.Contains(pos)) continue;
+
+				if (_maze.Map[x - 1, z] == 1) candidatos.Add((pos, -90f, new Vector2(-offset, 0)));   // pared al oeste -> dispara al este
+				if (_maze.Map[x + 1, z] == 1) candidatos.Add((pos, 90f, new Vector2(offset, 0)));     // pared al este -> dispara al oeste
+				if (_maze.Map[x, z - 1] == 1) candidatos.Add((pos, 180f, new Vector2(0, -offset)));   // pared al norte -> dispara al sur
+				if (_maze.Map[x, z + 1] == 1) candidatos.Add((pos, 0f, new Vector2(0, offset)));      // pared al sur -> dispara al norte
+			}
+		}
+
+		if (candidatos.Count > 0)
+		{
+			return candidatos[_random.Next(candidatos.Count)];
+		}
+
+		// Fallback: no hay celdas junto a una pared, usamos una libre cualquiera sin offset.
+		return (ObtenerEspacioVacioAleatorio(), _random.Next(0, 4) * 90f, Vector2.Zero);
 	}
 
 	private Vector2I SpawnBoss()

@@ -1,19 +1,5 @@
 class_name TrapBase extends Node3D
 
-## Estructura de nodos esperada dentro de la escena de la trampa (hijos, opcionales
-## según el activation_mode que uses):
-##   - DetectionArea (Area3D + CollisionShape3D)  -> requerido para AREA_TRIGGER y
-##                                                    PRESSURE_PLATE, y también se
-##                                                    usa en TIMED_PATTERN para saber
-##                                                    si el jugador está encima cuando
-##                                                    la trampa se activa.
-##   - PlateVisual (Node3D)                        -> opcional, solo si quieres que
-##                                                    una placa se hunda visualmente
-##                                                    en modo PRESSURE_PLATE.
-##
-## El jugador debe pertenecer al grupo "player" (body.add_to_group("player")) para
-## que la trampa lo detecte.
-
 signal trap_triggered(body: Node3D)
 signal trap_activated
 signal trap_deactivated
@@ -90,8 +76,7 @@ func _set_active(value: bool) -> void:
 	if value:
 		_on_activate()
 		trap_activated.emit()
-		# Si el jugador ya estaba parado sobre la trampa cuando se activa, la
-		# dispara igual (por ejemplo pinchos que suben debajo de sus pies).
+		# Si el jugador ya estaba parado sobre la trampa cuando se activa
 		for body in _bodies_inside:
 			_try_trigger(body)
 	else:
@@ -142,8 +127,7 @@ func _try_trigger(body: Node3D) -> void:
 
 
 # ---------------------------------------------------------------------------
-# Aplica los Effect configurados en TrapData (mismo patrón que
-# ConsumableComponent: daño, veneno, ralentizar, etc. se resuelven ahí).
+# Aplica los Effect configurados en TrapData
 # ---------------------------------------------------------------------------
 
 func apply_effects(body: Node3D) -> void:
@@ -174,8 +158,7 @@ func _release_plate() -> void:
 
 
 # ---------------------------------------------------------------------------
-# Métodos virtuales: cada trampa concreta (SpikeTrap, ArrowTrap, CageTrap...)
-# sobreescribe lo que necesite.
+# Métodos virtuales: cada trampa concreta
 # ---------------------------------------------------------------------------
 
 ## Se llama cada vez que la trampa "dispara" contra un cuerpo (según cooldown).

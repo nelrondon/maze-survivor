@@ -19,6 +19,18 @@ public partial class Maze : Node3D
 	[Export] public PackedScene DoorScene;
 	[Export] public PackedScene BackpackScene;
 
+	[ExportGroup("Trampas")]
+	[Export] public PackedScene SpikeTrapScene;
+	[Export] public PackedScene PoisonSpikeTrapScene;
+	[Export] public PackedScene ArrowTrapScene;
+	[Export] public PackedScene CageTrapScene;
+	[Export] public int SpikeClusterCount = 8;
+	[Export(PropertyHint.Range, "0,1,0.05")] public float SpikeClusterChance = 0.6f;
+	[Export] public int SpikeClusterSize = 3;
+	[Export] public int ArrowClusterCount = 8;
+	[Export] public int ArrowClusterSize = 3;
+	[Export] public int CageTrapCount = 8;
+
 	[ExportGroup("Texture Options")]
 	[Export] public Texture2D WallTexture;
 	[Export] public Texture2D FloorTexture;
