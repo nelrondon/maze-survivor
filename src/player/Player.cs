@@ -161,16 +161,23 @@ public partial class Player : CharacterBody3D {
 
 	public void DropKey() {
 		if (!HasKey) return;
-		HasKey = false;
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
+			if (IsMultiplayerAuthority()) {
+				Rpc(nameof(RpcDropKey), GlobalPosition);
+			}
+		} else {
+			RpcDropKey(GlobalPosition);
+		}
+	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcDropKey(Vector3 dropPos) {
+		HasKey = false;
 		if (KeyScene != null) {
 			var keyInstance = KeyScene.Instantiate<Node3D>();
+			keyInstance.Name = "SingleMazeKey";
 			GetParent().AddChild(keyInstance);
-			keyInstance.GlobalPosition = GlobalPosition;
-		}
-
-		if (Multiplayer.HasMultiplayerPeer() && IsMultiplayerAuthority()) {
-			Rpc(nameof(SyncKeyStatus), false);
+			keyInstance.GlobalPosition = dropPos;
 		}
 	}
 
@@ -178,6 +185,17 @@ public partial class Player : CharacterBody3D {
 	public bool IsDead => _isDead;
 
 	public void Die() {
+		if (_isDead) return;
+
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected && IsMultiplayerAuthority()) {
+			Rpc(nameof(RpcDie));
+		} else {
+			RpcDie();
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RpcDie() {
 		if (_isDead) return;
 		_isDead = true;
 

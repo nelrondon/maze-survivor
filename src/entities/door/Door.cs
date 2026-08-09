@@ -105,15 +105,28 @@ public partial class Door : Node3D
 			// Si es la PRIMERA vez que interactúa
 			else
 			{
-				_isTimerStarted = true;
-				_timer = 0.0f;
-				GD.Print("🔑 Llave aceptada. Cuenta atrás de 2 minutos iniciada. ¡Ya puedes esconderte!");
+				if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected)
+				{
+					Rpc(nameof(RpcStartTimer));
+				}
+				else
+				{
+					RpcStartTimer();
+				}
 			}
 		}
 		else
 		{
 			GD.Print("🔒 Se necesita la llave.");
 		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RpcStartTimer()
+	{
+		_isTimerStarted = true;
+		_timer = 0.0f;
+		GD.Print("🔑 Llave aceptada. Cuenta atrás de 2 minutos iniciada. ¡Ya puedes esconderte!");
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
