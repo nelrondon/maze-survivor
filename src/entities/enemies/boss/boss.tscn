@@ -1,0 +1,79 @@
+﻿[gd_scene format=3 uid="uid://dapgaq80f0cwh"]
+
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss.gd" id="1_d0l2c"]
+[ext_resource type="PackedScene" path="res://assets/boss/boss_model.tscn" id="2_2ayys"]
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss_senses.gd" id="2_y0qss"]
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss_movement.gd" id="3_2ayys"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d0l2c"]
+radius = 1.3168945
+height = 3.1701355
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3ydn5"]
+radius = 15.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_byssr"]
+radius = 5.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_d0l2c"]
+viewport_path = NodePath("Sprite3D/SubViewport")
+
+[node name="Boss" type="CharacterBody3D" unique_id=1356429750]
+collision_layer = 2
+collision_mask = 15
+script = ExtResource("1_d0l2c")
+
+[node name="BossModel" parent="." unique_id=198466513 instance=ExtResource("2_2ayys")]
+transform = Transform3D(-0.25, 0, -2.1855694e-08, 0, 0.25, 0, 2.1855694e-08, 0, -0.25, 0, -1.0348575, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1627986265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58506775, 0)
+shape = SubResource("CapsuleShape3D_d0l2c")
+debug_color = Color(0.29408327, 0.49775738, 1, 0.41960785)
+
+[node name="PatrolWaitTimer" type="Timer" parent="." unique_id=581638384]
+one_shot = true
+
+[node name="AttackCooldownTimer" type="Timer" parent="." unique_id=1846176395]
+wait_time = 1.5
+one_shot = true
+
+[node name="Senses" type="Node3D" parent="." unique_id=1370485946]
+script = ExtResource("2_y0qss")
+
+[node name="HearingZone" type="Area3D" parent="Senses" unique_id=389871355]
+collision_layer = 0
+collision_mask = 7
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/HearingZone" unique_id=25219235]
+shape = SubResource("SphereShape3D_3ydn5")
+
+[node name="SmellZone" type="Area3D" parent="Senses" unique_id=405274101]
+collision_layer = 0
+collision_mask = 7
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/SmellZone" unique_id=485859256]
+shape = SubResource("SphereShape3D_byssr")
+
+[node name="Movement" type="Node" parent="." unique_id=855043645]
+script = ExtResource("3_2ayys")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1010837501]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.519039, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_d0l2c")
+
+[node name="SubViewport" type="SubViewport" parent="Sprite3D" unique_id=1119862604]
+transparent_bg = true
+size = Vector2i(200, 20)
+
+[node name="ProgressBar" type="ProgressBar" parent="Sprite3D/SubViewport" unique_id=916558416]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+fill_mode = 1

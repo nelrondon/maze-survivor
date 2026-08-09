@@ -116,8 +116,14 @@ func _unmount() -> void:
 func _sync_viewmodel_data(slot: InventorySlot) -> void:
 	if _current_viewmodel == null:
 		return
+	if "current_slot" in _current_viewmodel:
+		_current_viewmodel.current_slot = slot
 	var comp: ComponentBase = ItemRegistry.get_component(slot.item_data.id)
 	if comp is WeaponComponent:
 		var weapon: WeaponComponent = comp as WeaponComponent
 		if "damage" in _current_viewmodel:
 			_current_viewmodel.damage = weapon.damage
+	if comp is ProjectileWeaponComponent:
+		var proj: ProjectileWeaponComponent = comp as ProjectileWeaponComponent
+		if "max_ammo" in _current_viewmodel:
+			_current_viewmodel.max_ammo = proj.max_ammo

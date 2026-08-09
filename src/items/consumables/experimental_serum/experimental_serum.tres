@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cp7d17mcbgsn8"]
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cp7d17mcbgsn8"]
 
-[ext_resource type="Script" uid="uid://betk0kby505dv" path="res://src/items/item_data.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://dh2a0kf73xg4t" path="res://src/items/consumables/experimental_serum/experimental_serum_icon.png" id="1_qwmb7"]
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/experimental_serum/experimental_serum_icon.png" id="1_qwmb7"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/experimental_serum/experimental_serum_viewmodel.tscn" id="2_viewmodel"]
 
 [resource]

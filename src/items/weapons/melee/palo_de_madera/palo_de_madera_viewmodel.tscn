@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://bfbtprn53y5cr"]
+﻿[gd_scene format=3 uid="uid://bfbtprn53y5cr"]
 
-[ext_resource type="Script" uid="uid://b3sbcx05ofuom" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_viewmodel.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://bqrdyfwwt8j77" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_model.glb" id="2_model"]
-[ext_resource type="AudioStream" uid="uid://ffyty1nc37ei" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="3_sound"]
+[ext_resource type="Script" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_viewmodel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_model.glb" id="2_model"]
+[ext_resource type="AudioStream" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="3_sound"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hitbox"]
 size = Vector3(1.0, 1.0, 1.5)

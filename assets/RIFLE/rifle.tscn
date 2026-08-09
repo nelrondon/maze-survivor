@@ -1,10 +1,10 @@
-[gd_scene format=3 uid="uid://dpgxrgm1d16jx"]
+﻿[gd_scene format=3 uid="uid://dpgxrgm1d16jx"]
 
-[ext_resource type="Script" uid="uid://cygjfcipjrnsn" path="res://src/items/weapons/ranged/firearm_viewmodel.gd" id="1_amdq0"]
-[ext_resource type="PackedScene" uid="uid://8jiu43rm4bdn" path="res://assets/RIFLE/sks.glb" id="1_j33d7"]
+[ext_resource type="Script" path="res://src/items/weapons/ranged/firearm_viewmodel.gd" id="1_amdq0"]
+[ext_resource type="PackedScene" path="res://assets/RIFLE/sks.glb" id="1_j33d7"]
 [ext_resource type="PackedScene" path="res://assets/bala/Bala.tscn" id="BalaScene"]
-[ext_resource type="AudioStream" uid="uid://e5kdsac6tyh1" path="res://assets/RIFLE/rife (mp3cut.net).mp3" id="5_0koic"]
-[ext_resource type="AudioStream" uid="uid://cpiq3n6vjb5h2" path="res://assets/RIFLE/rifle reloading.mp3" id="6_msqsb"]
+[ext_resource type="AudioStream" path="res://assets/RIFLE/rife (mp3cut.net).mp3" id="5_0koic"]
+[ext_resource type="AudioStream" path="res://assets/RIFLE/rifle reloading.mp3" id="6_msqsb"]
 
 [sub_resource type="Animation" id="Animation_0qv6g"]
 resource_name = "recoil"

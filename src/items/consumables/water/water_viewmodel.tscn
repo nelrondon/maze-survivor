@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://cne3aa5x2okw5"]
+﻿[gd_scene format=3 uid="uid://cne3aa5x2okw5"]
 
-[ext_resource type="Script" uid="uid://djoplyd6wggjg" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://cjfjw7r3f0hgj" path="res://src/items/consumables/water/water_model.glb" id="2_model"]
+[ext_resource type="Script" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/water/water_model.glb" id="2_model"]
 
 [sub_resource type="Animation" id="Animation_reset"]
 length = 0.001

@@ -1,10 +1,10 @@
-[gd_scene format=3 uid="uid://cymltp0awavw8"]
+﻿[gd_scene format=3 uid="uid://cymltp0awavw8"]
 
-[ext_resource type="Script" uid="uid://cygjfcipjrnsn" path="res://src/items/weapons/ranged/firearm_viewmodel.gd" id="1_fov6t"]
-[ext_resource type="PackedScene" uid="uid://d4no8hw6vq1ep" path="res://assets/armas/tokarev.glb" id="3_4ql4r"]
+[ext_resource type="Script" path="res://src/items/weapons/ranged/firearm_viewmodel.gd" id="1_fov6t"]
+[ext_resource type="PackedScene" path="res://assets/armas/tokarev.glb" id="3_4ql4r"]
 [ext_resource type="PackedScene" path="res://assets/bala/Bala.tscn" id="BalaScene"]
-[ext_resource type="AudioStream" uid="uid://clkvkf3004gby" path="res://assets/armas/recargar arma.mp3" id="4_4ql4r"]
-[ext_resource type="AudioStream" uid="uid://cx8acix6ry3ds" path="res://assets/armas/pistol mano.mp3" id="4_v1btw"]
+[ext_resource type="AudioStream" path="res://assets/armas/recargar arma.mp3" id="4_4ql4r"]
+[ext_resource type="AudioStream" path="res://assets/armas/pistol mano.mp3" id="4_v1btw"]
 
 [sub_resource type="Animation" id="Animation_ejk5a"]
 resource_name = "recoil"

@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://dlsjdl67f8ujx"]
+﻿[gd_scene format=3 uid="uid://dlsjdl67f8ujx"]
 
-[ext_resource type="Script" uid="uid://bdyt5vl1h55pm" path="res://src/inventory/PlayerInventory/PlayerInventoryUI.gd" id="1"]
+[ext_resource type="Script" path="res://src/inventory/PlayerInventory/PlayerInventoryUI.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/inventory/Slot/SlotUI.tscn" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="inv_panel_bg"]

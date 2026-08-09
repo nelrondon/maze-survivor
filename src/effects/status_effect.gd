@@ -1,4 +1,4 @@
-class_name StatusEffect extends Resource
+class_name StatusEffect extends Effect
 
 @export var id: String = ""
 @export var is_environment_based: bool = false
@@ -9,6 +9,13 @@ class_name StatusEffect extends Resource
 var current_duration: float = 0.0
 var time_since_last_tick: float = 0.0
 var is_paused: bool = false
+
+func apply(target) -> void:
+	if target == null:
+		return
+	var sm = target.get_node_or_null("StatusManager") if target.has_node("StatusManager") else null
+	if sm != null and sm.has_method("apply_status"):
+		sm.apply_status(self)
 
 ## Se ejecuta una sola vez al aplicar el estado. Útil para aplicar modificadores (ej. reducir velocidad).
 func on_start(_target: Node) -> void:

@@ -1,0 +1,25 @@
+[ext_resource type="Script" path="res://src/entities/traps/trap_types/cage_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/entities/traps/data/cage_trap_data.tres" id="2_data"]
+[ext_resource type="Material" path="res://src/entities/traps/materials/cage_material.tres" id="3_mat"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.5, 1, 1.5)
+
+[sub_resource type="BoxMesh" id="3_cage_mesh"]
+size = Vector3(1.3, 2.0, 1.3)
+
+[node name="CageTrap" type="Node3D"]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("1_detect_shape")
+
+[node name="Cage" type="Node3D" parent="."]
+position = Vector3(0, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Cage"]
+material_override = ExtResource("3_mat")
+mesh = SubResource("3_cage_mesh")

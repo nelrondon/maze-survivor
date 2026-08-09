@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://b3rdks6ja5gky"]
+
+[ext_resource type="Script" path="res://src/maze/Maze.cs" id="1_h41xc"]
+[ext_resource type="PackedScene" path="res://src/player/player.tscn" id="2_u11kd"]
+[ext_resource type="PackedScene" path="res://src/entities/enemies/boss/boss.tscn" id="3_pgab2"]
+[ext_resource type="PackedScene" path="res://src/entities/key/keys.tscn" id="4_mjrf4"]
+[ext_resource type="PackedScene" path="res://src/entities/world/backpack.tscn" id="5_mjrf4"]
+[ext_resource type="PackedScene" path="res://src/entities/door/Door.tscn" id="5_nw8dj"]
+[ext_resource type="PackedScene" path="res://src/entities/traps/scenes/spike_trap_example.tscn" id="6_dnyu5"]
+[ext_resource type="PackedScene" path="res://src/entities/traps/scenes/poison_spike_trap_example.tscn" id="7_ifb1s"]
+[ext_resource type="PackedScene" path="res://src/entities/traps/scenes/arrow_trap_example.tscn" id="8_cwyby"]
+[ext_resource type="PackedScene" path="res://src/entities/traps/scenes/cage_trap_example.tscn" id="9_a8wcq"]
+[ext_resource type="Texture2D" path="res://assets/textures/maze/paredes.jpg" id="6_mjrf4"]
+[ext_resource type="Texture2D" path="res://assets/textures/maze/piso.jpg" id="6_pgab2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_maze"]
+sky_top_color = Color(0.25, 0.3, 0.4, 1)
+sky_horizon_color = Color(0.4, 0.45, 0.5, 1)
+ground_bottom_color = Color(0.15, 0.15, 0.15, 1)
+ground_horizon_color = Color(0.4, 0.45, 0.5, 1)
+
+[sub_resource type="Sky" id="Sky_maze"]
+sky_material = SubResource("ProceduralSkyMaterial_maze")
+
+[sub_resource type="Environment" id="Environment_maze"]
+background_mode = 2
+sky = SubResource("Sky_maze")
+ambient_light_source = 3
+ambient_light_color = Color(0.45, 0.45, 0.5, 1)
+ambient_light_energy = 0.65
+
+[node name="Node3D" type="Node3D" unique_id=882580129]
+script = ExtResource("1_h41xc")
+PlayerScene = ExtResource("2_u11kd")
+BossScene = ExtResource("3_pgab2")
+KeyScene = ExtResource("4_mjrf4")
+DoorScene = ExtResource("5_nw8dj")
+BackpackScene = ExtResource("5_mjrf4")
+SpikeTrapScene = ExtResource("6_dnyu5")
+PoisonSpikeTrapScene = ExtResource("7_ifb1s")
+ArrowTrapScene = ExtResource("8_cwyby")
+CageTrapScene = ExtResource("9_a8wcq")
+WallTexture = ExtResource("6_mjrf4")
+FloorTexture = ExtResource("6_pgab2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=671684005]
+environment = SubResource("Environment_maze")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=348789510]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 15, 0)
+light_energy = 0.75
+shadow_enabled = true

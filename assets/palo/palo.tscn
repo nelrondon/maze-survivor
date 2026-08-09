@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://dxd886hu4yepx"]
+﻿[gd_scene format=3 uid="uid://dxd886hu4yepx"]
 
-[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="1_gvfwa"]
-[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://assets/palo/madera qque se rompe.mp3" id="2_8iiw5"]
+[ext_resource type="PackedScene" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="1_gvfwa"]
+[ext_resource type="AudioStream" path="res://assets/palo/madera qque se rompe.mp3" id="2_8iiw5"]
 
 [sub_resource type="GDScript" id="GDScript_rvd8w"]
 script/source = "extends Node3D

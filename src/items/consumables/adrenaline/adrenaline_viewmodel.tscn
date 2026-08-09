@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bywoieokjh2er"]
+﻿[gd_scene format=3 uid="uid://bywoieokjh2er"]
 
-[ext_resource type="Script" uid="uid://djoplyd6wggjg" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://d2kibi8pma3kx" path="res://src/items/consumables/adrenaline/adrenaline_model.glb" id="2_model"]
+[ext_resource type="Script" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/adrenaline/adrenaline_model.glb" id="2_model"]
 
 [sub_resource type="Animation" id="Animation_reset"]
 length = 0.001

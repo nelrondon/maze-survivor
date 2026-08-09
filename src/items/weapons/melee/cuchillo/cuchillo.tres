@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dyk2v8b6n9h2l"]
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dyk2v8b6n9h2l"]
 
-[ext_resource type="Script" uid="uid://betk0kby505dv" path="res://src/items/item_data.gd" id="1_data"]
-[ext_resource type="Texture2D" uid="uid://dy00000000000" path="res://assets/cuchillo/cuchillo.final.png" id="2_icon"]
-[ext_resource type="AudioStream" uid="uid://c7kuxgamwiqp5" path="res://assets/cuchillo/Sonido_cuchillo.mp3" id="3_sound"]
-[ext_resource type="PackedScene" uid="uid://y4fuoiixvx5" path="res://assets/cuchillo/cuchillo.tscn" id="4_viewmodel"]
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/cuchillo/cuchillo.final.png" id="2_icon"]
+[ext_resource type="AudioStream" path="res://assets/cuchillo/Sonido_cuchillo.mp3" id="3_sound"]
+[ext_resource type="PackedScene" path="res://assets/cuchillo/cuchillo.tscn" id="4_viewmodel"]
 
 [resource]
 script = ExtResource("1_data")

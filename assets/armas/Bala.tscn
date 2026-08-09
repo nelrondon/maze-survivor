@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://cgla6vx83qy2t"]
+﻿[gd_scene format=3 uid="uid://cgla6vx83qy2t"]
 
-[ext_resource type="Script" uid="uid://br7slrcj6cy2p" path="res://Bala_3d.cs" id="1_jql1f"]
-[ext_resource type="PackedScene" uid="uid://cbs3ay7guttfe" path="res://bullet1.glb" id="1_pu3jq"]
+[ext_resource type="Script" path="res://Bala_3d.cs" id="1_jql1f"]
+[ext_resource type="PackedScene" path="res://bullet1.glb" id="1_pu3jq"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ti8w2"]
 height = 0.008739833

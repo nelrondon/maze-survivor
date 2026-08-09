@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwt4vry4bn84k"]
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwt4vry4bn84k"]
 
-[ext_resource type="Script" uid="uid://betk0kby505dv" path="res://src/items/item_data.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://clli2kmgfjtep" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_icon.png" id="1_46vix"]
-[ext_resource type="AudioStream" uid="uid://ffyty1nc37ei" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="2_sound"]
-[ext_resource type="PackedScene" uid="uid://bfbtprn53y5cr" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_viewmodel.tscn" id="3_viewmodel"]
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_icon.png" id="1_46vix"]
+[ext_resource type="AudioStream" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="2_sound"]
+[ext_resource type="PackedScene" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_viewmodel.tscn" id="3_viewmodel"]
 
 [resource]
 script = ExtResource("1")

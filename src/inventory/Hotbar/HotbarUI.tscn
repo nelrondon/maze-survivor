@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://bi7nfgmmfbsx0"]
+﻿[gd_scene format=3 uid="uid://bi7nfgmmfbsx0"]
 
-[ext_resource type="Script" uid="uid://bii5j8voo0m45" path="res://src/inventory/Hotbar/HotbarUI.gd" id="1"]
+[ext_resource type="Script" path="res://src/inventory/Hotbar/HotbarUI.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/inventory/Slot/SlotUI.tscn" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="panel_bg"]

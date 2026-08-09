@@ -1,0 +1,106 @@
+[gd_resource type="Resource" script_class="LootTable" format=3 uid="uid://bmy0fkel1sed0"]
+
+[ext_resource type="Script" path="res://src/entities/world/loot_table.gd" id="1"]
+[ext_resource type="Script" path="res://src/entities/world/loot_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="entry_bandages"]
+script = ExtResource("2")
+item_id = "bandages"
+probability = 0.7
+max_amount = 3
+
+[sub_resource type="Resource" id="entry_medkit_small"]
+script = ExtResource("2")
+item_id = "medkit_small"
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_medkit_large"]
+script = ExtResource("2")
+item_id = "medkit_large"
+probability = 0.2
+
+[sub_resource type="Resource" id="entry_water"]
+script = ExtResource("2")
+item_id = "water"
+probability = 0.7
+max_amount = 3
+
+[sub_resource type="Resource" id="entry_energy_bar"]
+script = ExtResource("2")
+item_id = "energy_bar"
+probability = 0.6
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_energy_drink"]
+script = ExtResource("2")
+item_id = "energy_drink"
+probability = 0.4
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_coffee"]
+script = ExtResource("2")
+item_id = "coffee"
+probability = 0.4
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_food_ration"]
+script = ExtResource("2")
+item_id = "food_ration"
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_regen_pills"]
+script = ExtResource("2")
+item_id = "regen_pills"
+probability = 0.3
+max_amount = 2
+
+[sub_resource type="Resource" id="entry_adrenaline"]
+script = ExtResource("2")
+item_id = "adrenaline"
+probability = 0.2
+
+[sub_resource type="Resource" id="entry_steroids"]
+script = ExtResource("2")
+item_id = "steroids"
+probability = 0.1
+
+[sub_resource type="Resource" id="entry_experimental_serum"]
+script = ExtResource("2")
+item_id = "experimental_serum"
+probability = 0.1
+
+[sub_resource type="Resource" id="entry_canned_feast"]
+script = ExtResource("2")
+item_id = "canned_feast"
+probability = 0.3
+
+[sub_resource type="Resource" id="entry_palo"]
+script = ExtResource("2")
+item_id = "palo_de_madera"
+probability = 0.4
+
+[sub_resource type="Resource" id="entry_cuchillo"]
+script = ExtResource("2")
+item_id = "cuchillo"
+probability = 0.3
+
+[sub_resource type="Resource" id="entry_tokarev"]
+script = ExtResource("2")
+item_id = "tokarev_pistol"
+probability = 0.5
+
+[sub_resource type="Resource" id="entry_sks"]
+script = ExtResource("2")
+item_id = "sks_rifle"
+probability = 0.2
+
+[sub_resource type="Resource" id="entry_bala"]
+script = ExtResource("2")
+item_id = "bala"
+probability = 0.5
+min_amount = 2
+max_amount = 2
+
+[resource]
+script = ExtResource("1")
+entries = Array[ExtResource("2")]([SubResource("entry_bandages"), SubResource("entry_medkit_small"), SubResource("entry_medkit_large"), SubResource("entry_water"), SubResource("entry_energy_bar"), SubResource("entry_energy_drink"), SubResource("entry_coffee"), SubResource("entry_food_ration"), SubResource("entry_regen_pills"), SubResource("entry_adrenaline"), SubResource("entry_steroids"), SubResource("entry_experimental_serum"), SubResource("entry_canned_feast"), SubResource("entry_palo"), SubResource("entry_cuchillo"), SubResource("entry_tokarev"), SubResource("entry_sks"), SubResource("entry_bala")])

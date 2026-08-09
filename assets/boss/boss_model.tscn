@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://b8kkndjpk71r8"]
+﻿[gd_scene format=3 uid="uid://b8kkndjpk71r8"]
 
-[ext_resource type="PackedScene" uid="uid://cn60k5hfb070f" path="res://assets/boss/drugdor_the_golem_animated.glb" id="1_2n1v3"]
+[ext_resource type="PackedScene" path="res://assets/boss/drugdor_the_golem_animated.glb" id="1_2n1v3"]
 
 [node name="BossModel" unique_id=198466513 instance=ExtResource("1_2n1v3")]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
