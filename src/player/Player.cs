@@ -89,7 +89,7 @@ public partial class Player : CharacterBody3D {
 		// Configuración según la autoridad de red/control local
 		if (_IsLocallyControlled()) {
 			if (_gameCamera != null) _gameCamera.Current = true;
-			if (_characterVisual != null) _characterVisual.Visible = false;
+			if (_characterVisual != null) _characterVisual.Visible = true;
 			if (_hud != null) _hud.Visible = true;
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 
