@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://dpgxrgm1d16jx"]
+
+[ext_resource type="Script" path="res://src/items/weapons/ranged/firearm_viewmodel.gd" id="1_amdq0"]
+[ext_resource type="PackedScene" path="res://assets/RIFLE/sks.glb" id="1_j33d7"]
+[ext_resource type="PackedScene" path="res://assets/bala/Bala.tscn" id="BalaScene"]
+[ext_resource type="AudioStream" path="res://assets/RIFLE/rife (mp3cut.net).mp3" id="5_0koic"]
+[ext_resource type="AudioStream" path="res://assets/RIFLE/rifle reloading.mp3" id="6_msqsb"]
+
+[sub_resource type="Animation" id="Animation_0qv6g"]
+resource_name = "recoil"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AudioStreamPlayer3D:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.16666667),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.7)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.15707964, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fqvkh"]
+resource_name = "reload"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.2443461, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AudioStreamPlayer3D2:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.53333336),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5gv3x"]
+_data = {
+&"recoil2": SubResource("Animation_0qv6g"),
+&"reload2": SubResource("Animation_fqvkh")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_k0h2g"]
+size = Vector3(0.472394, 0.21664238, 0.12795329)
+
+[node name="rifle" type="Node3D" unique_id=901842793]
+script = ExtResource("1_amdq0")
+weapon_range = 100.0
+bala_scene = ExtResource("BalaScene")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=595845333]
+transform = Transform3D(0.05882353, 0, 0, 0, 0.036750127, -0.045930773, 0, 0.045930773, 0.036750127, -0.010235429, 0.015966443, -0.0073039527)
+stream = ExtResource("5_0koic")
+
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=552184821]
+libraries/ = SubResource("AnimationLibrary_5gv3x")
+
+[node name="tokarev" parent="." unique_id=2064131346 instance=ExtResource("1_j33d7")]
+transform = Transform3D(0.09963205, 0.0073647136, -0.004383577, -0.007033837, 0.09948661, 0.00727597, 0.004896927, -0.006940865, 0.099638574, -0.008769274, 0.038963135, -0.0038064122)
+
+[node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="." unique_id=1454799215]
+transform = Transform3D(0.05882353, 0, 0, 0, 0.05882353, 0, 0, 0, 0.05882353, 0, -0.00011724584, 0)
+stream = ExtResource("6_msqsb")
+
+
+[node name="Area3D" type="Area3D" parent="." unique_id=484786607]
+transform = Transform3D(0.074398816, 0.05584271, 0.99566394, -0.0041611237, 0.99843955, -0.055687454, -0.99722, 0, 0.07451509, 0.016013734, 0.08196859, 0.12688567)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=97739844]
+transform = Transform3D(0.9999994, -1.6197781e-08, 0, 2.6853288e-09, 0.9999991, -2.1240302e-07, 1.4901161e-08, 1.1359537e-07, 0.9999991, 0.07595858, -0.01001703, -0.028833358)
+shape = SubResource("BoxShape3D_k0h2g")
+
+[node name="Boca_canon" type="Marker3D" parent="." unique_id=1214574152]
+transform = Transform3D(0.9998492, -0.017362785, 0, 0.017362785, 0.9998492, 0, 0, 0, 1, 0.00012235256, 0.052002423, -0.18439381)

@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/entities/traps/trap_types/arrow_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/entities/traps/data/arrow_trap_data.tres" id="2_data"]
+[ext_resource type="PackedScene" path="res://src/entities/traps/scenes/arrow_projectile.tscn" id="3_arrow"]
+[ext_resource type="Material" path="res://src/entities/traps/materials/arrow_trap_material.tres" id="4_mat"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.6, 2.5, 6.0)
+
+[sub_resource type="BoxMesh" id="2_hole_mesh"]
+size = Vector3(0.3, 0.3, 0.3)
+
+[sub_resource type="BoxMesh" id="3_plate_mesh"]
+size = Vector3(1.3, 1.3, 0.3)
+
+[node name="ArrowTrap" type="Node3D"]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+arrow_scene = ExtResource("3_arrow")
+
+[node name="MountPlate" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+material_override = ExtResource("4_mat")
+mesh = SubResource("3_plate_mesh")
+
+[node name="DetectionArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -3.0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("1_detect_shape")
+
+[node name="SpawnPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.6)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpawnPoint"]
+material_override = ExtResource("4_mat")
+mesh = SubResource("2_hole_mesh")

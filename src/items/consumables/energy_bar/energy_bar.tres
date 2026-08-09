@@ -1,0 +1,14 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dsx77xl767nll"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/energy_bar/energy_bar_icon.png" id="1_w2jsg"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/energy_bar/energy_bar_viewmodel.tscn" id="2_viewmodel"]
+
+[resource]
+script = ExtResource("1")
+id = "energy_bar"
+display_name = "Barra energética"
+description = "Una barra compacta que quita el hambre y restaura stamina"
+stackable = true
+icon = ExtResource("1_w2jsg")
+view_model = ExtResource("2_viewmodel")

@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/items/item_entity.gd" id="1_entity"]
+[ext_resource type="Resource" path="res://src/items/consumables/bala/bala.tres" id="2_data"]
+[ext_resource type="PackedScene" path="res://assets/bala/Bala.tscn" id="3_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bala"]
+size = Vector3(0.3, 0.3, 0.3)
+
+[node name="BalaEntity" type="RigidBody3D" groups=["interactable"]]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_entity")
+data = ExtResource("2_data")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_bala")
+
+[node name="Model" parent="." instance=ExtResource("3_model")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

@@ -1,0 +1,15 @@
+﻿[gd_scene format=3 uid="uid://cwvfr4kcjtbhg"]
+
+[ext_resource type="Script" path="res://src/items/item_entity.gd" id="1_entity"]
+[ext_resource type="Resource" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera.tres" id="2_data"]
+[ext_resource type="Script" path="res://src/items/components/weapon/melee_weapon_component.gd" id="3_comp"]
+
+[node name="PaloDeMadera" type="Node3D" unique_id=1780010510 node_paths=PackedStringArray("component")]
+script = ExtResource("1_entity")
+data = ExtResource("2_data")
+component = NodePath("MeleeWeaponComponent")
+
+[node name="MeleeWeaponComponent" type="Node" parent="." unique_id=447004212]
+script = ExtResource("3_comp")
+damage = 15.0
+use_time = 0.5

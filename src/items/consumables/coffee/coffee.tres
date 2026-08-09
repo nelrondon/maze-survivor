@@ -1,0 +1,14 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cw8a1lobg0p72"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/coffee/coffee_icon.png" id="1_7vjxj"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/coffee/coffee_viewmodel.tscn" id="2_viewmodel"]
+
+[resource]
+script = ExtResource("1")
+id = "coffee"
+display_name = "Café"
+description = "Un café que aumenta temporalmente la velocidad"
+stackable = true
+icon = ExtResource("1_7vjxj")
+view_model = ExtResource("2_viewmodel")

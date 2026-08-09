@@ -1,0 +1,207 @@
+﻿[gd_scene format=3 uid="uid://c2wvkjrtkopx8"]
+
+[ext_resource type="Script" path="res://src/inventory/Backpack/BackpackUI.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/inventory/Slot/SlotUI.tscn" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="bp_panel_bg"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(0.04, 0.04, 0.06, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.14)
+
+[node name="BackpackUI" type="CanvasLayer" unique_id=755853339]
+layer = 10
+script = ExtResource("1")
+
+[node name="BackpackPanel" type="CenterContainer" parent="." unique_id=1818289668]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HBox" type="HBoxContainer" parent="BackpackPanel" unique_id=110210639]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BPPanel" type="PanelContainer" parent="BackpackPanel/HBox" unique_id=948847648]
+layout_mode = 2
+theme_override_styles/panel = SubResource("bp_panel_bg")
+
+[node name="BPVBox" type="VBoxContainer" parent="BackpackPanel/HBox/BPPanel" unique_id=1309404857]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BPTitle" type="Label" parent="BackpackPanel/HBox/BPPanel/BPVBox" unique_id=915411140]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Mochila"
+horizontal_alignment = 1
+
+[node name="BPGrid" type="GridContainer" parent="BackpackPanel/HBox/BPPanel/BPVBox" unique_id=2105757524]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 5
+
+[node name="B0" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=2032290516 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B1" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=978110193 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B2" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=35882326 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B3" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=1499756068 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B4" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=1737803181 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B5" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=936422964 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B6" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=909314313 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B7" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=1066972521 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B8" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=998361930 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="B9" parent="BackpackPanel/HBox/BPPanel/BPVBox/BPGrid" unique_id=1444547089 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="InvPanel" type="PanelContainer" parent="BackpackPanel/HBox" unique_id=281824659]
+layout_mode = 2
+theme_override_styles/panel = SubResource("bp_panel_bg")
+
+[node name="InvVBox" type="VBoxContainer" parent="BackpackPanel/HBox/InvPanel" unique_id=2021575236]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InvTitle" type="Label" parent="BackpackPanel/HBox/InvPanel/InvVBox" unique_id=1288750159]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Inventario"
+horizontal_alignment = 1
+
+[node name="InvGrid" type="GridContainer" parent="BackpackPanel/HBox/InvPanel/InvVBox" unique_id=1998393888]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 5
+
+[node name="IS5" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=563549891 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS6" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=395158186 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS7" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=937865053 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS8" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1467103051 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS9" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1563447231 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS10" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1602863063 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS11" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1029902913 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS12" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1442835792 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS13" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1129374436 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS14" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=321090271 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS15" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=357796060 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS16" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=389796100 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS17" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=437037647 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS18" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=525244589 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IS19" parent="BackpackPanel/HBox/InvPanel/InvVBox/InvGrid" unique_id=1378923806 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Sep" type="HSeparator" parent="BackpackPanel/HBox/InvPanel/InvVBox" unique_id=994905142]
+layout_mode = 2
+
+[node name="HBLabel" type="Label" parent="BackpackPanel/HBox/InvPanel/InvVBox" unique_id=513177653]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.5)
+theme_override_font_sizes/font_size = 12
+text = "Hotbar"
+horizontal_alignment = 1
+
+[node name="HBGrid" type="GridContainer" parent="BackpackPanel/HBox/InvPanel/InvVBox" unique_id=747106138]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 5
+
+[node name="IH0" parent="BackpackPanel/HBox/InvPanel/InvVBox/HBGrid" unique_id=432599713 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IH1" parent="BackpackPanel/HBox/InvPanel/InvVBox/HBGrid" unique_id=880160742 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IH2" parent="BackpackPanel/HBox/InvPanel/InvVBox/HBGrid" unique_id=1242474952 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IH3" parent="BackpackPanel/HBox/InvPanel/InvVBox/HBGrid" unique_id=799223368 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="IH4" parent="BackpackPanel/HBox/InvPanel/InvVBox/HBGrid" unique_id=388273675 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2

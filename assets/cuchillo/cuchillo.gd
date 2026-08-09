@@ -1,83 +1,78 @@
-extends Node3D
+extends ViewModelBase
+## Viewmodel del cuchillo de combate.
 
-#definimos el daño que hará el arma
-#Esta variable aparece en el inspector de Godot y está como 7.6 su valor
-@export var damage = 1.0
+var enemies_in_range: Array[Node3D] = []
+var can_use: bool = true
+var damage: float = 0.0
 
-#Referencia directa al nodo hijo anim (AnimationPlayer)
-@onready var anim = $anim
-#Referencia del nodo que reproduce el sonido del golpe del arma
-@onready var Sonido_cuchillo = $Sonido_cuchillo
-#Referencia al nuevo nodo Area3D para recoger el arma del suelo
-@onready var pickup_area = $PickupArea
+@onready var _anim: AnimationPlayer = $anim
+@onready var _sound: AudioStreamPlayer = $Sonido_cuchillo
 
-# Almacena quién es el dueño actual del arma para evitar auto-daño en PvP
-var portador: Node3D = null
+var _portador: Node3D = null
 
-#Para determinar si el jugador ataca o no
-var can_attack = false
-
-#Para almacenar una lista de enemigos que entran en el
-#area de alcance del arma
-var enemies_in_range = []
-
-# Esta función de inicio conecta la señal del área de recogida automáticamente al empezar
 func _ready() -> void:
-	if pickup_area:
-		pickup_area.body_entered.connect(_on_pickup_area_body_entered)
+	_actualizar_portador()
 
-#Esta funcion se encarga de revisar constantemente si se quiere atacar
-func _process(_delta: float) -> void:
-	#Detecta si se presiona el boton de atacar o shoot (click izquierdo)
-	if Input.is_action_pressed("shoot") and can_attack and not anim.is_playing():
-		anim.play("Golpear")
-		Sonido_cuchillo.play()
-		can_attack = false
-		if not enemies_in_range.is_empty():
-			for e in enemies_in_range:
-				e.hit(damage)
+func _actualizar_portador() -> void:
+	var p = get_parent()
+	while p != null:
+		if p.is_in_group("player") or p.is_in_group("Players"):
+			_portador = p
+			break
+		p = p.get_parent()
 
-#Estas son funciones para detectar la colision entre el arma y los personajes
+func _find_damageable_target(node: Node) -> Node:
+	var curr: Node = node
+	while curr != null:
+		if curr.has_method("hit"):
+			return curr
+		if curr.is_in_group("player") or curr.is_in_group("Players"):
+			return curr
+		curr = curr.get_parent()
+	return null
+
+func use() -> void:
+	if not can_use or _anim.is_playing():
+		return
+	if not is_instance_valid(_portador):
+		_actualizar_portador()
+	_anim.play("Golpear")
+	_sound.play()
+	can_use = false
+	get_tree().create_timer(0.25).timeout.connect(_deal_damage)
+
+func _deal_damage() -> void:
+	for enemy: Node3D in enemies_in_range.duplicate():
+		if is_instance_valid(enemy) and enemy.has_method("hit"):
+			print("[Cuchillo] Asestando golpe melee a ", enemy.name, " (Daño: ", damage, ")")
+			enemy.call("hit", damage, _portador)
+
+func equip() -> void:
+	visible = true
+	if _anim:
+		_anim.play("Equipar")
+
+func unequip() -> void:
+	if _anim:
+		_anim.play("Desequipar")
+	can_use = false
+
 func _on_hitbox_body_entered(body: Node3D) -> void:
-	#Reemplazar "player" por el nombre del nodo real de los personajes, le puse ese nombre de forma provisional
-	#Detecta a cualquier jugador, PERO ignora al que sostiene el arma (portador)
-	if body.is_in_group("player") and body != portador and not enemies_in_range.has(body):
-		enemies_in_range.append(body)
+	if not is_instance_valid(_portador):
+		_actualizar_portador()
+	var target = _find_damageable_target(body)
+	if target != null and target != _portador and not target.is_ancestor_of(self):
+		if not enemies_in_range.has(target):
+			enemies_in_range.append(target)
 
 func _on_hitbox_body_exited(body: Node3D) -> void:
-	if enemies_in_range.has(body):
-		enemies_in_range.erase(body)
+	var target = _find_damageable_target(body)
+	if target != null:
+		enemies_in_range.erase(target)
 
-# Esta función maneja la lógica cuando el jugador pasa por encima del arma para recogerla
-func _on_pickup_area_body_entered(body: Node3D) -> void:
-	# Comprobamos si es el jugador quien entra al área de recogida
-	if body.is_in_group("player"):
-		# Busca el nodo de la mano del jugador usando la ruta exacta de la cámara
-		var mano_jugador = body.get_node_or_null("Head/Camera3D/Hand")
-		
-		if mano_jugador:
-			# Guardamos en la memoria del arma quién es su dueño para el sistema PvP
-			portador = body
-			
-			# Desengancha el arma de su posición en el suelo y la vuelve hija de la mano del jugador
-			reparent(mano_jugador)
-			
-			# Resetea la posición y rotación relativas para que encaje perfectamente en la mano
-			position = Vector3.ZERO
-			rotation = Vector3.ZERO
-			
-			# Borra el área de recogida de la memoria ya que el arma ya ha sido equipada
-			pickup_area.queue_free()
-			
-			# Habilita el estado para que el jugador ya pueda empezar a atacar con ella
-			can_attack = true
-
-#Esta es la funcion de control de estado, sirve para que el jugador pueda volver a atacar
 func _on_anim_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Golpear":
-		can_attack = true
-	elif anim_name == "Equipar":
-		can_attack = true
-	elif anim_name == "Desequipar":
+	if anim_name == &"Golpear" or anim_name == &"Equipar":
+		can_use = true
+	elif anim_name == &"Desequipar":
 		visible = false
-		can_attack = false
+

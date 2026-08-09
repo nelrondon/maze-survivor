@@ -1,0 +1,14 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djingw11pqsbq"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/water/water_icon.png" id="1_skbem"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/water/water_viewmodel.tscn" id="2_viewmodel"]
+
+[resource]
+script = ExtResource("1")
+id = "water"
+display_name = "Agua"
+description = "Una botella de agua que recupera stamina"
+stackable = true
+icon = ExtResource("1_skbem")
+view_model = ExtResource("2_viewmodel")

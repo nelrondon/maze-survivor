@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://ta25gl41cvnm"]
+﻿[gd_scene format=3 uid="uid://ta25gl41cvnm"]
 
-[ext_resource type="PackedScene" uid="uid://drlin57nv6ukr" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="1_ry6ir"]
-[ext_resource type="AudioStream" uid="uid://dcgs5xnux7vb2" path="res://assets/palo/madera qque se rompe.mp3" id="2_0cfme"]
+[ext_resource type="PackedScene" path="res://assets/palo/wood_stick_1_lowpoly.glb" id="1_ry6ir"]
+[ext_resource type="AudioStream" path="res://assets/palo/madera qque se rompe.mp3" id="2_0cfme"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0cfme"]
 height = 6.2340117

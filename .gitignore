@@ -1,3 +1,6 @@
+/Scenes/
+/docs/
+
 /android/
 
 .import/
@@ -9,3 +12,9 @@ export.cfg
 .DS_Store
 Thumbs.db
 .vscode
+.agents/
+
+.claude/
+addons/
+.agent/
+use_mcp.local

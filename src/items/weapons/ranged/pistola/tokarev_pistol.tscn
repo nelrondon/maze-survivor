@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/items/item_entity.gd" id="1_entity"]
+[ext_resource type="Resource" path="res://src/items/weapons/ranged/pistola/pistola.tres" id="2_data"]
+[ext_resource type="Script" path="res://src/items/components/weapon/projectile_weapon_component.gd" id="3_comp"]
+[ext_resource type="PackedScene" path="res://assets/armas/tokarev.glb" id="4_model"]
+[ext_resource type="PackedScene" path="res://assets/bala/Bala.tscn" id="5_proj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.1, 0.2, 0.3)
+
+[node name="PistolaEntity" type="RigidBody3D" groups=["interactable"]]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_entity")
+data = ExtResource("2_data")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_1")
+
+[node name="tokarev" parent="." instance=ExtResource("4_model")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="ProjectileWeaponComponent" type="Node" parent="."]
+script = ExtResource("3_comp")
+damage = 15.0
+max_ammo = 7
+projectile_scene = ExtResource("5_proj")

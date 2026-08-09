@@ -132,4 +132,3 @@ func _toggle_test_asphyxia():
 	else:
 		player.remove_status("asfixia")
 		_add_log("[STATUS] Saliendo de zona de Asfixia")
-
