@@ -8,6 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://cbtnpuk5sprdd" path="res://src/Door/Door.tscn" id="5_nw8dj"]
 [ext_resource type="Texture2D" uid="uid://dap15xautvmgo" path="res://Maze/paredes.jpg" id="6_mjrf4"]
 [ext_resource type="Texture2D" uid="uid://bddghnnsnshbf" path="res://Maze/piso.jpg" id="6_pgab2"]
+[ext_resource type="PackedScene" uid="uid://c44v1mbbtjkcd" path="res://src/traps/scenes/arrow_trap_example.tscn" id="7_arrow"]
+[ext_resource type="PackedScene" uid="uid://bdka3occongbk" path="res://src/traps/scenes/cage_trap_example.tscn" id="7_cage"]
+[ext_resource type="PackedScene" uid="uid://llhhgexma6jp" path="res://src/traps/scenes/poison_spike_trap_example.tscn" id="7_poison"]
+[ext_resource type="PackedScene" uid="uid://fe20yhhny4w" path="res://src/traps/scenes/spike_trap.tscn" id="7_spike"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_maze"]
 sky_top_color = Color(0.25, 0.3, 0.4, 1)
@@ -32,6 +36,10 @@ BossScene = ExtResource("3_pgab2")
 KeyScene = ExtResource("4_mjrf4")
 DoorScene = ExtResource("5_nw8dj")
 BackpackScene = ExtResource("5_mjrf4")
+SpikeTrapScene = ExtResource("7_spike")
+PoisonSpikeTrapScene = ExtResource("7_poison")
+ArrowTrapScene = ExtResource("7_arrow")
+CageTrapScene = ExtResource("7_cage")
 WallTexture = ExtResource("6_mjrf4")
 FloorTexture = ExtResource("6_pgab2")
 
