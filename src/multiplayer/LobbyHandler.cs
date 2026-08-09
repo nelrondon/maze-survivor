@@ -323,17 +323,19 @@ public partial class LobbyHandler : Control
 
 	public void _on_start_game_button_down()
 	{
-		// Launch the game in all clients involved.
-		Rpc("startGame");
+		// Launch the game in all clients involved with a synchronized maze seed.
+		int mazeSeed = (int)GD.Randi();
+		Rpc(nameof(startGame), mazeSeed);
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	public void startGame()
+	public void startGame(int mazeSeed = 0)
 	{	
-		// "res://src/maze/maze.tscn"
-		var scene = ResourceLoader.Load<PackedScene>("res://src/maze/maze.tscn").Instantiate();
-		scene.Name = "ActiveGameScene";
-		GetTree().Root.AddChild(scene);
+		if (mazeSeed == 0) mazeSeed = (int)GD.Randi();
+		var mazeNode = ResourceLoader.Load<PackedScene>("res://src/maze/maze.tscn").Instantiate<Maze>();
+		mazeNode.MazeSeed = mazeSeed;
+		mazeNode.Name = "ActiveGameScene";
+		GetTree().Root.AddChild(mazeNode);
 		this.Hide();
 	}
 

@@ -1,9 +1,9 @@
-﻿[gd_scene format=3 uid="uid://b8kkndjpk71r8"]
+[gd_scene format=3 uid="uid://b8kkndjpk71r8"]
 
 [ext_resource type="PackedScene" path="res://assets/boss/drugdor_the_golem_animated.glb" id="1_2n1v3"]
 
 [node name="BossModel" unique_id=198466513 instance=ExtResource("1_2n1v3")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Skeleton3D" parent="Sketchfab_model/root/GLTF_SceneRootNode/Armature_15/GLTF_created_0" parent_id_path=PackedInt32Array(572672506) index="0" unique_id=956646019]
 bones/1/position = Vector3(-1.1051058, 0, 3.330669e-16)

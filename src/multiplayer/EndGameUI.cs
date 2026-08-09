@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 
 public partial class EndGameUI : CanvasLayer
@@ -87,14 +87,41 @@ public partial class EndGameUI : CanvasLayer
 		spacer.CustomMinimumSize = new Vector2(0, 10);
 		vbox.AddChild(spacer);
 
+		// Button container
+		var buttonHBox = new HBoxContainer();
+		buttonHBox.AddThemeConstantOverride("separation", 20);
+		buttonHBox.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		vbox.AddChild(buttonHBox);
+
+		if (!isVictory) {
+			var spectateButton = new Button();
+			spectateButton.Text = "Espectar Partida";
+			spectateButton.CustomMinimumSize = new Vector2(200, 50);
+			spectateButton.AddThemeFontSizeOverride("font_size", 20);
+			spectateButton.Pressed += OnSpectateButtonPressed;
+			buttonHBox.AddChild(spectateButton);
+		}
+
 		// Button to return to lobby
 		_lobbyButton = new Button();
 		_lobbyButton.Text = "Volver al Lobby";
-		_lobbyButton.CustomMinimumSize = new Vector2(220, 50);
-		_lobbyButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		_lobbyButton.CustomMinimumSize = new Vector2(200, 50);
 		_lobbyButton.AddThemeFontSizeOverride("font_size", 20);
 		_lobbyButton.Pressed += OnLobbyButtonPressed;
-		vbox.AddChild(_lobbyButton);
+		buttonHBox.AddChild(_lobbyButton);
+	}
+
+	private void OnSpectateButtonPressed()
+	{
+		Input.MouseMode = Input.MouseModeEnum.Visible;
+
+		var mazeSpawner = GetTree().Root.FindChild("MazeSpawner", recursive: true, owned: false) as MazeSpawner;
+		if (mazeSpawner != null && IsInstanceValid(mazeSpawner))
+		{
+			mazeSpawner.SetupSpectatorModeForCurrentClient();
+		}
+
+		QueueFree();
 	}
 
 	private void OnLobbyButtonPressed()

@@ -36,6 +36,13 @@ public partial class Player : CharacterBody3D {
 	private float _airTime = 0.0f;
 	private bool _isHoldingWeapon = false;
 
+	// Sincronización multijugador remota
+	private Vector3 _syncedPosition = Vector3.Zero;
+	private float _syncedRotationY = 0.0f;
+	private Vector2 _syncedDir = Vector2.Zero;
+	private bool _syncedIsOnFloor = true;
+	private bool _hasReceivedFirstTransformSync = false;
+
 	// Nodos UI y Estado
 	private Node _statusManager;
 	private Map _mapUI;
@@ -168,6 +175,7 @@ public partial class Player : CharacterBody3D {
 	}
 
 	private bool _isDead = false;
+	public bool IsDead => _isDead;
 
 	public void Die() {
 		if (_isDead) return;
@@ -176,8 +184,11 @@ public partial class Player : CharacterBody3D {
 		DropKey();
 		SetInputLocked(true);
 
+		if (_characterVisual != null) _characterVisual.Visible = false;
+		if (_hud != null) _hud.Visible = false;
+
 		if (_IsLocallyControlled()) {
-			EndGameUI.ShowResult(this, false, "¡HAS MUERTO!", "Has sido eliminado en el laberinto.");
+			EndGameUI.ShowResult(this, false, "¡HAS MUERTO!", "Has sido eliminado en el laberinto. Puedes espectar a los sobrevivientes o volver al lobby.");
 		}
 	}
 
@@ -205,6 +216,62 @@ public partial class Player : CharacterBody3D {
 	#endregion
 
 	#region Sistema de Armas y Combate (Sincronizado)
+
+	private string _equippedItemId = "";
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void SyncEquippedWeapon(string itemId) {
+		_equippedItemId = itemId ?? "";
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
+			Rpc(nameof(RpcSyncEquippedWeapon), _equippedItemId);
+		} else {
+			RpcSyncEquippedWeapon(_equippedItemId);
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcSyncEquippedWeapon(string itemId) {
+		_equippedItemId = itemId ?? "";
+		if (_rightHand == null) _rightHand = GetNodeOrNull<BoneAttachment3D>("CharacterVisual/rig/Skeleton3D/RightHand");
+		if (_rightHand == null) return;
+
+		Node3D mountPoint = _rightHand.GetNodeOrNull<Node3D>("HandOffset") ?? _rightHand;
+
+		foreach (Node child in mountPoint.GetChildren()) {
+			child.QueueFree();
+		}
+
+		if (string.IsNullOrEmpty(itemId)) {
+			_isHoldingWeapon = false;
+			if (_animTree != null) {
+				_animTree.Set("parameters/TransitionStrafeHolding/transition_request", "Unarmed");
+			}
+			return;
+		}
+
+		var registry = GetNodeOrNull("/root/ItemRegistry");
+		if (registry != null) {
+			var data = registry.Call("get_data", itemId);
+			if (data.AsGodotObject() != null) {
+				var vmObj = data.AsGodotObject().Get("view_model");
+				if (vmObj.VariantType != Variant.Type.Nil && vmObj.AsGodotObject() is PackedScene scene) {
+					var weapon3D = scene.Instantiate<Node3D>();
+					mountPoint.AddChild(weapon3D);
+
+					weapon3D.Position = Vector3.Zero;
+					weapon3D.RotationDegrees = _rightHandGripRotation;
+					weapon3D.Scale = Vector3.One * 0.01f;
+
+					_isHoldingWeapon = true;
+					if (_animTree != null) {
+						_animTree.Set("parameters/TransitionStrafeHolding/transition_request", "Armed");
+					}
+					UpdateWeaponIK(weapon3D);
+					GD.Print($"[Player {Name}] Arma 3D '{itemId}' montada en la mano del modelo en tercera persona.");
+				}
+			}
+		}
+	}
 
 	public void RequestEquipWeapon(Node3D weaponNode) {
 		if (weaponNode == null) return;
@@ -334,69 +401,104 @@ public partial class Player : CharacterBody3D {
 	}
 
 	public override void _PhysicsProcess(double delta) {
-		if (!_IsLocallyControlled()) return;
+		if (_IsLocallyControlled()) {
+			ProcessStaminaRegen(delta);
+			ProcessHunger(delta);
+			ProcessStarvation(delta);
 
-		ProcessStaminaRegen(delta);
-		ProcessHunger(delta);
-		ProcessStarvation(delta);
+			Vector3 direction = Vector3.Zero;
+			Vector2 localInput = Vector2.Zero;
 
-		Vector3 direction = Vector3.Zero;
-		Vector2 localInput = Vector2.Zero;
-
-		if (!_isLocked) {
-			if (Input.IsActionPressed("up")) { direction -= Transform.Basis.Z; localInput.Y += 1f; }
-			if (Input.IsActionPressed("down")) { direction += Transform.Basis.Z; localInput.Y -= 1f; }
-			if (Input.IsActionPressed("left")) { direction -= Transform.Basis.X; localInput.X -= 1f; }
-			if (Input.IsActionPressed("right")) { direction += Transform.Basis.X; localInput.X += 1f; }
-		}
-
-		bool isSprintingRequested = !_isLocked && (Input.IsKeyPressed(Key.Shift) || (InputMap.HasAction("sprint") && Input.IsActionPressed("sprint")));
-		float currentSpeed = _speed;
-
-		if (direction != Vector3.Zero) {
-			direction = direction.Normalized();
-
-			if (isSprintingRequested && GetStat(1) > 0f) {
-				currentSpeed *= 1.3f; 
-				modify_stat(1, -15.0f * (float)delta); 
+			if (!_isLocked) {
+				if (Input.IsActionPressed("up")) { direction -= Transform.Basis.Z; localInput.Y += 1f; }
+				if (Input.IsActionPressed("down")) { direction += Transform.Basis.Z; localInput.Y -= 1f; }
+				if (Input.IsActionPressed("left")) { direction -= Transform.Basis.X; localInput.X -= 1f; }
+				if (Input.IsActionPressed("right")) { direction += Transform.Basis.X; localInput.X += 1f; }
 			}
 
-			_targetVelocity.X = direction.X * currentSpeed;
-			_targetVelocity.Z = direction.Z * currentSpeed;
-		} 
-		else {
-			_targetVelocity.X = Mathf.MoveToward(Velocity.X, 0, currentSpeed);
-			_targetVelocity.Z = Mathf.MoveToward(Velocity.Z, 0, currentSpeed);
-		}
+			bool isSprintingRequested = !_isLocked && (Input.IsKeyPressed(Key.Shift) || (InputMap.HasAction("sprint") && Input.IsActionPressed("sprint")));
+			float currentSpeed = _speed;
 
-		_newDir = localInput;
+			if (direction != Vector3.Zero) {
+				direction = direction.Normalized();
 
-		if (!IsOnFloor()) {
-			_airTime += (float)delta;
-			_targetVelocity.Y -= _gravity * (float)delta;
-		}
-		else {
-			_airTime = 0.0f;
-			if (Input.IsActionJustPressed("jump") && !_isLocked) {
-				if (GetStat(1) >= 8f) {
-					_targetVelocity.Y = _jumpStrength;
-					modify_stat(1, -8f);
+				if (isSprintingRequested && GetStat(1) > 0f) {
+					currentSpeed *= 1.3f; 
+					modify_stat(1, -15.0f * (float)delta); 
 				}
+
+				_targetVelocity.X = direction.X * currentSpeed;
+				_targetVelocity.Z = direction.Z * currentSpeed;
+			} 
+			else {
+				_targetVelocity.X = Mathf.MoveToward(Velocity.X, 0, currentSpeed);
+				_targetVelocity.Z = Mathf.MoveToward(Velocity.Z, 0, currentSpeed);
 			}
-		} 
 
-		Velocity = _targetVelocity;
-		MoveAndSlide();
+			_newDir = localInput;
 
+			if (!IsOnFloor()) {
+				_airTime += (float)delta;
+				_targetVelocity.Y -= _gravity * (float)delta;
+			}
+			else {
+				_airTime = 0.0f;
+				if (Input.IsActionJustPressed("jump") && !_isLocked) {
+					if (GetStat(1) >= 8f) {
+						_targetVelocity.Y = _jumpStrength;
+						modify_stat(1, -8f);
+					}
+				}
+			} 
+
+			Velocity = _targetVelocity;
+			MoveAndSlide();
+
+			UpdateAnimations(_newDir, IsOnFloor(), Velocity);
+
+			if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
+				Rpc(nameof(RpcSyncTransform), GlobalPosition, Rotation.Y, _newDir, IsOnFloor(), Velocity.Y);
+			}
+		}
+		else {
+			// Jugador remoto: interpolación suave de posición y rotación Y
+			if (_hasReceivedFirstTransformSync) {
+				GlobalPosition = GlobalPosition.Lerp(_syncedPosition, (float)delta * 18.0f);
+				Vector3 currentRot = Rotation;
+				currentRot.Y = Mathf.LerpAngle(currentRot.Y, _syncedRotationY, (float)delta * 18.0f);
+				Rotation = currentRot;
+			}
+			UpdateAnimations(_syncedDir, _syncedIsOnFloor, Velocity);
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
+	private void RpcSyncTransform(Vector3 pos, float rotY, Vector2 animDir, bool isOnFloor, float velY) {
+		_syncedPosition = pos;
+		_syncedRotationY = rotY;
+		_syncedDir = animDir;
+		_syncedIsOnFloor = isOnFloor;
+
+		if (!_hasReceivedFirstTransformSync) {
+			_hasReceivedFirstTransformSync = true;
+			GlobalPosition = pos;
+			Vector3 r = Rotation;
+			r.Y = rotY;
+			Rotation = r;
+		}
+		UpdateAnimations(animDir, isOnFloor, new Vector3(0, velY, 0));
+	}
+
+	private void UpdateAnimations(Vector2 dir, bool isOnFloor, Vector3 vel) {
 		if (_animTree != null) {
-			bool isJumping = !IsOnFloor() && Velocity.Y > 0 && _airTime < 0.45f;
-			bool isFalling = !IsOnFloor() && (Velocity.Y <= 0 || _airTime >= 0.45f);
+			bool isJumping = !isOnFloor && vel.Y > 0.5f;
+			bool isFalling = !isOnFloor && vel.Y < -0.5f;
 
-			_animTree.Set("parameters/Strafe/blend_position", _newDir);
-			_animTree.Set("parameters/StrafeHolding/blend_position", _newDir);
+			_animTree.Set("parameters/Strafe/blend_position", dir);
+			_animTree.Set("parameters/StrafeHolding/blend_position", dir);
 			_animTree.Set("parameters/TransitionStrafeHolding/transition_request", _isHoldingWeapon ? "Armed" : "Unarmed");
-			_animTree.Set("parameters/TransitionStrafeJumping/transition_request", IsOnFloor() ? "Strafe" : "Jump");
-			_animTree.Set("parameters/Jump/conditions/IsOnFloor", IsOnFloor());
+			_animTree.Set("parameters/TransitionStrafeJumping/transition_request", isOnFloor ? "Strafe" : "Jump");
+			_animTree.Set("parameters/Jump/conditions/IsOnFloor", isOnFloor);
 			_animTree.Set("parameters/Jump/conditions/IsJumping", isJumping);
 			_animTree.Set("parameters/Jump/conditions/IsFalling", isFalling);
 		}

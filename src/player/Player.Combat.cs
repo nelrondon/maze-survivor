@@ -1,7 +1,14 @@
 using Godot;
 
 public partial class Player {
-	public void hit(float damage, Node3D attacker = null) {
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void hit(float damage) {
+		hit(damage, null);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	public void hit(float damage, Node3D attacker) {
+		GD.Print($"[Player {Name}] Procesando impacto de arma (Daño: {damage}, Atacante: {attacker?.Name ?? "Desconocido"})");
 		int targetPeer = GetMultiplayerAuthority();
 		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
 			RpcId(targetPeer, nameof(RpcReceiveDamage), damage);
@@ -34,10 +41,8 @@ public partial class Player {
 	public void TakeDamage() {
 		if (!_IsLocallyControlled()) return;
 		
-		SetInputLocked(true);
-		
 		if (_hudFace != null && _hudFaceDamageTexture != null) _hudFace.Texture = _hudFaceDamageTexture;
 		
-		GD.Print("Player took damage. Controls locked.");
+		GD.Print($"[Player {Name}] ¡Recibió daño! Nueva salud: {get_stat(0)}");
 	}
 }

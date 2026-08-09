@@ -6,7 +6,7 @@ using System.Linq;
 public partial class MazeSpawner : Node
 {
 	private Maze _maze;
-	private readonly Random _random = new Random();
+	private Random _random = new Random();
 	private readonly HashSet<Vector2I> _occupiedPositions = new HashSet<Vector2I>();
 
 	private SpectatorUI _spectatorUI;
@@ -51,6 +51,7 @@ public partial class MazeSpawner : Node
 	{
 		if (_maze == null) return;
 
+		_random = new Random(_maze.MazeSeed + 100);
 		_occupiedPositions.Clear();
 
 		Vector2I bossSpawnPos = SpawnBoss();
@@ -66,12 +67,14 @@ public partial class MazeSpawner : Node
 	{
 		Vector2I spawnPos = new Vector2I(_maze.Width / 2, _maze.Height / 2);
 
-		if (_maze.BossScene != null)
+		if (_maze.BossScene != null && _maze.GetNodeOrNull("SingleMazeBoss") == null)
 		{
 			var boss = _maze.BossScene.Instantiate<Node3D>();
-			boss.Position = new Vector3(spawnPos.X * _maze.GridScale, 1.20f, spawnPos.Y * _maze.GridScale);
+			boss.Name = "SingleMazeBoss";
+			boss.Position = new Vector3(spawnPos.X * _maze.GridScale, 1.50f, spawnPos.Y * _maze.GridScale);
 			_maze.AddChild(boss);
 			_occupiedPositions.Add(spawnPos);
+			GD.Print($"[MazeSpawner] Boss generado exitosamente en el centro del laberinto: {boss.Position}");
 		}
 
 		return spawnPos;
@@ -142,10 +145,13 @@ public partial class MazeSpawner : Node
 	private void SpawnKey(Vector2I bossPosition)
 	{
 		if (_maze.KeyScene == null) return;
+		if (_maze.GetNodeOrNull("SingleMazeKey") != null) return;
 
 		var key = _maze.KeyScene.Instantiate<Node3D>();
+		key.Name = "SingleMazeKey";
 		key.Position = new Vector3(bossPosition.X * _maze.GridScale, 0.5f, bossPosition.Y * _maze.GridScale);
 		_maze.AddChild(key);
+		GD.Print($"[MazeSpawner] Llave única generada en posición: {key.Position}");
 	}
 
 	private void SpawnDoorOnWall()
@@ -269,18 +275,26 @@ public partial class MazeSpawner : Node
 		}
 	}
 
-	private void SetupSpectatorMode()
+	public void SetupSpectatorModeForCurrentClient()
 	{
-		var specUiScene = ResourceLoader.Load<PackedScene>("res://src/multiplayer/SpectatorUI.tscn");
-		if (specUiScene != null)
+		if (_spectatorUI == null || !IsInstanceValid(_spectatorUI))
 		{
-			_spectatorUI = specUiScene.Instantiate<SpectatorUI>();
-			_maze.AddChild(_spectatorUI);
-			_spectatorUI.Connect(SpectatorUI.SignalName.CycleTarget, Callable.From<int>(OnCycleSpectateTarget));
+			var specUiScene = ResourceLoader.Load<PackedScene>("res://src/multiplayer/SpectatorUI.tscn");
+			if (specUiScene != null)
+			{
+				_spectatorUI = specUiScene.Instantiate<SpectatorUI>();
+				_maze.AddChild(_spectatorUI);
+				_spectatorUI.Connect(SpectatorUI.SignalName.CycleTarget, Callable.From<int>(OnCycleSpectateTarget));
+			}
 		}
 
 		Input.MouseMode = Input.MouseModeEnum.Visible;
 		SetSpectatedTargetIndex(0);
+	}
+
+	private void SetupSpectatorMode()
+	{
+		SetupSpectatorModeForCurrentClient();
 	}
 
 	private void OnCycleSpectateTarget(int direction)
@@ -290,9 +304,15 @@ public partial class MazeSpawner : Node
 
 	public void SetSpectatedTargetIndex(int newIndex)
 	{
-		var activePlayers = GameManager.Players.Where(p => !p.IsSpectator).ToList();
+		var alivePlayers = GameManager.Players
+			.Where(p => !p.IsSpectator)
+			.Where(p => {
+				var pNode = _maze.GetNodeOrNull<Player>(p.Id.ToString());
+				return pNode != null && IsInstanceValid(pNode) && !pNode.IsDead;
+			})
+			.ToList();
 
-		if (activePlayers.Count == 0)
+		if (alivePlayers.Count == 0)
 		{
 			if (_currentlySpectatedPlayer != null && IsInstanceValid(_currentlySpectatedPlayer))
 			{
@@ -301,13 +321,13 @@ public partial class MazeSpawner : Node
 			}
 			if (_spectatorUI != null)
 			{
-				_spectatorUI.UpdateSpectateText("", 0);
+				_spectatorUI.UpdateSpectateText("No hay jugadores vivos disponibles", 0);
 			}
 			return;
 		}
 
-		_spectateIndex = (newIndex % activePlayers.Count + activePlayers.Count) % activePlayers.Count;
-		var targetInfo = activePlayers[_spectateIndex];
+		_spectateIndex = (newIndex % alivePlayers.Count + alivePlayers.Count) % alivePlayers.Count;
+		var targetInfo = alivePlayers[_spectateIndex];
 		var targetPlayerNode = _maze.GetNodeOrNull<Player>(targetInfo.Id.ToString());
 
 		if (_currentlySpectatedPlayer != null && IsInstanceValid(_currentlySpectatedPlayer) && _currentlySpectatedPlayer != targetPlayerNode)

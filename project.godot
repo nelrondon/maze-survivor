@@ -32,7 +32,7 @@ project/assembly_name="maze-survivor"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 

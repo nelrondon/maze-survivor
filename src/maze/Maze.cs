@@ -36,14 +36,19 @@ public partial class Maze : Node3D
 	[Export] public Texture2D WallTexture;
 	[Export] public Texture2D FloorTexture;
 
+	[ExportGroup("Multiplayer Seed")]
+	[Export] public int MazeSeed = 12345;
+
 	public byte[,] Map;
-	private Random _random = new Random();
+	private Random _random;
 	private NavigationRegion3D _navRegion;
 	public Node3D SpawnedPlayer { get; private set; }
 	private Map _mapUIInstance;
 
 	public override void _Ready()
 	{
+		_random = new Random(MazeSeed);
+
 		if (Width % 2 == 0) Width++;
 		if (Height % 2 == 0) Height++;
 

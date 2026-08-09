@@ -36,7 +36,9 @@ func _check_for_noise():
 			break
 
 func _on_smell_zone_entered(body):
-	if body.is_in_group("player") or body.is_in_group("Players") or body is CharacterBody3D:
+	if body == owner or body.is_in_group("boss") or body.is_in_group("enemies"):
+		return
+	if body.is_in_group("player") or body.is_in_group("Players"):
 		player_detected.emit(body, "¡ENEMIGO SINTIÓ TU PRESENCIA Y SE LANZA AL ATAQUE!")
 
 func _on_hearing_zone_entered(body):

@@ -96,6 +96,9 @@ func _mount(scene: PackedScene, slot: InventorySlot) -> void:
 	var player: Node = get_parent()
 	if player.has_method("SetIsHoldingWeapon"):
 		player.call("SetIsHoldingWeapon", true)
+	if slot != null and not slot.is_empty() and slot.item_data != null:
+		if player.has_method("SyncEquippedWeapon"):
+			player.call("SyncEquippedWeapon", slot.item_data.id)
 
 
 func _unmount() -> void:
@@ -111,6 +114,8 @@ func _unmount() -> void:
 	var player: Node = get_parent()
 	if player.has_method("SetIsHoldingWeapon"):
 		player.call("SetIsHoldingWeapon", false)
+	if player.has_method("SyncEquippedWeapon"):
+		player.call("SyncEquippedWeapon", "")
 
 
 func _sync_viewmodel_data(slot: InventorySlot) -> void:

@@ -88,7 +88,7 @@ func _physics_process(delta):
 				animation_player.play("Idle")
 
 func _on_player_detected(player: Node3D, reason: String):
-	if current_boss_state == BossState.DEAD:
+	if current_boss_state == BossState.DEAD or player == self or player.is_in_group("boss") or player.is_in_group("enemies"):
 		return
 	if player.has_method("get_stat") and player.get_stat(0) <= 0.0:
 		return
@@ -100,6 +100,8 @@ func _on_player_lost(player: Node3D):
 		_lose_the_trail()
 
 func _start_chase(target: Node3D, msg: String):
+	if target == self or target.is_in_group("boss") or target.is_in_group("enemies"):
+		return
 	movement.cancel_wait()
 	player_target = target
 	current_boss_state = BossState.CHASING
@@ -118,7 +120,7 @@ func _lose_the_trail():
 		animation_player.play("Idle")
 
 func _try_attack():
-	if not can_attack or player_target == null or not is_instance_valid(player_target):
+	if not can_attack or player_target == null or not is_instance_valid(player_target) or player_target == self:
 		return
 		
 	# Aplanamos la posición (Y = 0) para ignorar la diferencia de alturas
@@ -150,14 +152,15 @@ func _deal_delayed_damage(target: Node3D, delay: float) -> void:
 	if delay > 0.0:
 		await get_tree().create_timer(delay).timeout
 
-	if not is_instance_valid(target) or not target.has_method("hit") or current_boss_state != BossState.ATTACKING:
+	if not is_instance_valid(target) or target == self or not target.has_method("hit") or current_boss_state != BossState.ATTACKING:
 		return
 
 	# Revalidamos la distancia al momento del golpe: si el jugador ya se alejó, el ataque falla
 	var flat_boss_pos = Vector3(global_position.x, 0, global_position.z)
 	var flat_target_pos = Vector3(target.global_position.x, 0, target.global_position.z)
 	if flat_boss_pos.distance_to(flat_target_pos) <= attack_range:
-		target.hit(attack_damage)
+		if target.has_method("hit"):
+			target.call("hit", attack_damage, self)
 
 func _on_attack_cooldown_timeout():
 	can_attack = true

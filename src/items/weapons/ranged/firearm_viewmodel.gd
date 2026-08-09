@@ -25,16 +25,25 @@ func _ready() -> void:
 func _actualizar_portador() -> void:
 	var p = get_parent()
 	while p != null:
-		if p.is_in_group("player"):
+		if p.is_in_group("player") or p.is_in_group("Players"):
 			_portador = p
 			break
 		p = p.get_parent()
+
+func _find_damageable_target(node: Node) -> Node:
+	var curr: Node = node
+	while curr != null:
+		if curr.has_method("hit"):
+			return curr
+		if curr.is_in_group("player") or curr.is_in_group("Players"):
+			return curr
+		curr = curr.get_parent()
+	return null
 
 func use() -> void:
 	if not can_shoot or is_reloading:
 		return
 
-	# Asegurar referencia al portador de forma dinámica si es necesario
 	if not is_instance_valid(_portador):
 		_actualizar_portador()
 	
@@ -58,15 +67,15 @@ func use() -> void:
 		print("[FirearmViewModel] ¡Sin balas en el inventario para disparar!")
 		return
 
-	# Notificar al inventario para refrescar la UI (Hotbar e Inventario) en tiempo real
-	_notify_inventory_changed()
-
 	# Sincronizar cargador si aplica
 	if current_slot != null:
 		var current_ammo: int = current_slot.instance_data.get("ammo", max_ammo)
 		current_slot.instance_data["ammo"] = maxi(0, current_ammo - 1)
 
 	_fire()
+
+	# Notificar al inventario de forma diferida para evitar desmontar el ViewModel a mitad de ejecucion
+	_notify_inventory_changed()
 
 func _fire() -> void:
 	can_shoot = false
@@ -102,15 +111,17 @@ func _fire() -> void:
 	if result:
 		hit_point = result.position
 		var col = result.collider
-		var target = col
-		if target != null and not target.has_method("hit") and target.get_parent() != null and target.get_parent().has_method("hit"):
-			target = target.get_parent()
+		var target = _find_damageable_target(col)
 
-		if target != null and target.has_method("hit"):
+		if target != null and target != _portador and target.has_method("hit"):
 			print("[FirearmViewModel] ¡Impacto directo en ", target.name, "! Daño infligido: ", damage)
-			target.hit(damage, _portador)
+			target.call("hit", damage, _portador)
 
-	_create_tracer(boca_canon.global_position if boca_canon else global_position, hit_point)
+	var tracer_origin = global_position
+	if boca_canon and is_instance_valid(boca_canon) and boca_canon.is_inside_tree():
+		tracer_origin = boca_canon.global_position
+
+	_create_tracer(tracer_origin, hit_point)
 
 func reload() -> void:
 	if is_reloading or not visible:
@@ -185,11 +196,11 @@ func _notify_inventory_changed() -> void:
 	if is_instance_valid(_portador):
 		var inv = _portador.get_node_or_null("Inventory")
 		if inv and inv.has_signal("changed"):
-			inv.changed.emit()
+			inv.changed.emit.call_deferred()
 
 func _create_tracer(start: Vector3, end: Vector3) -> void:
 	var distance = start.distance_to(end)
-	if distance < 0.1: return
+	if distance < 0.2: return
 
 	var mesh_inst = MeshInstance3D.new()
 	var cyl = CylinderMesh.new()
@@ -220,12 +231,14 @@ func _create_tracer(start: Vector3, end: Vector3) -> void:
 	if abs(start.direction_to(end).y) > 0.99:
 		up = Vector3.RIGHT
 
-	mesh_inst.look_at(end, up)
-	mesh_inst.rotate_object_local(Vector3.RIGHT, PI/2.0)
+	if not start.is_equal_approx(end):
+		mesh_inst.look_at(end, up)
+		mesh_inst.rotate_object_local(Vector3.RIGHT, PI/2.0)
 
 	var tween = get_tree().create_tween()
-	tween.tween_property(mat, "albedo_color:a", 0.0, 0.15)
-	tween.tween_callback(mesh_inst.queue_free)
+	if tween:
+		tween.tween_property(mat, "albedo_color:a", 0.0, 0.15)
+		tween.tween_callback(mesh_inst.queue_free)
 
 func equip() -> void:
 	super.equip()

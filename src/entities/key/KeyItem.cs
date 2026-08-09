@@ -50,7 +50,20 @@ public partial class KeyItem : Area3D
 		{
 			_playerNode.Call("PickUpKey");
 			GD.Print("¡Llave recogida con éxito!");
-			QueueFree(); // Elimina la llave del mapa
+			if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected)
+			{
+				Rpc(nameof(RpcRemoveKeyFromWorld));
+			}
+			else
+			{
+				QueueFree();
+			}
 		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcRemoveKeyFromWorld()
+	{
+		QueueFree();
 	}
 }
