@@ -96,8 +96,6 @@ public partial class Player : CharacterBody3D {
 			// Iniciar efecto de hambre natural gestionado por Stats
 
 
-			// DEBUG: Give weapons
-			CallDeferred("DebugGiveWeapons");
 		}
 		else {
 			if (_gameCamera != null) _gameCamera.Current = false;
@@ -107,40 +105,7 @@ public partial class Player : CharacterBody3D {
 	}
 
 	private void DebugGiveWeapons() {
-		var registry = GetNodeOrNull("/root/ItemRegistry");
-		var inv = GetNodeOrNull("Inventory");
-		if (registry != null && inv != null) {
-			string[] weapons = { "palo_de_madera", "cuchillo", "tokarev_pistol", "sks_rifle" };
-			foreach (string w in weapons) {
-				var data = registry.Call("get_data", w);
-				if (data.AsGodotObject() != null) {
-					var comp = registry.Call("get_component", w);
-					var dict = new Godot.Collections.Dictionary();
-					if (comp.AsGodotObject() != null) {
-						var maxDur = comp.AsGodotObject().Get("max_durability");
-						if (maxDur.VariantType != Variant.Type.Nil) dict["durability"] = maxDur;
-						
-						var maxAmmo = comp.AsGodotObject().Get("max_ammo");
-						if (maxAmmo.VariantType != Variant.Type.Nil) dict["ammo"] = maxAmmo;
-					}
-					inv.Call("add_item", data, 1, dict);
-				}
-			}
-
-			// Otorgar 60 balas iniciales al inventario del jugador
-			var balaData = registry.Call("get_data", "bala");
-			if (balaData.AsGodotObject() != null) {
-				inv.Call("add_item", balaData, 60);
-			}
-		}
-
-		// Spawn backpack in front of player instead of knife
-		var backpackScene = GD.Load<PackedScene>("res://src/entities/world/backpack.tscn");
-		if (backpackScene != null) {
-			var backpack = (Node3D)backpackScene.Instantiate();
-			GetParent().AddChild(backpack);
-			backpack.GlobalPosition = GlobalPosition + GlobalTransform.Basis.Z * -1.5f + Vector3.Down * 1.0f;
-		}
+		// Los jugadores empiezan sin items (desde 0)
 	}
 
 	#region Sistema de Llave (Sincronizado)

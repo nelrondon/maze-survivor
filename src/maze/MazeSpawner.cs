@@ -253,7 +253,7 @@ public partial class MazeSpawner : Node
 				{
 					_maze.SetSpawnedPlayer(player);
 				}
-				GD.Print($"[MazeSpawner] Spawning player '{playerInfo.Name}' (ID: {playerInfo.Id}) en el centro del mapa pos {spawnPos}");
+				GD.Print($"[MazeSpawner] Spawning player '{playerInfo.Name}' (ID: {playerInfo.Id}) en esquina {i} pos {spawnPos}");
 			}
 		}
 		else
