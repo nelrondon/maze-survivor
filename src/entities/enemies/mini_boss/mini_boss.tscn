@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/boss/boss_model.tscn" id="2_model"]
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss_senses.gd" id="3_senses"]
+[ext_resource type="Script" path="res://src/entities/enemies/boss/boss_movement.gd" id="4_movement"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mini"]
+radius = 0.65
+height = 1.6
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hear"]
+radius = 16.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_smell"]
+radius = 8.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_mini"]
+viewport_path = NodePath("Sprite3D/SubViewport")
+
+[node name="MiniBoss" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 15
+script = ExtResource("1_script")
+max_health = 100.0
+attack_range = 2.5
+attack_damage = 10.0
+
+[node name="BossModel" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(-0.125, 0, -1.0927847e-08, 0, 0.125, 0, 1.0927847e-08, 0, -0.125, 0, -0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+shape = SubResource("CapsuleShape3D_mini")
+
+[node name="PatrolWaitTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AttackCooldownTimer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true
+
+[node name="Senses" type="Node3D" parent="."]
+script = ExtResource("3_senses")
+
+[node name="HearingZone" type="Area3D" parent="Senses"]
+collision_layer = 0
+collision_mask = 7
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/HearingZone"]
+shape = SubResource("SphereShape3D_hear")
+
+[node name="SmellZone" type="Area3D" parent="Senses"]
+collision_layer = 0
+collision_mask = 7
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Senses/SmellZone"]
+shape = SubResource("SphereShape3D_smell")
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("4_movement")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_mini")
+
+[node name="SubViewport" type="SubViewport" parent="Sprite3D"]
+transparent_bg = true
+size = Vector2i(200, 20)
+
+[node name="ProgressBar" type="ProgressBar" parent="Sprite3D/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+fill_mode = 1

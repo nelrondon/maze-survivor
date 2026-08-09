@@ -1,0 +1,20 @@
+﻿[gd_scene format=3 uid="uid://bfota07c2u0oh"]
+
+[ext_resource type="Script" path="res://src/entities/world/backpack.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/entities/world/loot_common.tres" id="2_loot"]
+[ext_resource type="PackedScene" path="res://assets/models/backpack_model.glb" id="3_3emai"]
+
+[sub_resource type="BoxShape3D" id="interact_shape"]
+size = Vector3(1.5, 1.0991211, 0.84628296)
+
+[node name="Backpack" type="Node3D" unique_id=1102864646]
+script = ExtResource("1_script")
+loot_table = ExtResource("2_loot")
+
+[node name="InteractArea" type="StaticBody3D" parent="." unique_id=1897625487]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea" unique_id=1442027422]
+transform = Transform3D(0.99984056, -0.017855668, 0, 0.017855668, 0.99984056, 0, 0, 0, 1, 0.0035789805, -0.03580509, -0.004562378)
+shape = SubResource("interact_shape")
+
+[node name="Model" parent="." unique_id=1909118878 instance=ExtResource("3_3emai")]

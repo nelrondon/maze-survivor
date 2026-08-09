@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cus17wmht4vm2"]
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cus17wmht4vm2"]
 
-[ext_resource type="Script" uid="uid://betk0kby505dv" path="res://src/items/item_data.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://bc87v5w01yhve" path="res://src/items/consumables/canned_food/canned_food_icon.png" id="1_lld82"]
-[ext_resource type="PackedScene" uid="uid://cxrmg8ikyif2d" path="res://src/items/consumables/canned_food/canned_food_viewmodel.tscn" id="3_7c7j0"]
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/canned_food/canned_food_icon.png" id="1_lld82"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/canned_food/canned_food_viewmodel.tscn" id="3_7c7j0"]
 
 [resource]
 script = ExtResource("1")

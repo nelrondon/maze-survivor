@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bqj6dhtnji7ux"]
+﻿[gd_scene format=3 uid="uid://bqj6dhtnji7ux"]
 
-[ext_resource type="Script" uid="uid://djoplyd6wggjg" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://dha3kjaxtv3ra" path="res://src/items/consumables/energy_bar/energy_bar_model.glb" id="2_model"]
+[ext_resource type="Script" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/energy_bar/energy_bar_model.glb" id="2_model"]
 
 [sub_resource type="Animation" id="Animation_reset"]
 length = 0.001

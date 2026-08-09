@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://cy8k7c3t4h2w1"]
+﻿[gd_scene format=3 uid="uid://cy8k7c3t4h2w1"]
 
-[ext_resource type="Script" uid="uid://bjkijl7elrny4" path="res://src/items/item_entity.gd" id="1_entity"]
-[ext_resource type="Resource" uid="uid://dyk2v8b6n9h2l" path="res://src/items/weapons/melee/cuchillo/cuchillo.tres" id="2_data"]
-[ext_resource type="Script" uid="uid://dr5laveqq7tws" path="res://src/items/components/weapon/melee_weapon_component.gd" id="3_comp"]
+[ext_resource type="Script" path="res://src/items/item_entity.gd" id="1_entity"]
+[ext_resource type="Resource" path="res://src/items/weapons/melee/cuchillo/cuchillo.tres" id="2_data"]
+[ext_resource type="Script" path="res://src/items/components/weapon/melee_weapon_component.gd" id="3_comp"]
 
 [node name="Cuchillo" type="Node3D" node_paths=PackedStringArray("component")]
 script = ExtResource("1_entity")

@@ -23,5 +23,6 @@ transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="ProjectileWeaponComponent" type="Node" parent="."]
 script = ExtResource("3_comp")
+damage = 15.0
 max_ammo = 7
 projectile_scene = ExtResource("5_proj")

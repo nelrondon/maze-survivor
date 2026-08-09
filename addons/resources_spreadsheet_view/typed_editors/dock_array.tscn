@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3a2cip8ffccv"]
+﻿[gd_scene load_steps=5 format=3 uid="uid://c3a2cip8ffccv"]
 
-[ext_resource type="Script" uid="uid://vgcrpbelxpe0" path="res://addons/resources_spreadsheet_view/typed_editors/dock_array.gd" id="1"]
-[ext_resource type="Script" uid="uid://dyxdmrhopt5i0" path="res://addons/resources_spreadsheet_view/editor_icon_button.gd" id="2"]
+[ext_resource type="Script" path="res://addons/resources_spreadsheet_view/typed_editors/dock_array.gd" id="1"]
+[ext_resource type="Script" path="res://addons/resources_spreadsheet_view/editor_icon_button.gd" id="2"]
 
 [sub_resource type="Image" id="Image_4nb2y"]
 data = {

@@ -8,11 +8,13 @@
 
 config_version=5
 
+"ï»¿config_version"=5
+
 [application]
 
 config/name="maze-survivor-player"
-run/main_scene="res://LoginInterface/menu.tscn"
-config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+run/main_scene="res://src/ui/login/menu.tscn"
+config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -30,7 +32,7 @@ project/assembly_name="maze-survivor"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 

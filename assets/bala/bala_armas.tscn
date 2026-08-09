@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://ceee5saklcpto"]
+﻿[gd_scene format=3 uid="uid://ceee5saklcpto"]
 
-[ext_resource type="PackedScene" uid="uid://cbs3ay7guttfe" path="res://bullet1.glb" id="1_h0dqp"]
+[ext_resource type="PackedScene" path="res://bullet1.glb" id="1_h0dqp"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ti8w2"]
 height = 0.028526101

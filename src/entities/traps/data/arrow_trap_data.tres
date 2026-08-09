@@ -1,0 +1,15 @@
+﻿[gd_resource type="Resource" script_class="TrapData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/entities/traps/trap_data.gd" id="1_data"]
+[ext_resource type="Script" path="res://src/effects/effect.gd" id="2_effectbase"]
+[ext_resource type="Resource" path="res://src/effects/resources/stat/hp_damage_1.tres" id="3_dmg"]
+
+[resource]
+script = ExtResource("1_data")
+id = "arrow_trap_01"
+display_name = "Trampa de Flechas"
+description = "Dispara una flecha cuando el jugador entra en el área"
+trap_type = 1
+activation_mode = 0
+effects = Array[ExtResource("2_effectbase")]([ExtResource("3_dmg")])
+cooldown = 1.5

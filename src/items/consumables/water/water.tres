@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djingw11pqsbq"]
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://djingw11pqsbq"]
 
-[ext_resource type="Script" uid="uid://betk0kby505dv" path="res://src/items/item_data.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://deh1gwqywgkpa" path="res://src/items/consumables/water/water_icon.png" id="1_skbem"]
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/water/water_icon.png" id="1_skbem"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/water/water_viewmodel.tscn" id="2_viewmodel"]
 
 [resource]

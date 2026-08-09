@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bs5becy0hfvw1"]
+﻿[gd_scene format=3 uid="uid://bs5becy0hfvw1"]
 
-[ext_resource type="Script" uid="uid://ck10epvduwn0m" path="res://test/test_scene.gd" id="1_test"]
-[ext_resource type="Script" uid="uid://dgjt5jft13tqc" path="res://test/test_player.gd" id="2_player"]
+[ext_resource type="Script" path="res://test/test_scene.gd" id="1_test"]
+[ext_resource type="Script" path="res://test/test_player.gd" id="2_player"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/adrenaline.tscn" id="2_xdggk"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/bandages.tscn" id="3_mwmxg"]
 [ext_resource type="PackedScene" path="res://src/items/consumables/steroids.tscn" id="4_fkvod"]
