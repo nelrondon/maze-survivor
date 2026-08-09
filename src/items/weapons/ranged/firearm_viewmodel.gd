@@ -20,6 +20,9 @@ var _portador: Node3D = null
 func _ready() -> void:
 	if damage <= 0.0:
 		damage = 45.0
+	_actualizar_portador()
+
+func _actualizar_portador() -> void:
 	var p = get_parent()
 	while p != null:
 		if p.is_in_group("player"):
@@ -31,20 +34,25 @@ func use() -> void:
 	if not can_shoot or is_reloading:
 		return
 
-	# Buscar y consumir 1 bala directamente del inventario en cada disparo
-	var inv: Inventory = null
-	if _portador:
-		inv = _portador.get_node_or_null("Inventory") as Inventory
+	# Asegurar referencia al portador de forma dinámica si es necesario
+	if not is_instance_valid(_portador):
+		_actualizar_portador()
+	
+	if not is_instance_valid(_portador):
+		return
+
+	var inv: Inventory = _portador.get_node_or_null("Inventory") as Inventory
+	if not inv or not "slots" in inv:
+		return
 
 	var bullet_consumed: bool = false
-	if inv != null:
-		for slot in inv.slots:
-			if not slot.is_empty() and slot.item_data.id == "bala" and slot.current_amount > 0:
-				slot.current_amount -= 1
-				if slot.current_amount <= 0:
-					slot.clear()
-				bullet_consumed = true
-				break
+	for slot in inv.slots:
+		if slot and not slot.is_empty() and slot.item_data and slot.item_data.id == "bala" and slot.current_amount > 0:
+			slot.current_amount -= 1
+			if slot.current_amount <= 0:
+				slot.clear()
+			bullet_consumed = true
+			break
 
 	if not bullet_consumed:
 		print("[FirearmViewModel] ¡Sin balas en el inventario para disparar!")
@@ -115,17 +123,20 @@ func reload() -> void:
 	if current_ammo >= max_ammo:
 		return
 
-	var needed: int = max_ammo - current_ammo
-	var inv: Inventory = null
-	if _portador:
-		inv = _portador.get_node_or_null("Inventory") as Inventory
+	if not is_instance_valid(_portador):
+		_actualizar_portador()
 
+	if not is_instance_valid(_portador):
+		return
+
+	var inv: Inventory = _portador.get_node_or_null("Inventory") as Inventory
+	var needed: int = max_ammo - current_ammo
 	var bullets_taken: int = 0
 
-	if inv != null:
+	if inv != null and "slots" in inv:
 		# Buscar stacks de balas en el inventario
 		for slot in inv.slots:
-			if not slot.is_empty() and slot.item_data.id == "bala":
+			if slot and not slot.is_empty() and slot.item_data and slot.item_data.id == "bala":
 				var available = slot.current_amount
 				var take = mini(needed - bullets_taken, available)
 				slot.current_amount -= take
@@ -171,7 +182,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			reload()
 
 func _notify_inventory_changed() -> void:
-	if _portador:
+	if is_instance_valid(_portador):
 		var inv = _portador.get_node_or_null("Inventory")
 		if inv and inv.has_signal("changed"):
 			inv.changed.emit()
