@@ -1,16 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://src/entities/traps/trap_types/spike_trap.gd" id="1_script"]
 [ext_resource type="Resource" path="res://src/entities/traps/data/spike_trap_data.tres" id="2_data"]
-[ext_resource type="Material" path="res://src/entities/traps/materials/spike_material.tres" id="3_mat"]
+[ext_resource type="PackedScene" uid="uid://b20vl8q2kak3g" path="res://src/entities/traps/models/spike_trap_01.glb" id="3_model"]
 
 [sub_resource type="BoxShape3D" id="1_detect_shape"]
 size = Vector3(5.6, 1, 5.6)
 
 [sub_resource type="BoxShape3D" id="2_spike_shape"]
-size = Vector3(5.4, 0.4, 5.4)
-
-[sub_resource type="BoxMesh" id="3_spike_mesh"]
 size = Vector3(5.4, 0.4, 5.4)
 
 [node name="SpikeTrap" type="Node3D"]
@@ -24,9 +21,8 @@ shape = SubResource("1_detect_shape")
 
 [node name="Spikes" type="StaticBody3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Spikes"]
-material_override = ExtResource("3_mat")
-mesh = SubResource("3_spike_mesh")
+[node name="Sketchfab_Scene" parent="Spikes" instance=ExtResource("3_model")]
+transform = Transform3D(8.5, 0, 0, 0, 8.5, 0, 0, 0, 8.5, 0, -0.90241176, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Spikes"]
 shape = SubResource("2_spike_shape")

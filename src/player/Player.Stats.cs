@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 public partial class Player {
 
+	// Piso mínimo de velocidad: ningún debuff (actual o futuro) puede bajar
+	// la velocidad a 0 o negativo, porque eso invierte el movimiento
+	// (direction * velocidad_negativa = te mueves al revés).
+	private const float _minSpeed = 1.5f;
+
 	private Dictionary<int, float> _stats = new() {
 		{ 0, 100f },
 		{ 1, 100f },
@@ -46,7 +51,13 @@ public partial class Player {
 			_timeSinceLastStaminaUse = 0f;
 		}
 
-		if (stat == 3) _speed = _stats[stat];
+		if (stat == 3) {
+			// Guardamos _stats[3] SIN clampear para que start_temp_effect pueda
+			// revertir el debuff sumando -value más tarde y quede exacto.
+			// Solo protegemos _speed (lo que realmente usa el movimiento) de
+			// quedar en 0 o negativo.
+			_speed = Mathf.Max(_stats[stat], _minSpeed);
+		}
 		else if (stat == 0 && _stats[stat] <= 0f) {
 			TakeDamage();
 			Die();

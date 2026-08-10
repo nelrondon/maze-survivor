@@ -1,7 +1,7 @@
 class_name SpikeTrap extends TrapBase
 
 @export var spikes_path: NodePath = ^"Spikes"
-@export var rise_height: float = 0.5
+@export var rise_height: float = 0.8
 @export var rise_time: float = 0.15
 @export var retract_time: float = 0.3
 ## Cuánto tiempo se quedan arriba antes de bajar solos (solo en AREA_TRIGGER /
