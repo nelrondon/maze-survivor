@@ -89,15 +89,13 @@ public partial class Player : CharacterBody3D {
 		// Configuración según la autoridad de red/control local
 		if (_IsLocallyControlled()) {
 			if (_gameCamera != null) _gameCamera.Current = true;
-			if (_characterVisual != null) _characterVisual.Visible = false;
+			if (_characterVisual != null) _characterVisual.Visible = true;
 			if (_hud != null) _hud.Visible = true;
 			Input.MouseMode = Input.MouseModeEnum.Captured;
 
 			// Iniciar efecto de hambre natural gestionado por Stats
 
 
-			// DEBUG: Give weapons
-			CallDeferred("DebugGiveWeapons");
 		}
 		else {
 			if (_gameCamera != null) _gameCamera.Current = false;
@@ -107,40 +105,7 @@ public partial class Player : CharacterBody3D {
 	}
 
 	private void DebugGiveWeapons() {
-		var registry = GetNodeOrNull("/root/ItemRegistry");
-		var inv = GetNodeOrNull("Inventory");
-		if (registry != null && inv != null) {
-			string[] weapons = { "palo_de_madera", "cuchillo", "tokarev_pistol", "sks_rifle" };
-			foreach (string w in weapons) {
-				var data = registry.Call("get_data", w);
-				if (data.AsGodotObject() != null) {
-					var comp = registry.Call("get_component", w);
-					var dict = new Godot.Collections.Dictionary();
-					if (comp.AsGodotObject() != null) {
-						var maxDur = comp.AsGodotObject().Get("max_durability");
-						if (maxDur.VariantType != Variant.Type.Nil) dict["durability"] = maxDur;
-						
-						var maxAmmo = comp.AsGodotObject().Get("max_ammo");
-						if (maxAmmo.VariantType != Variant.Type.Nil) dict["ammo"] = maxAmmo;
-					}
-					inv.Call("add_item", data, 1, dict);
-				}
-			}
-
-			// Otorgar 60 balas iniciales al inventario del jugador
-			var balaData = registry.Call("get_data", "bala");
-			if (balaData.AsGodotObject() != null) {
-				inv.Call("add_item", balaData, 60);
-			}
-		}
-
-		// Spawn backpack in front of player instead of knife
-		var backpackScene = GD.Load<PackedScene>("res://src/entities/world/backpack.tscn");
-		if (backpackScene != null) {
-			var backpack = (Node3D)backpackScene.Instantiate();
-			GetParent().AddChild(backpack);
-			backpack.GlobalPosition = GlobalPosition + GlobalTransform.Basis.Z * -1.5f + Vector3.Down * 1.0f;
-		}
+		// Los jugadores empiezan sin items (desde 0)
 	}
 
 	#region Sistema de Llave (Sincronizado)
@@ -161,16 +126,23 @@ public partial class Player : CharacterBody3D {
 
 	public void DropKey() {
 		if (!HasKey) return;
-		HasKey = false;
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
+			if (IsMultiplayerAuthority()) {
+				Rpc(nameof(RpcDropKey), GlobalPosition);
+			}
+		} else {
+			RpcDropKey(GlobalPosition);
+		}
+	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcDropKey(Vector3 dropPos) {
+		HasKey = false;
 		if (KeyScene != null) {
 			var keyInstance = KeyScene.Instantiate<Node3D>();
+			keyInstance.Name = "SingleMazeKey";
 			GetParent().AddChild(keyInstance);
-			keyInstance.GlobalPosition = GlobalPosition;
-		}
-
-		if (Multiplayer.HasMultiplayerPeer() && IsMultiplayerAuthority()) {
-			Rpc(nameof(SyncKeyStatus), false);
+			keyInstance.GlobalPosition = dropPos;
 		}
 	}
 
@@ -178,6 +150,17 @@ public partial class Player : CharacterBody3D {
 	public bool IsDead => _isDead;
 
 	public void Die() {
+		if (_isDead) return;
+
+		if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected && IsMultiplayerAuthority()) {
+			Rpc(nameof(RpcDie));
+		} else {
+			RpcDie();
+		}
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+	private void RpcDie() {
 		if (_isDead) return;
 		_isDead = true;
 
@@ -353,7 +336,7 @@ public partial class Player : CharacterBody3D {
 		}
 
 		// Rotación de Cámara por Mouse
-		if (@event is InputEventMouseMotion mouseMotion) {
+		if (@event is InputEventMouseMotion mouseMotion && Input.MouseMode == Input.MouseModeEnum.Captured) {
 			RotateY(-mouseMotion.Relative.X * _mouseSensibility);
 
 			_pitch -= mouseMotion.Relative.Y * _mouseSensibility;
@@ -369,31 +352,42 @@ public partial class Player : CharacterBody3D {
 			Input.MouseMode = Input.MouseModeEnum.Visible;
 		}
 
-		// Interacción (Tecla E / Acción "interact")
-		bool isInteractPressed = (@event is InputEventKey interactKey && interactKey.Pressed && interactKey.Keycode == Key.E) || 
-			(InputMap.HasAction("interact") && @event.IsActionPressed("interact"));
+		// Interacción (Tecla E / Acción "interact") - solo interactuar en el mundo si no hay menús abiertos (mouse capturado)
+		bool isInteractPressed = Input.MouseMode == Input.MouseModeEnum.Captured && (
+			(@event is InputEventKey interactKey && interactKey.Pressed && !interactKey.Echo && interactKey.Keycode == Key.E) || 
+			(InputMap.HasAction("interact") && @event.IsActionPressed("interact"))
+		);
 
 		if (isInteractPressed) {
 			if (_interactionRayCast != null && _interactionRayCast.IsColliding()) {
 				GodotObject collider = _interactionRayCast.GetCollider();
 
 				if (collider is Node node) {
+					bool handled = false;
 					if (node.HasMethod("interact")) {
 						node.Call("interact", this);
+						handled = true;
 					} 
 					else if (node.HasMethod("Interact")) {
 						node.Call("Interact", this);
+						handled = true;
 					}
 					else {
 						Node parent = node.GetParent();
 						if (parent != null) {
 							if (parent.HasMethod("interact")) {
 								parent.Call("interact", this);
+								handled = true;
 							} 
 							else if (parent.HasMethod("Interact")) {
 								parent.Call("Interact", this);
+								handled = true;
 							}
 						}
+					}
+
+					if (handled) {
+						GetViewport().SetInputAsHandled();
 					}
 				}
 			}

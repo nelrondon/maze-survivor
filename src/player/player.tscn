@@ -98,7 +98,7 @@ animation = &"CharLib/walk"
 animation = &"CharLib/walk"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5htga"]
-animation = &"mixamo_com"
+animation = &"CharLib/holdidle"
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_p5o4e"]
 blend_point_0/node = SubResource("AnimationNodeAnimation_od3ui")

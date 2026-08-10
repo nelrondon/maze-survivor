@@ -20,6 +20,11 @@ public partial class KeyItem : Area3D
 	{
 		if (body.HasMethod("PickUpKey"))
 		{
+			if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected)
+			{
+				if (!body.IsMultiplayerAuthority()) return;
+			}
+
 			_isPlayerInside = true;
 			_playerNode = body;
 			GD.Print($"{PromptText}");

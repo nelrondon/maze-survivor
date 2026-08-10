@@ -16,7 +16,7 @@ public partial class LobbyHandler : Control
 	private int MAX_PLAYERS = 4;
 
 	[Export]
-	private int MAX_SPECTATORS = 0;
+	private int MAX_SPECTATORS = 4;
 
 	private int HOST_ID = 1;
 
@@ -35,6 +35,8 @@ public partial class LobbyHandler : Control
 		return GetNodeOrNull<T>("%" + nodeName) ?? (FindChild(nodeName) as T);
 	}
 
+	private string _cachedHostIp = "";
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -52,6 +54,20 @@ public partial class LobbyHandler : Control
 		UpdatePlayerListUI();
 		string localIp = GetLocalIPv4Address();
 		SetLobbyState(false, false, $"Status: Disconnected (Tu IP Local: {localIp})");
+
+		// Obtener IP pública en segundo plano para la UI
+		_ = FetchPublicIpForLobbyInitAsync();
+	}
+
+	private async System.Threading.Tasks.Task FetchPublicIpForLobbyInitAsync()
+	{
+		string pubIp = await GetPublicIPv4AddressAsync();
+		if (!string.IsNullOrEmpty(pubIp) && pubIp != "127.0.0.1")
+		{
+			_cachedHostIp = pubIp;
+			string localIp = GetLocalIPv4Address();
+			SetLobbyState(false, false, $"Status: Disconnected (IP Pública: {pubIp} | IP Local: {localIp})");
+		}
 	}
 
 	public string GetLocalIPv4Address()
@@ -67,7 +83,47 @@ public partial class LobbyHandler : Control
 		return "127.0.0.1";
 	}
 
-	private void SetupUPnP(int port)
+	public async System.Threading.Tasks.Task<string> GetPublicIPv4AddressAsync()
+	{
+		try
+		{
+			using (var httpClient = new System.Net.Http.HttpClient())
+			{
+				httpClient.Timeout = TimeSpan.FromSeconds(3);
+				string response = await httpClient.GetStringAsync("https://api.ipify.org");
+				string ip = response.Trim();
+				if (!string.IsNullOrWhiteSpace(ip) && !ip.Contains(":"))
+				{
+					GD.Print($"[Network] IP Pública obtenida vía ipify: {ip}");
+					return ip;
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			GD.Print($"[Network] Falló obtención de IP pública vía ipify: {ex.Message}");
+		}
+
+		try
+		{
+			using (var httpClient = new System.Net.Http.HttpClient())
+			{
+				httpClient.Timeout = TimeSpan.FromSeconds(3);
+				string response = await httpClient.GetStringAsync("https://icanhazip.com");
+				string ip = response.Trim();
+				if (!string.IsNullOrWhiteSpace(ip) && !ip.Contains(":"))
+				{
+					GD.Print($"[Network] IP Pública obtenida vía icanhazip: {ip}");
+					return ip;
+				}
+			}
+		}
+		catch { }
+
+		return GetLocalIPv4Address();
+	}
+
+	private string SetupUPnP(int port)
 	{
 		try
 		{
@@ -81,7 +137,8 @@ public partial class LobbyHandler : Control
 					if (mapResult == (int)Upnp.UpnpResult.Success)
 					{
 						string extIp = upnp.QueryExternalAddress();
-						GD.Print($"[UPnP] Puerto {port} mapeado exitosamente. IP Pública: {extIp}");
+						GD.Print($"[UPnP] Puerto {port} mapeado exitosamente. IP Externa: {extIp}");
+						return extIp;
 					}
 				}
 			}
@@ -90,6 +147,7 @@ public partial class LobbyHandler : Control
 		{
 			GD.PrintErr("[UPnP] Discovery no soportado o falló: " + ex.Message);
 		}
+		return null;
 	}
 
 	private void SetLobbyState(bool isConnected, bool isHost, string statusText = "")
@@ -210,15 +268,19 @@ public partial class LobbyHandler : Control
 		startGame();
 	}
 
-	public void _on_copy_ip_button_down()
+	public async void _on_copy_ip_button_down()
 	{
-		string localIp = GetLocalIPv4Address();
-		string roomCode = RoomCodeManager.IpToRoomCode(localIp);
+		string ip = _cachedHostIp;
+		if (string.IsNullOrEmpty(ip))
+		{
+			ip = await GetPublicIPv4AddressAsync();
+		}
+		string roomCode = RoomCodeManager.IpToRoomCode(ip);
 		DisplayServer.ClipboardSet(roomCode);
-		SetLobbyState(false, false, $"¡Código {roomCode} copiado al portapapeles!");
+		SetLobbyState(false, false, $"¡Código {roomCode} ({ip}) copiado al portapapeles!");
 	}
 
-	public void _on_host_button_down()
+	public async void _on_host_button_down()
 	{
 		_joiningAsSpectator = false;
 		int port = GetTargetPort();
@@ -235,13 +297,22 @@ public partial class LobbyHandler : Control
 		this.peer.Host.Compress(this.COMPRESSION_TYPE);
 
 		Multiplayer.MultiplayerPeer = this.peer;
-		string localIp = GetLocalIPv4Address();
-		string roomCode = RoomCodeManager.IpToRoomCode(localIp);
-		GD.Print($"Hosting server on {localIp}:{port} (Room Code: {roomCode})...");
 
-		SetupUPnP(port);
+		// Mapeo UPnP primero
+		string upnpIp = SetupUPnP(port);
 
-		SetLobbyState(true, true, $"Status: Servidor Activo | CÓDIGO DE SALA: {roomCode}");
+		SetLobbyState(true, true, $"Status: Obteniendo IP pública...");
+		string publicIp = await GetPublicIPv4AddressAsync();
+		if ((string.IsNullOrWhiteSpace(publicIp) || publicIp == "127.0.0.1") && !string.IsNullOrEmpty(upnpIp))
+		{
+			publicIp = upnpIp;
+		}
+		_cachedHostIp = publicIp;
+
+		string roomCode = RoomCodeManager.IpToRoomCode(publicIp);
+		GD.Print($"Hosting server on {publicIp}:{port} (Room Code: {roomCode})...");
+
+		SetLobbyState(true, true, $"Status: Servidor Activo ({publicIp}:{port}) | CÓDIGO DE SALA: {roomCode}");
 		GameManager.Players.Clear();
 		var nameInput = GetLobbyNode<LineEdit>("LineEdit");
 		string hostName = nameInput != null ? nameInput.Text : "";

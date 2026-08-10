@@ -21,6 +21,11 @@ var can_attack: bool = true
 
 @onready var animation_player: AnimationPlayer = $BossModel/AnimationPlayer
 
+var _synced_pos: Vector3 = Vector3.ZERO
+var _synced_rot_y: float = 0.0
+var _has_synced_transform: bool = false
+
+
 func _ready():
 	senses.player_detected.connect(_on_player_detected)
 	senses.player_lost.connect(_on_player_lost)
@@ -33,8 +38,18 @@ func _ready():
 	if animation_player.has_animation("Idle"):
 		animation_player.play("Idle")
 
+
 func _physics_process(delta):
 	if current_boss_state == BossState.DEAD:
+		return
+
+	# Si es un cliente remoto en multijugador, interpolar posición del servidor
+	if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED and not multiplayer.is_server():
+		if _has_synced_transform:
+			global_position = global_position.lerp(_synced_pos, delta * 15.0)
+			var cur_rot = rotation
+			cur_rot.y = lerp_angle(cur_rot.y, _synced_rot_y, delta * 15.0)
+			rotation = cur_rot
 		return
 
 	# Comprobar si el jugador objetivo murió o desapareció
@@ -51,8 +66,7 @@ func _physics_process(delta):
 	if current_boss_state == BossState.CHASING:
 		_try_attack()
 
-	# Si está atacando, se frena en seco
-	# Si está atacando, avanza un poco hacia el jugador (lunge) en vez de congelarse
+	# Si está atacando, avanza un poco hacia el jugador (lunge)
 	if current_boss_state == BossState.ATTACKING:
 		var target_vel = Vector3.ZERO
 
@@ -63,7 +77,6 @@ func _physics_process(delta):
 			if dir.length() > 0.01:
 				var look_transform = transform.looking_at(global_position + dir, Vector3.UP)
 				transform = transform.interpolate_with(look_transform, movement.rotation_speed * delta)
-				# Solo avanza si no está ya pegado al jugador, para no seguir empujando
 				if flat_pos.distance_to(flat_target) > movement.arrival_distance:
 					target_vel = dir * attack_lunge_speed
 
@@ -75,7 +88,6 @@ func _physics_process(delta):
 		var state_int = 0 if current_boss_state == BossState.PATROLLING else 1
 		movement.move(delta, state_int, player_target)
 
-# Manejo de animación según si se está moviendo o no
 		var horizontal_speed = Vector2(velocity.x, velocity.z).length()
 		if horizontal_speed > 0.3:
 			if animation_player.has_animation("Walk"):
@@ -86,6 +98,27 @@ func _physics_process(delta):
 			animation_player.speed_scale = 1.0
 			if animation_player.current_animation != "Idle" and animation_player.has_animation("Idle"):
 				animation_player.play("Idle")
+
+	# Servidor transmite la transformación del jefe a todos los clientes
+	if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED and multiplayer.is_server():
+		rpc("_sync_boss_transform", global_position, rotation.y, current_boss_state, current_health)
+
+
+@rpc("any_peer", "unreliable_ordered")
+func _sync_boss_transform(pos: Vector3, rot_y: float, state_val: int, hp: float) -> void:
+	if multiplayer.is_server():
+		return
+	_synced_pos = pos
+	_synced_rot_y = rot_y
+	current_boss_state = state_val
+	current_health = hp
+	health_bar.value = hp
+	if not _has_synced_transform:
+		_has_synced_transform = true
+		global_position = pos
+		var r = rotation
+		r.y = rot_y
+		rotation = r
 
 func _on_player_detected(player: Node3D, reason: String):
 	if current_boss_state == BossState.DEAD or player == self or player.is_in_group("boss") or player.is_in_group("enemies"):
@@ -170,6 +203,18 @@ func _on_attack_cooldown_timeout():
 
 # Combate (recibido, no infligido)
 func hit(damage: float, attacker: Node3D = null):
+	if current_boss_state == BossState.DEAD:
+		return
+	if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
+		rpc("_sync_hit", damage)
+	else:
+		_apply_damage(damage, attacker)
+
+@rpc("any_peer", "call_local")
+func _sync_hit(damage: float) -> void:
+	_apply_damage(damage, null)
+
+func _apply_damage(damage: float, attacker: Node3D = null) -> void:
 	if current_boss_state == BossState.DEAD:
 		return
 	current_health -= damage
