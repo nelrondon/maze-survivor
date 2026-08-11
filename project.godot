@@ -8,12 +8,18 @@
 
 config_version=5
 
+"ï»¿config_version"=5
+
 [application]
 
-config/name="laberint"
-run/main_scene="res://maze.tscn"
+config/name="maze-survivor-player"
+run/main_scene="res://src/ui/login/menu.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+ItemRegistry="*res://src/items/item_registry.gd"
 
 [display]
 
@@ -22,7 +28,11 @@ window/stretch/aspect="expand"
 
 [dotnet]
 
-project/assembly_name="laberint"
+project/assembly_name="maze-survivor"
+
+[editor_plugins]
+
+enabled=PackedStringArray()
 
 [global_group]
 

@@ -1,0 +1,81 @@
+﻿[gd_scene format=3 uid="uid://bi7nfgmmfbsx0"]
+
+[ext_resource type="Script" path="res://src/inventory/Hotbar/HotbarUI.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/inventory/Slot/SlotUI.tscn" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="panel_bg"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.04, 0.04, 0.06, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.14)
+
+[node name="HotbarUI" type="Control" unique_id=880760420]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -195.0
+offset_top = -110.0
+offset_right = 195.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1976083131]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 2
+
+[node name="ItemName" type="Label" parent="VBox" unique_id=782883225]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="VBox" unique_id=769051181]
+layout_mode = 2
+theme_override_styles/panel = SubResource("panel_bg")
+
+[node name="Slots" type="HBoxContainer" parent="VBox/Panel" unique_id=418347554]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Slot0" parent="VBox/Panel/Slots" unique_id=872800054 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Slot1" parent="VBox/Panel/Slots" unique_id=524064815 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Slot2" parent="VBox/Panel/Slots" unique_id=1305317474 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Slot3" parent="VBox/Panel/Slots" unique_id=1234065967 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Slot4" parent="VBox/Panel/Slots" unique_id=471857134 instance=ExtResource("2")]
+unique_name_in_owner = true
+layout_mode = 2

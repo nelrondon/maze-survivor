@@ -1,0 +1,14 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1q2gng67g68h"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/adrenaline/adrenaline_icon.png" id="1_ukilx"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/adrenaline/adrenaline_viewmodel.tscn" id="2_viewmodel"]
+
+[resource]
+script = ExtResource("1")
+id = "adrenaline"
+display_name = "Adrenalina"
+description = "Una inyección que aumenta temporalmente el daño"
+stackable = true
+icon = ExtResource("1_ukilx")
+view_model = ExtResource("2_viewmodel")

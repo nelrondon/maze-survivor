@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_blood"]
+resource_name = "BloodMaterial"
+transparency = 1
+albedo_color = Color(0.45, 0.02, 0.02, 0.92)
+metallic = 0.2
+roughness = 0.1
+
+[sub_resource type="QuadMesh" id="QuadMesh_blood"]
+material = SubResource("StandardMaterial3D_blood")
+size = Vector2(1.4, 1.4)
+
+[node name="BloodStain" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.02, 0)
+mesh = SubResource("QuadMesh_blood")

@@ -7,7 +7,7 @@ var current_item_index: int = 0
 @onready var stats_label: Label = $UI/HBox/StatsPanel/VBox/StatsLabel
 @onready var effects_label: Label = $UI/HBox/EffectsPanel/VBox/EffectsLabel
 @onready var items_label: Label = $UI/HBox/ItemsPanel/VBox/ItemsLabel
-@onready var log_label: Label = $UI/HBox/LogPanel/VBox/LogLabel
+@onready var log_label: Label = $UI/HBox /LogPanel/VBox/LogLabel
 
 var log_lines: Array[String] = []
 const MAX_LOG_LINES = 15

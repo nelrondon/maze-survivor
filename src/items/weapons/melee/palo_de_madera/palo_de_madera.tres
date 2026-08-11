@@ -1,0 +1,16 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dwt4vry4bn84k"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_icon.png" id="1_46vix"]
+[ext_resource type="AudioStream" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_sound.mp3" id="2_sound"]
+[ext_resource type="PackedScene" path="res://src/items/weapons/melee/palo_de_madera/palo_de_madera_viewmodel.tscn" id="3_viewmodel"]
+
+[resource]
+script = ExtResource("1")
+id = "palo_de_madera"
+display_name = "Palo de madera"
+description = "Un palo rústico para defenderte"
+item_type = 2
+use_sound = ExtResource("2_sound")
+icon = ExtResource("1_46vix")
+view_model = ExtResource("3_viewmodel")

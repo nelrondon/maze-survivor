@@ -1,12 +1,15 @@
 class_name ConsumableComponent extends ComponentBase
 
 @export var effects: Array[Effect] = []
-@export var use_time: float = 0.0
 
-func can_execute(target) -> bool:
+func _init() -> void:
+	consumable = true
+
+func can_execute(_user: Node) -> bool:
 	return effects.size() > 0
 
-func execute(target) -> void:
-	if !can_execute(target): return
-	for effect in effects:
-		effect.apply(target)
+func execute(user: Node) -> void:
+	if not can_execute(user):
+		return
+	for effect: Effect in effects:
+		effect.apply(user)

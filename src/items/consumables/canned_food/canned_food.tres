@@ -1,0 +1,14 @@
+﻿[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cus17wmht4vm2"]
+
+[ext_resource type="Script" path="res://src/items/item_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://src/items/consumables/canned_food/canned_food_icon.png" id="1_lld82"]
+[ext_resource type="PackedScene" path="res://src/items/consumables/canned_food/canned_food_viewmodel.tscn" id="3_7c7j0"]
+
+[resource]
+script = ExtResource("1")
+id = "canned_feast"
+display_name = "Banquete enlatado"
+description = "Una lata con una comida completa y nutritiva"
+stackable = true
+icon = ExtResource("1_lld82")
+view_model = ExtResource("3_7c7j0")

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cpdnb1svgr3nu"]
+
+[ext_resource type="Script" uid="uid://bif80m4uo8uar" path="res://src/entities/traps/trap_types/cage_trap.gd" id="1_script"]
+[ext_resource type="Resource" path="res://src/entities/traps/data/cage_trap_data.tres" id="2_data"]
+[ext_resource type="PackedScene" uid="uid://c0pr3s8tcoc0m" path="res://src/entities/traps/models/rustbound_iron_cage.glb" id="3_model"]
+
+[sub_resource type="BoxShape3D" id="1_detect_shape"]
+size = Vector3(1.5, 1, 1.5)
+
+[sub_resource type="BoxShape3D" id="2_cage_shape"]
+size = Vector3(1.3, 2, 1.3)
+
+[node name="CageTrap" type="Node3D" unique_id=1121753968]
+script = ExtResource("1_script")
+data = ExtResource("2_data")
+
+[node name="DetectionArea" type="Area3D" parent="." unique_id=958069359]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea" unique_id=1835872335]
+shape = SubResource("1_detect_shape")
+
+[node name="Cage" type="StaticBody3D" parent="." unique_id=804497824]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 0
+collision_mask = 0
+
+[node name="Sketchfab_Scene" parent="Cage" unique_id=1488073379 instance=ExtResource("3_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.021632195, -1, -0.015690207)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Cage" unique_id=474531086]
+shape = SubResource("2_cage_shape")

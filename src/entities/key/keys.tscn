@@ -1,0 +1,16 @@
+﻿[gd_scene format=3 uid="uid://bi7x1btixwc6f"]
+
+[ext_resource type="Script" path="res://src/entities/key/KeyItem.cs" id="1_voe30"]
+[ext_resource type="ArrayMesh" path="res://assets/key/Key.obj" id="2_keymesh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uj04i"]
+
+[node name="KeyItem" type="Area3D" unique_id=340959999]
+script = ExtResource("1_voe30")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1827220757]
+shape = SubResource("BoxShape3D_uj04i")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=109207900]
+transform = Transform3D(0.002, 0, 0, 0, 0.002, 0, 0, 0, 0.002, 0, 0, 0)
+mesh = ExtResource("2_keymesh")
