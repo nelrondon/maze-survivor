@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://opo3eybbyxyk"
-path.s3tc="res://.godot/imported/spike_trap_01_1.png-3fe198a0d35f4195a5da9bbb3af51ade.s3tc.ctex"
+path.s3tc="res://.godot/imported/spike_trap_01_1.png-5ae213c91bdff1b5fa904624314449f5.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -15,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://src/entities/traps/models/spike_trap_01_1.png"
-dest_files=["res://.godot/imported/spike_trap_01_1.png-3fe198a0d35f4195a5da9bbb3af51ade.s3tc.ctex"]
+dest_files=["res://.godot/imported/spike_trap_01_1.png-5ae213c91bdff1b5fa904624314449f5.s3tc.ctex"]
 
 [params]
 

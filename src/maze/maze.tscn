@@ -14,10 +14,10 @@
 [ext_resource type="Texture2D" path="res://assets/textures/maze/piso.jpg" id="6_pgab2"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_maze"]
-sky_top_color = Color(0.25, 0.3, 0.4, 1)
-sky_horizon_color = Color(0.4, 0.45, 0.5, 1)
-ground_bottom_color = Color(0.15, 0.15, 0.15, 1)
-ground_horizon_color = Color(0.4, 0.45, 0.5, 1)
+sky_top_color = Color(0.08, 0.1, 0.15, 1)
+sky_horizon_color = Color(0.15, 0.18, 0.22, 1)
+ground_bottom_color = Color(0.05, 0.05, 0.05, 1)
+ground_horizon_color = Color(0.15, 0.18, 0.22, 1)
 
 [sub_resource type="Sky" id="Sky_maze"]
 sky_material = SubResource("ProceduralSkyMaterial_maze")
@@ -26,8 +26,8 @@ sky_material = SubResource("ProceduralSkyMaterial_maze")
 background_mode = 2
 sky = SubResource("Sky_maze")
 ambient_light_source = 3
-ambient_light_color = Color(0.45, 0.45, 0.5, 1)
-ambient_light_energy = 0.65
+ambient_light_color = Color(0.2, 0.2, 0.25, 1)
+ambient_light_energy = 0.2
 
 [node name="Node3D" type="Node3D" unique_id=882580129]
 script = ExtResource("1_h41xc")
@@ -48,5 +48,5 @@ environment = SubResource("Environment_maze")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=348789510]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 15, 0)
-light_energy = 0.75
+light_energy = 0.25
 shadow_enabled = true

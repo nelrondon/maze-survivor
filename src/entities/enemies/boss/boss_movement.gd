@@ -23,6 +23,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var _chase_repath_timer: float = 0.0
 var _last_chase_target_pos: Vector3 = Vector3(INF, INF, INF)
+var _patrol_repath_timer: float = 0.0
 
 @onready var boss: CharacterBody3D = get_parent()
 @onready var patrol_wait_timer = $"../PatrolWaitTimer"
@@ -53,14 +54,51 @@ func move(delta: float, state: int, target: Node3D) -> void:
 		current_speed = patrol_speed
 		_chase_repath_timer = 0.0
 		_last_chase_target_pos = Vector3(INF, INF, INF)
+		_update_patrol_or_special_path(delta)
 
 	_follow_current_path(delta, state, target)
+
+func _update_patrol_or_special_path(delta: float) -> void:
+	# 1. Modo Escolta (sigue al Boss principal)
+	if boss.get("follow_target") != null and is_instance_valid(boss.follow_target):
+		_patrol_repath_timer -= delta
+		var flat_boss_pos = Vector3(boss.global_position.x, 0, boss.global_position.z)
+		var flat_target_pos = Vector3(boss.follow_target.global_position.x, 0, boss.follow_target.global_position.z)
+
+		if flat_boss_pos.distance_to(flat_target_pos) <= arrival_distance:
+			current_path = []
+			path_index = 0
+			return
+
+		if current_path.is_empty() or _patrol_repath_timer <= 0.0:
+			_request_path_to(boss.follow_target.global_position)
+			_patrol_repath_timer = 1.5
+		return
+
+	# 2. Modo Custodia de Puerta (si un jugador tiene la llave)
+	if boss.get("guards_exit_on_key") and boss.has_method("get_key_holder"):
+		var key_holder = boss.get_key_holder()
+		var door = boss.get_exit_door() if boss.has_method("get_exit_door") else null
+		if key_holder != null and door != null:
+			_patrol_repath_timer -= delta
+			var flat_boss_pos = Vector3(boss.global_position.x, 0, boss.global_position.z)
+			var flat_door_pos = Vector3(door.global_position.x, 0, door.global_position.z)
+
+			if flat_boss_pos.distance_to(flat_door_pos) <= arrival_distance:
+				current_path = []
+				path_index = 0
+				return
+
+			if current_path.is_empty() or _patrol_repath_timer <= 0.0:
+				_request_path_to(door.global_position)
+				_patrol_repath_timer = 1.5
+			return
 
 func _update_chase_path(delta: float, target: Node3D) -> void:
 	var flat_boss_pos = Vector3(boss.global_position.x, 0, boss.global_position.z)
 	var flat_target_pos = Vector3(target.global_position.x, 0, target.global_position.z)
 
-	# A corta distancia, ignoramos el grid y vamos directo (el path del grid hace zigzag aquí)
+	# A corta distancia, ignoramos el grid y vamos directo
 	if flat_boss_pos.distance_to(flat_target_pos) <= direct_chase_range:
 		current_path = []
 		path_index = 0
@@ -80,9 +118,18 @@ func _follow_current_path(delta: float, state: int, target: Node3D = null) -> vo
 		if state == 1 and target != null:
 			_move_directly_to(delta, target.global_position)
 			return
-		
-		# --- MODIFICADO: Si está patrullando (0) ---
+
 		if state == 0:
+			if boss.get("follow_target") != null and is_instance_valid(boss.follow_target):
+				_move_directly_to(delta, boss.follow_target.global_position)
+				return
+
+			if boss.get("guards_exit_on_key") and boss.has_method("get_key_holder") and boss.get_key_holder() != null:
+				var door = boss.get_exit_door() if boss.has_method("get_exit_door") else null
+				if door != null:
+					_move_directly_to(delta, door.global_position)
+					return
+
 			if not waiting_on_point:
 				waiting_on_point = true
 				patrol_wait_timer.wait_time = randf_range(1.0, 2.0)
@@ -139,12 +186,10 @@ func _move_directly_to(delta: float, world_pos: Vector3) -> void:
 
 func choose_new_destination():
 	var angle = randf() * TAU
-	# Forzamos a que camine al menos un poco, entre 4m y el borde de la sala
-	var distance = randf_range(4.0, patrol_radio) 
+	var distance = randf_range(4.0, patrol_radio)
 	var offset = Vector3(cos(angle) * distance, 0, sin(angle) * distance)
-	
-	# Al sumar offset a initial_pos, su patrulla será una correa invisible atada al centro
-	var raw_point = initial_pos + offset 
+
+	var raw_point = initial_pos + offset
 	_request_path_to(raw_point)
 
 func _request_path_to(world_pos: Vector3) -> void:
@@ -166,4 +211,12 @@ func cancel_wait():
 
 func _on_patrol_wait_timeout():
 	waiting_on_point = false
+	if boss.get("follow_target") != null and is_instance_valid(boss.follow_target):
+		_request_path_to(boss.follow_target.global_position)
+		return
+	if boss.get("guards_exit_on_key") and boss.has_method("get_key_holder") and boss.get_key_holder() != null:
+		var door = boss.get_exit_door() if boss.has_method("get_exit_door") else null
+		if door != null:
+			_request_path_to(door.global_position)
+			return
 	choose_new_destination()

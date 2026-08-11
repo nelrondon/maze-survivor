@@ -5,9 +5,28 @@ using System.Linq;
 
 public partial class MazeSpawner : Node
 {
+	private struct WallCell
+	{
+		public Vector2I Pos;
+		public float RotationY;
+		public Vector2 WallOffset;
+
+		public WallCell(Vector2I pos, float rotY, Vector2 offset)
+		{
+			Pos = pos;
+			RotationY = rotY;
+			WallOffset = offset;
+		}
+	}
+
 	private Maze _maze;
 	private Random _random = new Random();
 	private readonly HashSet<Vector2I> _occupiedPositions = new HashSet<Vector2I>();
+
+	// Pools indexados para selección en tiempo constante O(1)
+	private readonly List<Vector2I> _freeFloorPool = new List<Vector2I>();
+	private readonly List<WallCell> _wallAdjacentPool = new List<WallCell>();
+	private readonly Dictionary<int, List<Vector2I>> _sectorFloorPools = new Dictionary<int, List<Vector2I>>();
 
 	private SpectatorUI _spectatorUI;
 	private int _spectateIndex = 0;
@@ -54,13 +73,133 @@ public partial class MazeSpawner : Node
 		_random = new Random(_maze.MazeSeed + 100);
 		_occupiedPositions.Clear();
 
+		// Indexación espacial O(N) en un solo paso inicial
+		IndexMazeCells();
+
 		Vector2I bossSpawnPos = SpawnBoss();
+		SpawnMiniBosses(bossSpawnPos);
 		SpawnPlayer();
 		SpawnInventoryUI();
 		SpawnKey(bossSpawnPos);   
 		SpawnDoorOnWall();
 		SpawnBackpacks();
 		SpawnTraps();
+		SpawnDecoration();
+	}
+
+	private void IndexMazeCells()
+	{
+		_freeFloorPool.Clear();
+		_wallAdjacentPool.Clear();
+		_sectorFloorPools.Clear();
+		for (int i = 0; i < 16; i++)
+		{
+			_sectorFloorPools[i] = new List<Vector2I>();
+		}
+
+		int width = _maze.Width;
+		int height = _maze.Height;
+		float offset = _maze.GridScale * 0.47f;
+
+		Vector2I centerPos = new Vector2I(width / 2, height / 2);
+		int centerRadius = 3;
+
+		for (int x = 1; x < width - 1; x++)
+		{
+			for (int z = 1; z < height - 1; z++)
+			{
+				if (_maze.Map[x, z] != 0) continue;
+
+				// Excluir la sala central del boss para evitar que mochilas/trampas aparezcan pegadas al spawn inicial
+				if (Math.Abs(x - centerPos.X) <= centerRadius && Math.Abs(z - centerPos.Y) <= centerRadius)
+					continue;
+
+				Vector2I pos = new Vector2I(x, z);
+
+				_freeFloorPool.Add(pos);
+
+				// Clasificación estratificada por sub-regiones (4x4 = 16 sectores espaciales)
+				int sectorX = Math.Clamp((x * 4) / width, 0, 3);
+				int sectorZ = Math.Clamp((z * 4) / height, 0, 3);
+				int sector = sectorZ * 4 + sectorX;
+				_sectorFloorPools[sector].Add(pos);
+
+				// Detectar paredes contiguas para colocación de puertas y trampas de pared
+				if (_maze.Map[x - 1, z] == 1) _wallAdjacentPool.Add(new WallCell(pos, -90f, new Vector2(-offset, 0)));
+				if (_maze.Map[x + 1, z] == 1) _wallAdjacentPool.Add(new WallCell(pos, 90f, new Vector2(offset, 0)));
+				if (_maze.Map[x, z - 1] == 1) _wallAdjacentPool.Add(new WallCell(pos, 180f, new Vector2(0, -offset)));
+				if (_maze.Map[x, z + 1] == 1) _wallAdjacentPool.Add(new WallCell(pos, 0f, new Vector2(0, offset)));
+			}
+		}
+
+		// Barajado determinista Fisher-Yates sobre cada piscina
+		ShuffleList(_freeFloorPool);
+		ShuffleList(_wallAdjacentPool);
+		for (int i = 0; i < 16; i++)
+		{
+			ShuffleList(_sectorFloorPools[i]);
+		}
+	}
+
+	private void ShuffleList<T>(IList<T> list)
+	{
+		int n = list.Count;
+		while (n > 1)
+		{
+			n--;
+			int k = _random.Next(n + 1);
+			T value = list[k];
+			list[k] = list[n];
+			list[n] = value;
+		}
+	}
+
+	private Vector2I PopFreeCell(int preferredSector = -1)
+	{
+		if (preferredSector >= 0 && preferredSector < 16 && _sectorFloorPools.ContainsKey(preferredSector))
+		{
+			var sectorList = _sectorFloorPools[preferredSector];
+			for (int i = sectorList.Count - 1; i >= 0; i--)
+			{
+				Vector2I p = sectorList[i];
+				sectorList.RemoveAt(i);
+				if (!_occupiedPositions.Contains(p))
+				{
+					_occupiedPositions.Add(p);
+					_freeFloorPool.Remove(p);
+					return p;
+				}
+			}
+		}
+
+		for (int i = _freeFloorPool.Count - 1; i >= 0; i--)
+		{
+			Vector2I p = _freeFloorPool[i];
+			_freeFloorPool.RemoveAt(i);
+			if (!_occupiedPositions.Contains(p))
+			{
+				_occupiedPositions.Add(p);
+				return p;
+			}
+		}
+
+		return _maze.FindEmptySpace();
+	}
+
+	private WallCell PopWallCell()
+	{
+		for (int i = _wallAdjacentPool.Count - 1; i >= 0; i--)
+		{
+			WallCell cell = _wallAdjacentPool[i];
+			_wallAdjacentPool.RemoveAt(i);
+			if (!_occupiedPositions.Contains(cell.Pos))
+			{
+				return cell;
+			}
+		}
+
+		var fallbackPos = PopFreeCell();
+		return new WallCell(fallbackPos, 0f, Vector2.Zero);
 	}
 
 	private Vector2I SpawnBoss()
@@ -79,6 +218,71 @@ public partial class MazeSpawner : Node
 
 		return spawnPos;
 	}
+
+	private void SpawnMiniBosses(Vector2I bossSpawnPos)
+	{
+		if (_maze.MiniBossScene == null)
+		{
+			var loadedScene = GD.Load<PackedScene>("res://src/entities/enemies/mini_boss/mini_boss.tscn");
+			if (loadedScene != null)
+			{
+				_maze.MiniBossScene = loadedScene;
+			}
+		}
+
+		if (_maze.MiniBossScene == null) return;
+
+		var bossNode = _maze.GetNodeOrNull<Node3D>("SingleMazeBoss");
+
+		// 1. Generar MiniBosses repartidos equitativamente, alejados del Boss principal y entre sí
+		int count = Math.Max(1, _maze.MiniBossCount);
+		int spawned = 0;
+		const int minDistanceCells = 5; // Distancia mínima entre MiniBosses
+		const int minBossDistanceCells = 10; // Distancia mínima al Boss principal
+		var miniBossPositions = new List<Vector2I>();
+
+		for (int i = 0; i < count; i++)
+		{
+			int targetSector = i % 16;
+			Vector2I pos = FindMiniBossPosition(bossSpawnPos, targetSector, miniBossPositions, minDistanceCells, minBossDistanceCells);
+			if (pos.X < 0) continue; // No se encontró posición válida fuera de la zona del boss
+
+			var miniBoss = _maze.MiniBossScene.Instantiate<Node3D>();
+			miniBoss.Name = $"MiniBoss_{i + 1}";
+			miniBoss.Position = new Vector3(pos.X * _maze.GridScale, 1.0f, pos.Y * _maze.GridScale);
+			miniBoss.Set("guards_exit_on_key", false);
+			_maze.AddChild(miniBoss);
+			miniBossPositions.Add(pos);
+			_occupiedPositions.Add(pos);
+			spawned++;
+		}
+		GD.Print($"[MazeSpawner] {spawned} MiniBosses generados fuera de la zona del Boss (distancia mín al boss: {minBossDistanceCells} celdas).");
+
+		// 2. Generar únicamente los MiniBosses escolta que siguen al Boss principal
+		int escortCount = Math.Max(0, _maze.MiniBossEscortCount);
+		int escortsSpawned = 0;
+		Vector3 bossWorldPos = new Vector3(bossSpawnPos.X * _maze.GridScale, 1.0f, bossSpawnPos.Y * _maze.GridScale);
+
+		for (int i = 0; i < escortCount; i++)
+		{
+			var escort = _maze.MiniBossScene.Instantiate<Node3D>();
+			escort.Name = $"MiniBossEscort_{i + 1}";
+			
+			float offsetX = (i == 0) ? 2.5f : -2.5f;
+			float offsetZ = (i == 0) ? 2.5f : -2.5f;
+			escort.Position = bossWorldPos + new Vector3(offsetX, 0, offsetZ);
+
+			escort.Set("guards_exit_on_key", false);
+			if (bossNode != null)
+			{
+				escort.Set("follow_target", bossNode);
+			}
+
+			_maze.AddChild(escort);
+			escortsSpawned++;
+		}
+		GD.Print($"[MazeSpawner] {escortsSpawned} MiniBosses escoltas generados junto al Boss.");
+	}
 	
 	public void SpawnInventoryUI()
 	{
@@ -88,21 +292,15 @@ public partial class MazeSpawner : Node
 		var inv = player.GetNodeOrNull("Inventory");
 		var handler = player.GetNodeOrNull("ItemUseHandler");
 
-		// Hotbar
-		var hotbar = GD.Load<PackedScene>(
-			"res://src/inventory/Hotbar/HotbarUI.tscn").Instantiate();
+		var hotbar = GD.Load<PackedScene>("res://src/inventory/Hotbar/HotbarUI.tscn").Instantiate();
 		player.AddChild(hotbar);
 		hotbar.Call("setup", inv, handler);
 
-		// Inventario (Tab)
-		var invUI = GD.Load<PackedScene>(
-			"res://src/inventory/PlayerInventory/PlayerInventoryUI.tscn").Instantiate();
+		var invUI = GD.Load<PackedScene>("res://src/inventory/PlayerInventory/PlayerInventoryUI.tscn").Instantiate();
 		player.AddChild(invUI);
 		invUI.Call("setup", inv);
 
-		// BackpackUI (se abre al interactuar con mochilas)
-		var bpUI = GD.Load<PackedScene>(
-			"res://src/inventory/Backpack/BackpackUI.tscn").Instantiate();
+		var bpUI = GD.Load<PackedScene>("res://src/inventory/Backpack/BackpackUI.tscn").Instantiate();
 		player.AddChild(bpUI);
 		bpUI.Call("setup", inv);
 	}
@@ -111,35 +309,20 @@ public partial class MazeSpawner : Node
 	{
 		if (_maze.BackpackScene == null) return;
 
-		int cantidad = Math.Max(100, _maze.BackpackCount);
+		int cantidad = Math.Max(1, _maze.BackpackCount);
 		int spawned = 0;
 
 		for (int i = 0; i < cantidad; i++)
 		{
-			Vector2I pos = ObtenerEspacioVacioAleatorio();
+			int targetSector = i % 16; // Distribución equitativa entre los 16 sectores espaciales
+			Vector2I pos = PopFreeCell(targetSector);
 			var backpack = _maze.BackpackScene.Instantiate<Node3D>();
 			backpack.Position = new Vector3(pos.X * _maze.GridScale, 0.2f, pos.Y * _maze.GridScale);
 			backpack.RotationDegrees = new Vector3(0, _random.Next(0, 360), 0);
 			_maze.AddChild(backpack);
-			_occupiedPositions.Add(pos);
 			spawned++;
 		}
-		GD.Print($"[MazeSpawner] {spawned} mochilas generadas individualmente de forma separada por todo el laberinto.");
-	}
-
-	private Vector2I GetEmptySpaceInQuadrant(int startX, int endX, int startZ, int endZ)
-	{
-		int intentos = 0;
-		while (intentos < 500)
-		{
-			int x = _random.Next(startX, endX + 1);
-			int z = _random.Next(startZ, endZ + 1);
-			Vector2I pos = new Vector2I(x, z);
-			if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(pos))
-				return pos;
-			intentos++;
-		}
-		return ObtenerEspacioVacioAleatorio();
+		GD.Print($"[MazeSpawner] {spawned} mochilas generadas en O(1) con distribución estratificada en 16 sectores.");
 	}
 
 	private void SpawnKey(Vector2I bossPosition)
@@ -158,72 +341,18 @@ public partial class MazeSpawner : Node
 	{
 		if (_maze.DoorScene == null) return;
 
-		Vector2I freeSpace = ObtenerEspacioConParedAdyacente();
+		WallCell wallCell = PopWallCell();
 		var door = _maze.DoorScene.Instantiate<Node3D>();
-		Vector3 basePos = new Vector3(freeSpace.X * _maze.GridScale, 0.0f, freeSpace.Y * _maze.GridScale);
-
-		float offset = _maze.GridScale * 0.45f;
-
-		if (freeSpace.X == 1)
-		{
-			basePos.X -= offset;
-			door.RotationDegrees = new Vector3(0, 90, 0);
-		}
-		else if (freeSpace.X == _maze.Width - 2)
-		{
-			basePos.X += offset;
-			door.RotationDegrees = new Vector3(0, -90, 0);
-		}
-		else if (freeSpace.Y == 1)
-		{
-			basePos.Z -= offset;
-			door.RotationDegrees = new Vector3(0, 0, 0);
-		}
-		else if (freeSpace.Y == _maze.Height - 2)
-		{
-			basePos.Z += offset;
-			door.RotationDegrees = new Vector3(0, 180, 0);
-		}
+		Vector3 basePos = new Vector3(wallCell.Pos.X * _maze.GridScale, 0.0f, wallCell.Pos.Y * _maze.GridScale);
+		basePos.X += wallCell.WallOffset.X;
+		basePos.Z += wallCell.WallOffset.Y;
 
 		door.Position = basePos;
+		door.RotationDegrees = new Vector3(0, wallCell.RotationY, 0);
 		_maze.AddChild(door);
 
-		_occupiedPositions.Add(freeSpace);
-		GD.Print($"Puerta colocada en el borde interior accesible en: {freeSpace}");
-	}
-
-	private Vector2I ObtenerEspacioConParedAdyacente()
-	{
-		List<Vector2I> candidatos = new List<Vector2I>();
-
-		int maxX = _maze.Width - 1;
-		int maxZ = _maze.Height - 1;
-
-		for (int x = 1; x < maxX; x++)
-		{
-			for (int z = 1; z < maxZ; z++)
-			{
-				if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(new Vector2I(x, z)))
-				{
-					bool tocaBordeIzquierdo = (x == 1 && _maze.Map[x - 1, z] == 1);
-					bool tocaBordeDerecho = (x == maxX - 1 && _maze.Map[x + 1, z] == 1);
-					bool tocaBordeSuperior = (z == 1 && _maze.Map[x, z - 1] == 1);
-					bool tocaBordeInferior = (z == maxZ - 1 && _maze.Map[x, z + 1] == 1);
-
-					if (tocaBordeIzquierdo || tocaBordeDerecho || tocaBordeSuperior || tocaBordeInferior)
-					{
-						candidatos.Add(new Vector2I(x, z));
-					}
-				}
-			}
-		}
-
-		if (candidatos.Count > 0)
-		{
-			return candidatos[_random.Next(candidatos.Count)];
-		}
-
-		return ObtenerEspacioVacioAleatorio();
+		_occupiedPositions.Add(wallCell.Pos);
+		GD.Print($"[MazeSpawner] Puerta colocada en O(1) en la posición: {wallCell.Pos}");
 	}
 
 	private void SpawnPlayer()
@@ -352,20 +481,6 @@ public partial class MazeSpawner : Node
 		}
 	}
 
-	private Vector2I ObtenerEspacioVacioAleatorio()
-	{
-		int intentos = 0;
-		while (intentos < 1000)
-		{
-			int x = _random.Next(1, _maze.Width - 1);
-			int z = _random.Next(1, _maze.Height - 1);
-			Vector2I pos = new Vector2I(x, z);
-			if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(pos)) return pos;
-			intentos++;
-		}
-		return _maze.FindEmptySpace();
-	}
-
 	private Vector2I FindCornerSpace(int cornerIndex = -1)
 	{
 		int esquinaElegida = cornerIndex >= 0 ? (cornerIndex % 4) : _random.Next(0, 4);
@@ -386,10 +501,14 @@ public partial class MazeSpawner : Node
 			for (int z = startZ; z <= endZ; z++)
 			{
 				Vector2I pos = new Vector2I(x, z);
-				if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(pos)) return pos;
+				if (_maze.Map[x, z] == 0 && !_occupiedPositions.Contains(pos))
+				{
+					_occupiedPositions.Add(pos);
+					return pos;
+				}
 			}
 		}
-		return _maze.FindEmptySpace();
+		return PopFreeCell();
 	}
 
 	private void SpawnTraps()
@@ -413,11 +532,7 @@ public partial class MazeSpawner : Node
 			if (_random.NextDouble() > _maze.SpikeClusterChance) continue;
 
 			var fila = ObtenerLineaLibre(largo);
-			if (fila == null)
-			{
-				GD.Print($"No hay pasillo libre de {largo} celdas seguidas para otro cluster de pinchos, se omite.");
-				continue;
-			}
+			if (fila == null) continue;
 
 			foreach (var pos in fila)
 			{
@@ -427,7 +542,6 @@ public partial class MazeSpawner : Node
 				_maze.AddChild(trap);
 				_occupiedPositions.Add(pos);
 			}
-			GD.Print($"Fila de {fila.Count} pinchos colocada en pasillo, inicio {fila[0]}");
 		}
 	}
 
@@ -475,29 +589,28 @@ public partial class MazeSpawner : Node
 
 		for (int c = 0; c < _maze.ArrowClusterCount; c++)
 		{
-			var (pos, rotationY, wallOffset) = ObtenerEspacioConParedYRotacion();
-			if (_occupiedPositions.Contains(pos)) continue;
+			if (_wallAdjacentPool.Count == 0) break;
+			WallCell cell = PopWallCell();
 
-			Vector2 ejeLateral = (Mathf.Abs(rotationY) == 90f) ? new Vector2(0, 1) : new Vector2(1, 0);
+			Vector2 ejeLateral = (Mathf.Abs(cell.RotationY) == 90f) ? new Vector2(0, 1) : new Vector2(1, 0);
 
 			int n = Math.Max(1, _maze.ArrowClusterSize);
 			for (int i = 0; i < n; i++)
 			{
 				float lateral = (i - (n - 1) / 2.0f) * espaciado;
-				Vector2 offsetFinal = wallOffset + ejeLateral * lateral;
+				Vector2 offsetFinal = cell.WallOffset + ejeLateral * lateral;
 
 				var trap = _maze.ArrowTrapScene.Instantiate<Node3D>();
 				trap.Position = new Vector3(
-					pos.X * _maze.GridScale + offsetFinal.X,
+					cell.Pos.X * _maze.GridScale + offsetFinal.X,
 					0.0f,
-					pos.Y * _maze.GridScale + offsetFinal.Y
+					cell.Pos.Y * _maze.GridScale + offsetFinal.Y
 				);
-				trap.RotationDegrees = new Vector3(0, rotationY, 0);
+				trap.RotationDegrees = new Vector3(0, cell.RotationY, 0);
 				_maze.AddChild(trap);
 			}
 
-			_occupiedPositions.Add(pos);
-			GD.Print($"Grupo de {n} disparadores de flecha en {pos}, rot Y={rotationY}");
+			_occupiedPositions.Add(cell.Pos);
 		}
 	}
 
@@ -507,35 +620,122 @@ public partial class MazeSpawner : Node
 
 		for (int i = 0; i < _maze.CageTrapCount; i++)
 		{
-			Vector2I spawnPos = ObtenerEspacioVacioAleatorio();
+			Vector2I spawnPos = PopFreeCell();
 			var trap = _maze.CageTrapScene.Instantiate<Node3D>();
 			trap.Position = new Vector3(spawnPos.X * _maze.GridScale, 0.0f, spawnPos.Y * _maze.GridScale);
 			_maze.AddChild(trap);
-			_occupiedPositions.Add(spawnPos);
 		}
 	}
 
-	private (Vector2I pos, float rotationY, Vector2 wallOffset) ObtenerEspacioConParedYRotacion()
+	// ===== DECORACIÓN AMBIENTAL =====
+
+	private void SpawnDecoration()
 	{
-		float offset = _maze.GridScale * 0.47f;
-		var candidatos = new List<(Vector2I pos, float rot, Vector2 off)>();
+		_maze.TorchScene ??= GD.Load<PackedScene>("res://src/entities/world/torch.tscn");
+		SpawnTorches();
+	}
 
-		for (int x = 1; x < _maze.Width - 1; x++)
+	private void SpawnTorches()
+	{
+		if (_maze.TorchScene == null) return;
+
+		int count = Math.Max(0, _maze.TorchCount);
+		int spawned = 0;
+
+		for (int i = 0; i < count; i++)
 		{
-			for (int z = 1; z < _maze.Height - 1; z++)
-			{
-				var pos = new Vector2I(x, z);
-				if (_maze.Map[x, z] != 0 || _occupiedPositions.Contains(pos)) continue;
+			if (_wallAdjacentPool.Count == 0) break;
 
-				if (_maze.Map[x - 1, z] == 1) candidatos.Add((pos, -90f, new Vector2(-offset, 0)));
-				if (_maze.Map[x + 1, z] == 1) candidatos.Add((pos, 90f, new Vector2(offset, 0)));
-				if (_maze.Map[x, z - 1] == 1) candidatos.Add((pos, 180f, new Vector2(0, -offset)));
-				if (_maze.Map[x, z + 1] == 1) candidatos.Add((pos, 0f, new Vector2(0, offset)));
+			WallCell cell = PopWallCell();
+			var torch = _maze.TorchScene.Instantiate<Node3D>();
+
+			Vector3 pos = new Vector3(
+				cell.Pos.X * _maze.GridScale + cell.WallOffset.X,
+				0.0f,
+				cell.Pos.Y * _maze.GridScale + cell.WallOffset.Y
+			);
+			torch.Position = pos;
+			torch.RotationDegrees = new Vector3(0, cell.RotationY, 0);
+
+			var light = torch.GetNodeOrNull<OmniLight3D>("OmniLight3D");
+			if (light != null)
+			{
+				light.ShadowEnabled = false;
+				light.OmniRange = 5.0f;
+				light.LightEnergy = 1.2f;
+			}
+
+			_maze.AddChild(torch);
+			spawned++;
+		}
+		GD.Print($"[MazeSpawner] {spawned} antorchas colocadas en paredes.");
+	}
+
+	// ===== UTILIDAD: DISTANCIA MÍNIMA ENTRE MINIBOSSES =====
+
+	private Vector2I FindMiniBossPosition(Vector2I bossSpawnPos, int preferredSector, List<Vector2I> existingPositions, int minDistance, int minBossDistance)
+	{
+		// Intentar primero en el sector preferido
+		if (preferredSector >= 0 && preferredSector < 16 && _sectorFloorPools.ContainsKey(preferredSector))
+		{
+			var sectorList = _sectorFloorPools[preferredSector];
+			for (int i = sectorList.Count - 1; i >= 0; i--)
+			{
+				Vector2I p = sectorList[i];
+				if (!_occupiedPositions.Contains(p) && IsFarEnough(p, bossSpawnPos, minBossDistance, existingPositions, minDistance))
+				{
+					sectorList.RemoveAt(i);
+					_freeFloorPool.Remove(p);
+					return p;
+				}
 			}
 		}
 
-		if (candidatos.Count == 0) return (ObtenerEspacioVacioAleatorio(), 0f, Vector2.Zero);
+		// Fallback: buscar en el pool general
+		for (int i = _freeFloorPool.Count - 1; i >= 0; i--)
+		{
+			Vector2I p = _freeFloorPool[i];
+			if (!_occupiedPositions.Contains(p) && IsFarEnough(p, bossSpawnPos, minBossDistance, existingPositions, minDistance))
+			{
+				_freeFloorPool.RemoveAt(i);
+				return p;
+			}
+		}
 
-		return candidatos[_random.Next(candidatos.Count)];
+		// Relajar la distancia entre minibosses si es necesario, manteniendo siempre la distancia con el Boss
+		for (int i = _freeFloorPool.Count - 1; i >= 0; i--)
+		{
+			Vector2I p = _freeFloorPool[i];
+			if (!_occupiedPositions.Contains(p) && IsFarEnough(p, bossSpawnPos, minBossDistance, existingPositions, 2))
+			{
+				_freeFloorPool.RemoveAt(i);
+				return p;
+			}
+		}
+
+		return new Vector2I(-1, -1);
+	}
+
+	private bool IsFarEnough(Vector2I candidate, Vector2I bossSpawnPos, int minBossDistance, List<Vector2I> existingPositions, int minDistance)
+	{
+		// Distancia mínima al Boss principal
+		int dxBoss = Math.Abs(candidate.X - bossSpawnPos.X);
+		int dzBoss = Math.Abs(candidate.Y - bossSpawnPos.Y);
+		if (dxBoss + dzBoss < minBossDistance)
+		{
+			return false;
+		}
+
+		// Distancia mínima a otros MiniBosses
+		foreach (var existing in existingPositions)
+		{
+			int dx = Math.Abs(candidate.X - existing.X);
+			int dz = Math.Abs(candidate.Y - existing.Y);
+			if (dx + dz < minDistance) // Distancia Manhattan
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -12,6 +12,8 @@ public partial class Door : Node3D
 
 	public override void _Ready()
 	{
+		AddToGroup("Door");
+
 		// Creamos un Label de UI en tiempo de ejecución para mostrar el temporizador en una esquina (ej. superior derecha)
 		var canvasLayer = new CanvasLayer();
 		_timerLabel = new Label();

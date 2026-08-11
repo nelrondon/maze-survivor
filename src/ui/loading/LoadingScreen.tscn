@@ -1,0 +1,144 @@
+[gd_scene format=3 uid="uid://c8loadingscreen01"]
+
+[ext_resource type="Script" path="res://src/ui/loading/LoadingScreen.cs" id="1_loadingscreen"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.04, 0.06, 0.1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.08, 0.12, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.9, 0.7, 0.3)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_fill"]
+bg_color = Color(0, 0.9, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0.9, 0.7, 0.4)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tip_panel"]
+bg_color = Color(0.07, 0.1, 0.16, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.9, 0.7, 0.4)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 8
+
+[node name="LoadingScreen" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_loadingscreen")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="Panel" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="CenterContainer" type="CenterContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/CenterContainer"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.9, 0.7, 0.3)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 40
+text = "MAZE SURVIVOR"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 18
+text = "GENERANDO LABERINTO ALEATORIO"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Control/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_fill")
+show_percentage = true
+
+[node name="StatusLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "Construyendo pasillos y muros..."
+horizontal_alignment = 1
+
+[node name="TipPanel" type="PanelContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -100.0
+offset_right = -80.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tip_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/TipPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="TipLabel" type="Label" parent="Control/TipPanel/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "CONSEJO: ¡Mantén los botiquines a mano para curarte durante los enfrentamientos!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

@@ -42,6 +42,9 @@ func _search_recursive(id: String, path: String) -> bool:
 	dir.list_dir_begin()
 	var file_name: String = dir.get_next()
 	while file_name != "":
+		if file_name.begins_with("."):
+			file_name = dir.get_next()
+			continue
 		var full_path: String = path + file_name
 		if dir.current_is_dir():
 			if _search_recursive(id, full_path + "/"):

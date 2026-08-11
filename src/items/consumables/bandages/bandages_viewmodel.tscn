@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/items/consumables/consumable_viewmodel.gd" id="1_script"]
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+
+[sub_resource type="Animation" id="Animation_desequipar"]
+resource_name = "desequipar"
+length = 0.3
+
+[sub_resource type="Animation" id="Animation_equipar"]
+resource_name = "equipar"
+length = 0.3
+
+[sub_resource type="Animation" id="Animation_usar"]
+resource_name = "usar"
+length = 0.6
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_main"]
+_data = {
+&"RESET": SubResource("Animation_reset"),
+&"desequipar": SubResource("Animation_desequipar"),
+&"equipar": SubResource("Animation_equipar"),
+&"usar": SubResource("Animation_usar")
+}
+
+[node name="BandagesViewmodel" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="anim" type="AnimationPlayer" parent="."]
+libraries/ = SubResource("AnimationLibrary_main")
+
+[connection signal="animation_finished" from="anim" to="." method="_on_anim_animation_finished"]

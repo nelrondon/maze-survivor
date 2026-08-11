@@ -1,13 +1,57 @@
-﻿[gd_scene format=3 uid="uid://3q6jp1r86vhf"]
+[gd_scene format=3 uid="uid://3q6jp1r86vhf"]
 
 [ext_resource type="Texture2D" path="res://assets/ui/logo/LOGO_MAZE_SURVIVOR.png" id="1_lti8b"]
 [ext_resource type="Script" path="res://src/ui/login/Menu.cs" id="1_ouk20"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u840f"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.04, 0.06, 0.1, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fdm2o"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.07, 0.1, 0.16, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.9, 0.7, 0.4)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.08, 0.14, 0.22, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.9, 0.7, 0.4)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0, 0.75, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 1, 0.8, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0.9, 0.7, 0.4)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0, 0.55, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Control" type="Control" unique_id=1402574637]
 layout_mode = 3
@@ -18,6 +62,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ouk20")
 
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1412260520]
 layout_mode = 1
 anchors_preset = 15
@@ -26,35 +79,67 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=397513628]
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(420, 420)
 layout_mode = 2
-theme_override_constants/separation = 24
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=397513628]
+layout_mode = 2
+theme_override_constants/separation = 18
 alignment = 1
 
-[node name="LogoContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer" unique_id=808080808]
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.9, 0.7, 0.3)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+text = "MAZE SURVIVOR"
+horizontal_alignment = 1
+
+[node name="LogoContainer" type="CenterContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=808080808]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer/LogoContainer" unique_id=1798906883]
-custom_minimum_size = Vector2(320, 190)
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LogoContainer" unique_id=1798906883]
+custom_minimum_size = Vector2(260, 130)
 layout_mode = 2
 texture = ExtResource("1_lti8b")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer" unique_id=90909090]
+[node name="Spacer" type="Control" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=90909090]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1807359965]
-custom_minimum_size = Vector2(240, 50)
+[node name="Button" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1807359965]
+custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/normal = SubResource("StyleBoxFlat_u840f")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "JUGAR"
 
-[node name="Button2" type="Button" parent="CenterContainer/VBoxContainer" unique_id=319068554]
-custom_minimum_size = Vector2(240, 50)
+[node name="Button2" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=319068554]
+custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/normal = SubResource("StyleBoxFlat_fdm2o")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "SALIR DEL MENÚ"

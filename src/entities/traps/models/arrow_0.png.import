@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://fevpen7q85ah"
-path.s3tc="res://.godot/imported/arrow_0.png-5b6c0e8d34c5d01ba9718bbf1fa81b8f.s3tc.ctex"
+path.s3tc="res://.godot/imported/arrow_0.png-f026b6093c7835d8b76001f3593b578d.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -15,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://src/entities/traps/models/arrow_0.png"
-dest_files=["res://.godot/imported/arrow_0.png-5b6c0e8d34c5d01ba9718bbf1fa81b8f.s3tc.ctex"]
+dest_files=["res://.godot/imported/arrow_0.png-f026b6093c7835d8b76001f3593b578d.s3tc.ctex"]
 
 [params]
 

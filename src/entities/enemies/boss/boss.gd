@@ -11,6 +11,9 @@ var current_health: float = max_health
 @export var attack_cooldown: float = 1.5
 @export var attack_lunge_speed: float = 2.5
 
+@export var guards_exit_on_key: bool = true
+@export var follow_target: Node3D = null
+
 var player_target: Node3D = null
 var can_attack: bool = true
 
@@ -27,6 +30,13 @@ var _has_synced_transform: bool = false
 
 
 func _ready():
+	current_health = max_health
+	add_to_group("enemies")
+	add_to_group("boss")
+
+	if has_node("Sprite3D") and has_node("Sprite3D/SubViewport"):
+		$Sprite3D.texture = $Sprite3D/SubViewport.get_texture()
+
 	senses.player_detected.connect(_on_player_detected)
 	senses.player_lost.connect(_on_player_lost)
 	attack_cooldown_timer.timeout.connect(_on_attack_cooldown_timeout)
@@ -140,15 +150,41 @@ func _start_chase(target: Node3D, msg: String):
 	current_boss_state = BossState.CHASING
 	print(msg)
 
+func get_key_holder() -> Node3D:
+	var players = get_tree().get_nodes_in_group("Players")
+	for p in players:
+		if is_instance_valid(p) and not p.is_queued_for_deletion():
+			if "HasKey" in p and p.HasKey:
+				return p
+			elif "has_key" in p and p.has_key:
+				return p
+	return null
+
+func get_exit_door() -> Node3D:
+	return get_tree().get_first_node_in_group("Door")
+
 func _lose_the_trail():
-	print("El Oyente no encontró nada. Volviendo a patrullar...")
 	current_boss_state = BossState.PATROLLING
 	player_target = null
-	movement.reset_patrol_origin()
 
 	attack_cooldown_timer.stop()
 	can_attack = true
-	
+
+	if follow_target != null and is_instance_valid(follow_target):
+		print("El MiniBoss perdió al jugador. Retomando la escolta del Boss...")
+		movement.cancel_wait()
+		movement._request_path_to(follow_target.global_position)
+	else:
+		var key_holder = get_key_holder()
+		var door = get_exit_door()
+		if guards_exit_on_key and key_holder != null and door != null:
+			print("¡Un jugador tiene la llave y el Boss lo perdió de vista! El Boss se devuelve a la puerta de salida...")
+			movement.cancel_wait()
+			movement._request_path_to(door.global_position)
+		else:
+			print("El Oyente no encontró nada. Volviendo a patrullar...")
+			movement.reset_patrol_origin()
+
 	if animation_player.has_animation("Idle"):
 		animation_player.play("Idle")
 
@@ -205,14 +241,16 @@ func _on_attack_cooldown_timeout():
 func hit(damage: float, attacker: Node3D = null):
 	if current_boss_state == BossState.DEAD:
 		return
+	var attacker_path = attacker.get_path() if is_instance_valid(attacker) else NodePath("")
 	if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
-		rpc("_sync_hit", damage)
+		rpc("_sync_hit", damage, attacker_path)
 	else:
 		_apply_damage(damage, attacker)
 
 @rpc("any_peer", "call_local")
-func _sync_hit(damage: float) -> void:
-	_apply_damage(damage, null)
+func _sync_hit(damage: float, attacker_path: NodePath = NodePath("")) -> void:
+	var attacker_node = get_node_or_null(attacker_path) if not attacker_path.is_empty() else null
+	_apply_damage(damage, attacker_node)
 
 func _apply_damage(damage: float, attacker: Node3D = null) -> void:
 	if current_boss_state == BossState.DEAD:

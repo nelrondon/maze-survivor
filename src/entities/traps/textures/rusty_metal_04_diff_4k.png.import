@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bx0rg2fnqd5t3"
-path.s3tc="res://.godot/imported/rusty_metal_04_diff_4k.png-c9da26ea6b70994ae2be5d58ccc1fb40.s3tc.ctex"
+path.s3tc="res://.godot/imported/rusty_metal_04_diff_4k.png-7dc9b456f7ead02a9e8664db2699f7f3.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -12,7 +12,7 @@ metadata={
 [deps]
 
 source_file="res://src/entities/traps/textures/rusty_metal_04_diff_4k.png"
-dest_files=["res://.godot/imported/rusty_metal_04_diff_4k.png-c9da26ea6b70994ae2be5d58ccc1fb40.s3tc.ctex"]
+dest_files=["res://.godot/imported/rusty_metal_04_diff_4k.png-7dc9b456f7ead02a9e8664db2699f7f3.s3tc.ctex"]
 
 [params]
 

@@ -400,14 +400,54 @@ public partial class LobbyHandler : Control
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	public void startGame(int mazeSeed = 0)
+	public async void startGame(int mazeSeed = 0)
 	{	
 		if (mazeSeed == 0) mazeSeed = (int)GD.Randi();
+
+		// 1. Mostrar pantalla de carga inmediatamente
+		var loadingScene = GD.Load<PackedScene>("res://src/ui/loading/LoadingScreen.tscn");
+		LoadingScreen loadingScreen = null;
+		if (loadingScene != null)
+		{
+			loadingScreen = loadingScene.Instantiate<LoadingScreen>();
+			GetTree().Root.AddChild(loadingScreen);
+			loadingScreen.SetStatus("Iniciando generación del laberinto...");
+			loadingScreen.SetProgress(20f);
+		}
+
+		this.Hide();
+
+		// Renderizar primer frame de la pantalla de carga antes de la generación intensiva
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+		if (loadingScreen != null)
+		{
+			loadingScreen.SetStatus("Construyendo muros, salas y navegación 3D...");
+			loadingScreen.SetProgress(55f);
+		}
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
+		// 2. Instanciar y construir el laberinto
 		var mazeNode = ResourceLoader.Load<PackedScene>("res://src/maze/maze.tscn").Instantiate<Maze>();
 		mazeNode.MazeSeed = mazeSeed;
 		mazeNode.Name = "ActiveGameScene";
+
+		if (loadingScreen != null)
+		{
+			loadingScreen.SetStatus("Ubicando mochilas, botiquines y enemigos...");
+			loadingScreen.SetProgress(85f);
+		}
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
 		GetTree().Root.AddChild(mazeNode);
-		this.Hide();
+
+		if (loadingScreen != null)
+		{
+			loadingScreen.SetStatus("¡Laberinto generado! Entrando al juego...");
+			loadingScreen.SetProgress(100f);
+			await ToSignal(GetTree().CreateTimer(0.3f), SceneTreeTimer.SignalName.Timeout);
+			await loadingScreen.FadeOutAndFreeAsync();
+		}
 	}
 
 	// Send player information across multiple locations/scenes, etc.

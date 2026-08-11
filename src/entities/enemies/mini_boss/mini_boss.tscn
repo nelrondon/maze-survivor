@@ -25,6 +25,7 @@ script = ExtResource("1_script")
 max_health = 100.0
 attack_range = 2.5
 attack_damage = 10.0
+guards_exit_on_key = false
 
 [node name="BossModel" parent="." instance=ExtResource("2_model")]
 transform = Transform3D(-0.125, 0, -1.0927847e-08, 0, 0.125, 0, 1.0927847e-08, 0, -0.125, 0, -0.5, 0)

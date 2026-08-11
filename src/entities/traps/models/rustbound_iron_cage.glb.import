@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://c0pr3s8tcoc0m"
-path="res://.godot/imported/rustbound_iron_cage.glb-53265b26986e8cbf8d76c8da90360992.scn"
+path="res://.godot/imported/rustbound_iron_cage.glb-322f9b1e1ffc24963904049013894797.scn"
 
 [deps]
 
 source_file="res://src/entities/traps/models/rustbound_iron_cage.glb"
-dest_files=["res://.godot/imported/rustbound_iron_cage.glb-53265b26986e8cbf8d76c8da90360992.scn"]
+dest_files=["res://.godot/imported/rustbound_iron_cage.glb-322f9b1e1ffc24963904049013894797.scn"]
 
 [params]
 

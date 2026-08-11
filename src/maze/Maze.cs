@@ -14,23 +14,30 @@ public partial class Maze : Node3D
 	[ExportGroup("Spawning & Entities")]
 	[Export] public PackedScene PlayerScene;
 	[Export] public PackedScene BossScene;
+	[Export] public PackedScene MiniBossScene;
+	[Export] public int MiniBossCount = 40;
+	[Export] public int MiniBossEscortCount = 2;
 	[Export] public bool DebugSpawnPlayerNearBoss = false;
 	[Export] public PackedScene KeyScene;
 	[Export] public PackedScene DoorScene;
 	[Export] public PackedScene BackpackScene;
-	[Export] public int BackpackCount = 100;
+	[Export] public int BackpackCount = 150;
 
 	[ExportGroup("Trampas")]
 	[Export] public PackedScene SpikeTrapScene;
 	[Export] public PackedScene PoisonSpikeTrapScene;
 	[Export] public PackedScene ArrowTrapScene;
 	[Export] public PackedScene CageTrapScene;
-	[Export] public int SpikeClusterCount = 100; // 100 clusters de 2 baldosas = 200 trampas de piso en total
-	[Export(PropertyHint.Range, "0,1,0.05")] public float SpikeClusterChance = 0.95f;
-	[Export] public int SpikeClusterSize = 2; // Máximo 2 trampas de piso juntas (a lo largo del pasillo)
-	[Export] public int ArrowClusterCount = 60;
+	[Export] public int SpikeClusterCount = 35;
+	[Export(PropertyHint.Range, "0,1,0.05")] public float SpikeClusterChance = 0.80f;
+	[Export] public int SpikeClusterSize = 2;
+	[Export] public int ArrowClusterCount = 22;
 	[Export] public int ArrowClusterSize = 2;
-	[Export] public int CageTrapCount = 40;
+	[Export] public int CageTrapCount = 15;
+
+	[ExportGroup("Decoración Ambiental")]
+	[Export] public PackedScene TorchScene;
+	[Export] public int TorchCount = 180;
 
 	[ExportGroup("Texture Options")]
 	[Export] public Texture2D WallTexture;
@@ -77,7 +84,8 @@ public partial class Maze : Node3D
 		};
 		AddChild(_navRegion);
 
-		CreateFloorWithCollision(); 
+		CreateFloorWithCollision();
+		CreateCeiling();
 		DrawMapOptimized();
 		
 		_navRegion.BakeNavigationMesh(onThread: false);
@@ -169,6 +177,33 @@ public partial class Maze : Node3D
 
 		meshInstance.SetSurfaceOverrideMaterial(0, mat);
 		_navRegion.AddChild(staticBody);
+	}
+
+	private void CreateCeiling()
+	{
+		var ceilingMesh = new MeshInstance3D();
+		ceilingMesh.Mesh = new PlaneMesh() { Size = new Vector2(Width * GridScale, Height * GridScale) };
+		ceilingMesh.Position = new Vector3(
+			((Width * GridScale) / 2) - (GridScale / 2),
+			GridScale,
+			((Height * GridScale) / 2) - (GridScale / 2)
+		);
+		ceilingMesh.RotationDegrees = new Vector3(180, 0, 0);
+
+		var mat = new StandardMaterial3D();
+		if (WallTexture != null)
+		{
+			mat.AlbedoTexture = WallTexture;
+			mat.Uv1Scale = new Vector3(Width / 2.0f, Height / 2.0f, 1.0f);
+		}
+		else
+		{
+			mat.AlbedoColor = new Color(0.12f, 0.12f, 0.14f);
+		}
+		mat.Roughness = 1.0f;
+		ceilingMesh.SetSurfaceOverrideMaterial(0, mat);
+
+		AddChild(ceilingMesh);
 	}
 
 	private void DrawMapOptimized()
@@ -419,5 +454,11 @@ public partial class Maze : Node3D
 		for (int x = centerX - radius; x <= centerX + radius; x++)
 			for (int z = centerZ - radius; z <= centerZ + radius; z++)
 				Map[x, z] = 0;
+	}
+
+	public Vector3[] FindPath(Vector3 from, Vector3 to)
+	{
+		var map = GetWorld3D().NavigationMap;
+		return NavigationServer3D.MapGetPath(map, from, to, true);
 	}
 }

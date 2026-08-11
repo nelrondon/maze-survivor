@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpjjlmyyc1kxh"
-path.s3tc="res://.godot/imported/rustbound_iron_cage_1.png-a3c8737bbefa915f881bec094824c125.s3tc.ctex"
+path.s3tc="res://.godot/imported/rustbound_iron_cage_1.png-d992e51a4051b2a184dcfc55fe252134.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -15,7 +15,7 @@ generator_parameters={
 [deps]
 
 source_file="res://src/entities/traps/models/rustbound_iron_cage_1.png"
-dest_files=["res://.godot/imported/rustbound_iron_cage_1.png-a3c8737bbefa915f881bec094824c125.s3tc.ctex"]
+dest_files=["res://.godot/imported/rustbound_iron_cage_1.png-d992e51a4051b2a184dcfc55fe252134.s3tc.ctex"]
 
 [params]
 
