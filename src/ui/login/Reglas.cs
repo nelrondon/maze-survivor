@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using System;
 
 public partial class Reglas : Control
@@ -7,8 +7,8 @@ public partial class Reglas : Control
 
 	public override void _Ready()
 	{
-		// Ruta al botón según tu árbol: Control -> CenterContainer -> VBoxContainer -> Button
-		botonVolverMenu = GetNode<Button>("CenterContainer/VBoxContainer/Button");
+		botonVolverMenu = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button") 
+		               ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button");
 
 		if (botonVolverMenu != null)
 		{
@@ -18,7 +18,6 @@ public partial class Reglas : Control
 
 	private void OnBotonVolverMenuPressed()
 	{
-		// Cambia de vuelta a la escena del menú principal
 		GetTree().ChangeSceneToFile("res://src/ui/login/menu.tscn");
 	}
 }

@@ -1,56 +1,75 @@
-﻿using Godot;
+using Godot;
 using System;
 
 public partial class Sesion : Control
 {
-	private Button botonEntrarJugador;
-	private Button botonEntrarEspectador;
+	private RichTextLabel labelUsername;
+	private RichTextLabel labelDetalles;
+
+	private Button botonJugar;
 	private Button botonCerrarSesion;
 
 	public override void _Ready()
 	{
-		// 1. Obtener las referencias según la jerarquía de la escena (CenterContainer3)
-		botonEntrarJugador   = GetNode<Button>("CenterContainer3/VBoxContainer/Button");
-		botonEntrarEspectador = GetNode<Button>("CenterContainer3/VBoxContainer/Button2");
-		
-		// El último botón dentro de VBoxContainer o si tienes un botón para salir:
-		// Buscamos el nodo correspondiente al botón de cerrar sesión
-		botonCerrarSesion    = GetNodeOrNull<Button>("CenterContainer3/VBoxContainer/Button3");
+		labelUsername = GetNodeOrNull<RichTextLabel>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/RichTextLabel")
+		             ?? GetNodeOrNull<RichTextLabel>("CenterContainer2/VBoxContainer/RichTextLabel");
 
-		// 2. Conectar los eventos Pressed
-		if (botonEntrarJugador != null)
-		{
-			botonEntrarJugador.Pressed += OnBotonEntrarJugadorPressed;
-		}
+		labelDetalles = GetNodeOrNull<RichTextLabel>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/RichTextLabel2")
+		             ?? GetNodeOrNull<RichTextLabel>("CenterContainer2/VBoxContainer/RichTextLabel2");
 
-		if (botonEntrarEspectador != null)
+		botonJugar    = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button")
+		             ?? GetNodeOrNull<Button>("CenterContainer3/VBoxContainer/Button");
+
+		botonCerrarSesion = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button2")
+		                 ?? GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button3")
+		                 ?? GetNodeOrNull<Button>("CenterContainer3/VBoxContainer/Button3");
+
+		if (botonJugar != null)
 		{
-			botonEntrarEspectador.Pressed += OnBotonEntrarEspectadorPressed;
+			botonJugar.Pressed += OnBotonJugarPressed;
 		}
 
 		if (botonCerrarSesion != null)
 		{
 			botonCerrarSesion.Pressed += OnBotonCerrarSesionPressed;
 		}
+
+		CargarPerfilUI();
 	}
 
-	// --- MÉTODOS DE NAVEGACIÓN ---
-
-	// Botón 1: "ENTRAR COMO JUGADOR" -> Cambia a la escena de espera
-	private void OnBotonEntrarJugadorPressed()
+	private void CargarPerfilUI()
 	{
-		GetTree().ChangeSceneToFile("res://src/ui/login/espera.tscn");
+		var mgr = SupabaseManager.Instance;
+		if (mgr == null) return;
+
+		string username = mgr.CurrentPerfil?.Username ?? "SOBREVIVIENTE";
+		string nombre   = mgr.CurrentJugador?.Nombre ?? "Jugador";
+		decimal saldo   = mgr.CurrentJugador?.Saldo ?? 0;
+		int oro         = mgr.CurrentPerfil?.Oro ?? 0;
+		int xp          = mgr.CurrentPerfil?.Experiencia ?? 0;
+
+		if (labelUsername != null)
+		{
+			labelUsername.Text = $"[center][b][font_size=24]{username.ToUpper()}[/font_size][/b][/center]";
+		}
+
+		if (labelDetalles != null)
+		{
+			labelDetalles.Text = $"[center]{nombre} | Oro: {oro} | XP: {xp} | Saldo: ${saldo:F2}[/center]";
+		}
 	}
 
-	// Botón 2: "ENTRAR COMO EXPECTADOR" -> Cambia también a la escena de espera
-	private void OnBotonEntrarEspectadorPressed()
+	private void OnBotonJugarPressed()
 	{
-		GetTree().ChangeSceneToFile("res://src/ui/login/espera.tscn");
+		GetTree().ChangeSceneToFile("res://src/multiplayer/Lobby.tscn");
 	}
 
-	// Botón 3: "CERRAR SESIÓN" -> Regresa al Menú Principal o Login
-	private void OnBotonCerrarSesionPressed()
+	private async void OnBotonCerrarSesionPressed()
 	{
+		if (SupabaseManager.Instance != null)
+		{
+			await SupabaseManager.Instance.SignOutAsync();
+		}
 		GetTree().ChangeSceneToFile("res://src/ui/login/menu.tscn");
 	}
 }

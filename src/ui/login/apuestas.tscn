@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cmqbr8i7e7hly"]
+[gd_scene format=3 uid="uid://d3apuestas001"]
 
-[ext_resource type="Script" path="res://src/ui/login/Registro.cs" id="1_il02f"]
+[ext_resource type="Script" path="res://src/ui/login/Apuestas.cs" id="1_apuestas"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.12, 0.02, 0.04, 1)
@@ -52,14 +52,14 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="Control" type="Control" unique_id=887190262]
+[node name="Control" type="Control" unique_id=88472910]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_il02f")
+script = ExtResource("1_apuestas")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -70,7 +70,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1391991946]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=98712365]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +79,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(420, 520)
+custom_minimum_size = Vector2(440, 560)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
@@ -90,68 +90,83 @@ theme_override_constants/margin_top = 28
 theme_override_constants/margin_right = 28
 theme_override_constants/margin_bottom = 28
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=1356468167]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=98712366]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 alignment = 1
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.2, 0.2, 1)
 theme_override_colors/font_shadow_color = Color(0.8, 0.1, 0.1, 0.4)
-theme_override_font_sizes/font_size = 22
-text = "REGISTRO DE SUPERVIVIENTE"
+theme_override_font_sizes/font_size = 20
+text = "CENTRO DE APUESTAS ESPECTADOR"
 horizontal_alignment = 1
 
-[node name="LineEdit" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1671998554]
-custom_minimum_size = Vector2(260, 38)
+[node name="LabelSaldo" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712368]
 layout_mode = 2
-placeholder_text = "Nombre y Apellido"
+text = "Saldo Disponible: $0.00"
+horizontal_alignment = 1
 
-[node name="LineEdit2" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=88009706]
-custom_minimum_size = Vector2(260, 38)
+[node name="Control1" type="Control" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712369]
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
-placeholder_text = "Cédula"
 
-[node name="LineEdit3" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2119865717]
-custom_minimum_size = Vector2(260, 38)
+[node name="LabelPartida" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712370]
 layout_mode = 2
-placeholder_text = "Correo Electrónico"
+text = "Seleccionar Partida:"
 
-[node name="LineEdit4" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1070685450]
-custom_minimum_size = Vector2(260, 38)
+[node name="OptionButtonPartida" type="OptionButton" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712371]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-placeholder_text = "Nombre de Usuario"
 
-[node name="LineEdit5" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1070685451]
-custom_minimum_size = Vector2(260, 38)
+[node name="LabelJugador" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712372]
 layout_mode = 2
-placeholder_text = "Contraseña"
-secret = true
+text = "Jugador Pronosticado:"
 
-[node name="LabelMensaje" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1070685452]
+[node name="OptionButtonJugador" type="OptionButton" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712373]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="LabelMercado" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712374]
+layout_mode = 2
+text = "Tipo de Mercado:"
+
+[node name="OptionButtonMercado" type="OptionButton" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712375]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="LineEditMonto" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712376]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+placeholder_text = "Monto a apostar (ej: 50)"
+
+[node name="LabelGanancia" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712377]
+layout_mode = 2
+text = "Ganancia Potencial: $0.00 (Cuota: 2.50)"
+horizontal_alignment = 1
+
+[node name="LabelMensaje" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712378]
 layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="Button" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=298870747]
+[node name="ButtonApostar" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712379]
 custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-text = "REGISTRARSE"
+text = "REALIZAR APUESTA"
 
-[node name="Button2" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=528765022]
+[node name="ButtonVolver" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=98712380]
 custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-text = "VOLVER AL MENÚ"
+text = "VOLVER A LA SESIÓN"

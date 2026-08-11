@@ -173,10 +173,14 @@ public partial class Player : CharacterBody3D {
 		if (_characterVisual != null) _characterVisual.Visible = false;
 		if (_hud != null) _hud.Visible = false;
 
+		// Disparar liquidación de apuestas en Supabase al morir los jugadores
+		_ = SupabaseManager.Instance.LiquidarPartidaAsync("PARTIDA_LOBBY_ACTIVA", null);
+
 		if (_IsLocallyControlled()) {
-			EndGameUI.ShowResult(this, false, "¡HAS MUERTO!", "Has sido eliminado en el laberinto. Puedes espectar a los sobrevivientes o volver al lobby.");
+			EndGameUI.ShowResult(this, false, "¡HAS MUERTO!", "Has sido eliminado en el laberinto. Se han procesado las apuestas en Supabase.");
 		}
 	}
+
 
 	#endregion
 

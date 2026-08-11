@@ -1,7 +1,7 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 
 public partial class LobbyHandler : Control
 {
@@ -30,6 +30,18 @@ public partial class LobbyHandler : Control
 	private Label playerListTitle;
 	private Label spectatorListTitle;
 
+	// Betting System UI Elements inside Lobby
+	private Control bettingVBox;
+	private Label labelSaldoBet;
+	private OptionButton optionJugadorBet;
+	private OptionButton optionMercadoBet;
+	private LineEdit inputMontoBet;
+	private Label labelGananciaBet;
+	private Label labelMensajeBet;
+	private Button buttonApostarBet;
+
+	private decimal cuotaActualBet = 2.50m;
+
 	private T GetLobbyNode<T>(string nodeName) where T : Node
 	{
 		return GetNodeOrNull<T>("%" + nodeName) ?? (FindChild(nodeName) as T);
@@ -45,6 +57,37 @@ public partial class LobbyHandler : Control
 		playerListTitle = GetLobbyNode<Label>("PlayerListTitle");
 		spectatorListTitle = GetLobbyNode<Label>("SpectatorListTitle");
 
+		// Referencias del sistema de apuestas integrado
+		bettingVBox        = GetLobbyNode<Control>("BettingVBox");
+		labelSaldoBet      = GetLobbyNode<Label>("LabelSaldoBet");
+		optionJugadorBet  = GetLobbyNode<OptionButton>("OptionButtonJugadorBet");
+		optionMercadoBet  = GetLobbyNode<OptionButton>("OptionButtonMercadoBet");
+		inputMontoBet     = GetLobbyNode<LineEdit>("LineEditMontoBet");
+		labelGananciaBet  = GetLobbyNode<Label>("LabelGananciaBet");
+		labelMensajeBet   = GetLobbyNode<Label>("LabelMensajeBet");
+		buttonApostarBet  = GetLobbyNode<Button>("ButtonApostarBet");
+
+		if (bettingVBox != null)
+		{
+			bettingVBox.Visible = false; // Oculto por defecto hasta unirse como espectador
+		}
+
+		if (buttonApostarBet != null)
+		{
+			buttonApostarBet.Pressed += OnButtonApostarBetPressed;
+		}
+
+		if (inputMontoBet != null)
+		{
+			inputMontoBet.TextChanged += OnMontoBetChanged;
+		}
+
+		if (optionMercadoBet != null)
+		{
+			optionMercadoBet.ItemSelected += OnMercadoBetSelected;
+			ConfigurarMercadosBetting();
+		}
+
 		Multiplayer.PeerConnected += PeerConnected;
 		Multiplayer.PeerDisconnected += PeerDisconnected;
 		Multiplayer.ConnectedToServer += ConnectedToServer;
@@ -52,11 +95,122 @@ public partial class LobbyHandler : Control
 		Multiplayer.ServerDisconnected += ServerDisconnected;
 
 		UpdatePlayerListUI();
+		ActualizarSaldoBettingUI();
 		string localIp = GetLocalIPv4Address();
 		SetLobbyState(false, false, $"Status: Disconnected (Tu IP Local: {localIp})");
 
-		// Obtener IP pública en segundo plano para la UI
 		_ = FetchPublicIpForLobbyInitAsync();
+	}
+
+	private void ConfigurarMercadosBetting()
+	{
+		if (optionMercadoBet == null) return;
+
+		optionMercadoBet.Clear();
+		optionMercadoBet.AddItem("Ganador de la Partida (x2.50)", 0);
+		optionMercadoBet.AddItem("Primera Kill (x3.00)", 1);
+		optionMercadoBet.AddItem("Primera Llave (x2.10)", 2);
+	}
+
+	private void OnMercadoBetSelected(long index)
+	{
+		switch (index)
+		{
+			case 0: cuotaActualBet = 2.50m; break;
+			case 1: cuotaActualBet = 3.00m; break;
+			case 2: cuotaActualBet = 2.10m; break;
+		}
+		CalcularGananciaBet();
+	}
+
+	private void OnMontoBetChanged(string text)
+	{
+		CalcularGananciaBet();
+	}
+
+	private void CalcularGananciaBet()
+	{
+		if (labelGananciaBet == null) return;
+
+		if (decimal.TryParse(inputMontoBet?.Text, out decimal monto) && monto > 0)
+		{
+			decimal ganancia = monto * cuotaActualBet;
+			labelGananciaBet.Text = $"Ganancia Potencial: ${ganancia:F2} (Cuota: {cuotaActualBet:F2})";
+		}
+		else
+		{
+			labelGananciaBet.Text = $"Ganancia Potencial: $0.00 (Cuota: {cuotaActualBet:F2})";
+		}
+	}
+
+	private void ActualizarSaldoBettingUI()
+	{
+		var mgr = SupabaseManager.Instance;
+		decimal saldo = mgr != null ? mgr.GetSaldo() : 100.00m;
+		if (labelSaldoBet != null)
+		{
+			labelSaldoBet.Text = $"Saldo Disponible: ${saldo:F2}";
+		}
+	}
+
+
+	private async void OnButtonApostarBetPressed()
+	{
+		if (optionJugadorBet == null || optionJugadorBet.ItemCount == 0 || optionJugadorBet.Selected < 0)
+		{
+			MostrarMensajeBetting("No hay jugadores válidos en la sala para apostar.", true);
+			return;
+		}
+
+		if (!decimal.TryParse(inputMontoBet?.Text, out decimal monto) || monto <= 0)
+		{
+			MostrarMensajeBetting("Ingresa un monto válido a apostar.", true);
+			return;
+		}
+
+		var activePlayers = GameManager.Players.Where(p => !p.IsSpectator).ToList();
+		string jugadorPronosticadoId = activePlayers.Count > 0 && optionJugadorBet.Selected < activePlayers.Count
+			? activePlayers[optionJugadorBet.Selected].Id.ToString()
+			: Guid.NewGuid().ToString();
+
+		string tipoMercado = optionMercadoBet != null ? optionMercadoBet.GetItemText(optionMercadoBet.Selected) : "Ganador";
+
+		// ID de la partida activa actual en la sala
+		string partidaId = !string.IsNullOrEmpty(_cachedHostIp) ? _cachedHostIp : "PARTIDA_LOBBY_ACTIVA";
+
+		MostrarMensajeBetting("Procesando apuesta...", false);
+		if (buttonApostarBet != null) buttonApostarBet.Disabled = true;
+
+		var (success, error) = await SupabaseManager.Instance.RealizarApuestaAsync(
+			partidaId,
+			jugadorPronosticadoId,
+			tipoMercado,
+			monto,
+			cuotaActualBet
+		);
+
+		if (buttonApostarBet != null) buttonApostarBet.Disabled = false;
+
+		if (success)
+		{
+			ActualizarSaldoBettingUI();
+			MostrarMensajeBetting($"¡Apuesta realizada! Ganancia potencial: ${monto * cuotaActualBet:F2}", false);
+			if (inputMontoBet != null) inputMontoBet.Text = "";
+			CalcularGananciaBet();
+		}
+		else
+		{
+			MostrarMensajeBetting($"Error al apostar: {error}", true);
+		}
+	}
+
+	private void MostrarMensajeBetting(string text, bool esError)
+	{
+		if (labelMensajeBet != null)
+		{
+			labelMensajeBet.Text = text;
+			labelMensajeBet.Modulate = esError ? new Color(1, 0.4f, 0.4f) : new Color(0.4f, 1, 0.4f);
+		}
 	}
 
 	private async System.Threading.Tasks.Task FetchPublicIpForLobbyInitAsync()
@@ -94,32 +248,11 @@ public partial class LobbyHandler : Control
 				string ip = response.Trim();
 				if (!string.IsNullOrWhiteSpace(ip) && !ip.Contains(":"))
 				{
-					GD.Print($"[Network] IP Pública obtenida vía ipify: {ip}");
-					return ip;
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			GD.Print($"[Network] Falló obtención de IP pública vía ipify: {ex.Message}");
-		}
-
-		try
-		{
-			using (var httpClient = new System.Net.Http.HttpClient())
-			{
-				httpClient.Timeout = TimeSpan.FromSeconds(3);
-				string response = await httpClient.GetStringAsync("https://icanhazip.com");
-				string ip = response.Trim();
-				if (!string.IsNullOrWhiteSpace(ip) && !ip.Contains(":"))
-				{
-					GD.Print($"[Network] IP Pública obtenida vía icanhazip: {ip}");
 					return ip;
 				}
 			}
 		}
 		catch { }
-
 		return GetLocalIPv4Address();
 	}
 
@@ -136,17 +269,12 @@ public partial class LobbyHandler : Control
 					int mapResult = upnp.AddPortMapping(port, port, "MazeSurvivor", "UDP");
 					if (mapResult == (int)Upnp.UpnpResult.Success)
 					{
-						string extIp = upnp.QueryExternalAddress();
-						GD.Print($"[UPnP] Puerto {port} mapeado exitosamente. IP Externa: {extIp}");
-						return extIp;
+						return upnp.QueryExternalAddress();
 					}
 				}
 			}
 		}
-		catch (Exception ex)
-		{
-			GD.PrintErr("[UPnP] Discovery no soportado o falló: " + ex.Message);
-		}
+		catch { }
 		return null;
 	}
 
@@ -157,35 +285,17 @@ public partial class LobbyHandler : Control
 		var startGameButton = GetLobbyNode<Button>("StartGame");
 		var statusLabel = GetLobbyNode<Label>("StatusLabel");
 
-		if (connectionContainer != null)
-		{
-			connectionContainer.Visible = !isConnected;
-		}
-
-		if (lobbyActionContainer != null)
-		{
-			lobbyActionContainer.Visible = isConnected;
-		}
-
-		if (startGameButton != null)
-		{
-			startGameButton.Visible = isConnected && isHost;
-		}
+		if (connectionContainer != null) connectionContainer.Visible = !isConnected;
+		if (lobbyActionContainer != null) lobbyActionContainer.Visible = isConnected;
+		if (startGameButton != null) startGameButton.Visible = isConnected && isHost;
 
 		if (statusLabel != null)
 		{
-			if (!string.IsNullOrEmpty(statusText))
-			{
-				statusLabel.Text = statusText;
-			}
-			else
-			{
-				statusLabel.Text = isConnected ? (isHost ? "Status: Hosting server..." : "Status: Connected to lobby") : "Status: Disconnected";
-			}
+			if (!string.IsNullOrEmpty(statusText)) statusLabel.Text = statusText;
+			else statusLabel.Text = isConnected ? (isHost ? "Status: Hosting server..." : "Status: Connected to lobby") : "Status: Disconnected";
 		}
 	}
 
-	// Signals handling
 	private void ConnectedToServer()
 	{
 		GD.Print($"Connected to server! Role: {(_joiningAsSpectator ? "Spectator" : "Player")}");
@@ -197,26 +307,19 @@ public partial class LobbyHandler : Control
 
 	private void ConnectionFailed()
 	{
-		GD.Print("Connection failed!!");
 		ReturnToLobby("Status: Connection failed!");
 	}
 
 	private void ServerDisconnected()
 	{
-		GD.Print("Server disconnected!!");
 		ReturnToLobby("Status: Host disconnected. Returned to lobby.");
 	}
 
-	private void PeerConnected(long id)
-	{
-		GD.Print("Peer connected: " + id.ToString());
-	}
+	private void PeerConnected(long id) { }
 
 	private void PeerDisconnected(long id)
 	{
-		GD.Print("Peer disconnected: " + id.ToString());
 		removePlayerFromList((int)id);
-
 		if (Multiplayer.IsServer())
 		{
 			Rpc("removePlayerInformation", (int)id);
@@ -246,6 +349,7 @@ public partial class LobbyHandler : Control
 	public void _on_solo_button_down()
 	{
 		_joiningAsSpectator = false;
+		if (bettingVBox != null) bettingVBox.Visible = false;
 		int port = GetTargetPort();
 		this.peer = new ENetMultiplayerPeer();
 		var error = this.peer.CreateServer(port, 1);
@@ -271,6 +375,7 @@ public partial class LobbyHandler : Control
 	public async void _on_host_button_down()
 	{
 		_joiningAsSpectator = false;
+		if (bettingVBox != null) bettingVBox.Visible = false;
 		int port = GetTargetPort();
 		int maxClients = Math.Max(1, (this.MAX_PLAYERS + this.MAX_SPECTATORS) - 1);
 		this.peer = new ENetMultiplayerPeer();
@@ -278,17 +383,13 @@ public partial class LobbyHandler : Control
 
 		if (error != Error.Ok)
 		{
-			GD.Print("[ERROR]: cannot host!!\n" + error.ToString());
 			SetLobbyState(false, false, $"[ERROR] Cannot host on port {port}");
 			return;
 		}
 		this.peer.Host.Compress(this.COMPRESSION_TYPE);
-
 		Multiplayer.MultiplayerPeer = this.peer;
 
-		// Mapeo UPnP primero
 		string upnpIp = SetupUPnP(port);
-
 		SetLobbyState(true, true, $"Status: Obteniendo IP pública...");
 		string publicIp = await GetPublicIPv4AddressAsync();
 		if ((string.IsNullOrWhiteSpace(publicIp) || publicIp == "127.0.0.1") && !string.IsNullOrEmpty(upnpIp))
@@ -298,8 +399,6 @@ public partial class LobbyHandler : Control
 		_cachedHostIp = publicIp;
 
 		string roomCode = RoomCodeManager.IpToRoomCode(publicIp);
-		GD.Print($"Hosting server on {publicIp}:{port} (Room Code: {roomCode})...");
-
 		SetLobbyState(true, true, $"Status: Servidor Activo ({publicIp}:{port}) | CÓDIGO DE SALA: {roomCode}");
 		GameManager.Players.Clear();
 		var nameInput = GetLobbyNode<LineEdit>("LineEdit");
@@ -310,12 +409,18 @@ public partial class LobbyHandler : Control
 	public void _on_join_button_down()
 	{
 		_joiningAsSpectator = false;
+		if (bettingVBox != null) bettingVBox.Visible = false;
 		JoinServer();
 	}
 
 	public void _on_join_spectator_button_down()
 	{
 		_joiningAsSpectator = true;
+		if (bettingVBox != null)
+		{
+			bettingVBox.Visible = true; // Mostrar panel de apuestas integrado en el Lobby
+		}
+		ActualizarSaldoBettingUI();
 		JoinServer();
 	}
 
@@ -324,57 +429,47 @@ public partial class LobbyHandler : Control
 		string address = GetTargetAddress();
 		int port = GetTargetPort();
 
-		// Create a client session.
 		this.peer = new ENetMultiplayerPeer();
 		this.peer.CreateClient(address, port);
 		this.peer.Host.Compress(this.COMPRESSION_TYPE);
 
 		Multiplayer.MultiplayerPeer = this.peer;
 		string mode = _joiningAsSpectator ? "spectator" : "player";
-		GD.Print($"Joining game at {address}:{port} as {mode}!!");
 		SetLobbyState(true, false, $"Status: Connecting to {address}:{port} ({mode})...");
 	}
 
 	public void _on_leave_button_down()
 	{
+		if (bettingVBox != null) bettingVBox.Visible = false;
 		ReturnToLobby("Status: Disconnected");
 	}
 
 	public void _on_back_to_menu_button_down()
 	{
+		if (bettingVBox != null) bettingVBox.Visible = false;
 		ReturnToLobby("Status: Disconnected");
 		GetTree().ChangeSceneToFile("res://src/ui/login/menu.tscn");
 	}
 
 	public void ReturnToLobby(string statusMessage = "Status: Disconnected")
 	{
-		// 1. Clean up active game scenes
 		var activeGame = GetTree().Root.GetNodeOrNull("ActiveGameScene");
-		if (activeGame != null)
-		{
-			activeGame.QueueFree();
-		}
+		if (activeGame != null) activeGame.QueueFree();
 
 		foreach (Node child in GetTree().Root.GetChildren())
 		{
-			if (child is SceneManager)
-			{
-				child.QueueFree();
-			}
+			if (child is SceneManager) child.QueueFree();
 		}
 
-		// 2. Safely close multiplayer peer
 		if (Multiplayer.MultiplayerPeer != null)
 		{
 			Multiplayer.MultiplayerPeer.Close();
 			Multiplayer.MultiplayerPeer = null;
 		}
 
-		// 3. Clear player list state
 		GameManager.Players.Clear();
 		UpdatePlayerListUI();
 
-		// 4. Restore input mouse mode and reveal Lobby UI
 		Input.MouseMode = Input.MouseModeEnum.Visible;
 		this.Show();
 		SetLobbyState(false, false, statusMessage);
@@ -382,7 +477,6 @@ public partial class LobbyHandler : Control
 
 	public void _on_start_game_button_down()
 	{
-		// Launch the game in all clients involved with a synchronized maze seed.
 		int mazeSeed = (int)GD.Randi();
 		Rpc(nameof(startGame), mazeSeed);
 	}
@@ -392,7 +486,6 @@ public partial class LobbyHandler : Control
 	{	
 		if (mazeSeed == 0) mazeSeed = (int)GD.Randi();
 
-		// 1. Mostrar pantalla de carga inmediatamente
 		var loadingScene = GD.Load<PackedScene>("res://src/ui/loading/LoadingScreen.tscn");
 		LoadingScreen loadingScreen = null;
 		if (loadingScene != null)
@@ -404,8 +497,6 @@ public partial class LobbyHandler : Control
 		}
 
 		this.Hide();
-
-		// Renderizar primer frame de la pantalla de carga antes de la generación intensiva
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
 		if (loadingScreen != null)
@@ -415,7 +506,6 @@ public partial class LobbyHandler : Control
 		}
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
-		// 2. Instanciar y construir el laberinto
 		var mazeNode = ResourceLoader.Load<PackedScene>("res://src/maze/maze.tscn").Instantiate<Maze>();
 		mazeNode.MazeSeed = mazeSeed;
 		mazeNode.Name = "ActiveGameScene";
@@ -438,8 +528,7 @@ public partial class LobbyHandler : Control
 		}
 	}
 
-	// Send player information across multiple locations/scenes, etc.
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer /*, CallLocal = true*/ )]
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
 	private void sendPlayerInformation(string name, int id, bool isSpectator)
 	{
 		PlayerInfo playerInfo = new PlayerInfo()
@@ -456,7 +545,6 @@ public partial class LobbyHandler : Control
 		}
 		else
 		{
-			// Server-side validation: disconnect if player or spectator capacity is reached
 			if (Multiplayer.IsServer())
 			{
 				int activeCount = GameManager.Players.Count(p => !p.IsSpectator);
@@ -464,13 +552,11 @@ public partial class LobbyHandler : Control
 
 				if (!isSpectator && activeCount >= MAX_PLAYERS)
 				{
-					GD.PrintErr($"[Server] Connection rejected: Active player limit reached ({activeCount}/{MAX_PLAYERS}). Peer ID: {id}");
 					if (peer != null && id != HOST_ID) peer.DisconnectPeer(id);
 					return;
 				}
 				else if (isSpectator && specCount >= MAX_SPECTATORS)
 				{
-					GD.PrintErr($"[Server] Connection rejected: Spectator limit reached ({specCount}/{MAX_SPECTATORS}). Peer ID: {id}");
 					if (peer != null && id != HOST_ID) peer.DisconnectPeer(id);
 					return;
 				}
@@ -522,10 +608,7 @@ public partial class LobbyHandler : Control
 			foreach (var player in activePlayers)
 			{
 				string text = $"{player.Name} (ID: {player.Id})";
-				if (player.Id == HOST_ID)
-				{
-					text += " [Host]";
-				}
+				if (player.Id == HOST_ID) text += " [Host]";
 				playerList.AddItem(text);
 			}
 		}
@@ -536,11 +619,25 @@ public partial class LobbyHandler : Control
 			foreach (var spectator in spectators)
 			{
 				string text = $"{spectator.Name} (ID: {spectator.Id})";
-				if (spectator.Id == HOST_ID)
-				{
-					text += " [Host]";
-				}
+				if (spectator.Id == HOST_ID) text += " [Host]";
 				spectatorList.AddItem(text);
+			}
+		}
+
+		// Actualizar dinámicamente el selector "Jugador Pronosticado" en el panel de apuestas
+		if (optionJugadorBet != null)
+		{
+			optionJugadorBet.Clear();
+			if (activePlayers.Count > 0)
+			{
+				foreach (var player in activePlayers)
+				{
+					optionJugadorBet.AddItem($"{player.Name} (ID: {player.Id})");
+				}
+			}
+			else
+			{
+				optionJugadorBet.AddItem("Esperando jugadores en la sala...");
 			}
 		}
 	}

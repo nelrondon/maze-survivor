@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 ItemRegistry="*res://src/items/item_registry.gd"
+SupabaseManager="*res://src/core/SupabaseManager.cs"
 
 [display]
 

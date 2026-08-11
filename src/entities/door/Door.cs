@@ -137,13 +137,20 @@ public partial class Door : Node3D
 		long localPeerId = Multiplayer.HasMultiplayerPeer() ? Multiplayer.GetUniqueId() : 1;
 		bool isWinner = (localPeerId == winnerId);
 
+		string winnerIdStr = winnerId.ToString();
+		string partidaId = "PARTIDA_LOBBY_ACTIVA";
+
+		// Disparar liquidación de pozo del ganador y apuestas de espectadores en Supabase
+		_ = SupabaseManager.Instance.LiquidarPartidaAsync(partidaId, winnerIdStr);
+
 		if (isWinner)
 		{
-			EndGameUI.ShowResult(this, true, "¡VICTORIA!", "¡Felicidades! Has logrado escapar del laberinto a través de la puerta.");
+			EndGameUI.ShowResult(this, true, "¡VICTORIA!", "¡Felicidades! Has logrado escapar del laberinto. Se ha transferido el pozo acumulado a tu billetera.");
 		}
 		else
 		{
-			EndGameUI.ShowResult(this, false, "¡HAS PERDIDO!", "Otro jugador ha logrado escapar por la puerta antes que tú.");
+			EndGameUI.ShowResult(this, false, "¡HAS PERDIDO!", "Otro jugador ha logrado escapar por la puerta antes que tú. Las apuestas han sido procesadas.");
 		}
 	}
+
 }

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://60v62j814v0x"]
 
-[ext_resource type="Script" uid="uid://ce1vsgsugnf7q" path="res://src/multiplayer/LobbyHandler.cs" id="1_ao6dk"]
-[ext_resource type="Texture2D" uid="uid://dqg7yga72i88q" path="res://assets/ui/logo/LOGO_MAZE_SURVIVOR.png" id="2_logo"]
+[ext_resource type="Script" path="res://src/multiplayer/LobbyHandler.cs" id="1_ao6dk"]
+[ext_resource type="Texture2D" path="res://assets/ui/logo/LOGO_MAZE_SURVIVOR.png" id="2_logo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.12, 0.02, 0.04, 1)
@@ -88,14 +88,14 @@ alignment = 1
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer/LogoContainer" unique_id=1798906883]
-custom_minimum_size = Vector2(220, 110)
+custom_minimum_size = Vector2(220, 90)
 layout_mode = 2
 texture = ExtResource("2_logo")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer/VBoxContainer" unique_id=1834638150]
-custom_minimum_size = Vector2(560, 320)
+custom_minimum_size = Vector2(840, 440)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
@@ -133,8 +133,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "JUGAR SOLO (OFFLINE)"
 
 [node name="Host" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=1518817669]
@@ -144,8 +144,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "HOST (CREAR SERVIDOR)"
 
 [node name="Join" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=441146064]
@@ -155,9 +155,9 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "UNIRSE"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+text = "UNIRSE COMO JUGADOR"
 
 [node name="JoinSpectator" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=162568938]
 unique_name_in_owner = true
@@ -166,8 +166,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "UNIRSE COMO ESPECTADOR"
 
 [node name="BackToMenu" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=987654321]
@@ -177,8 +177,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "VOLVER AL MENÚ"
 
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=795773652]
@@ -221,8 +221,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "INICIAR PARTIDA"
 
 [node name="Leave" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/LobbyActionContainer" unique_id=1315823490]
@@ -232,8 +232,8 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "SALIR DEL LOBBY"
 
 [node name="RightVBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox" unique_id=298765153]
@@ -263,6 +263,78 @@ text = "Espectadores:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="BettingVBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox" unique_id=98712399]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BettingTitle" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
+theme_override_font_sizes/font_size = 15
+text = "CENTRO DE APUESTAS ESPECTADOR"
+horizontal_alignment = 1
+
+[node name="LabelSaldoBet" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712400]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Saldo Disponible: $0.00"
+horizontal_alignment = 1
+
+[node name="LabelJugadorBetTitle" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Jugador Pronosticado (En Sala):"
+
+[node name="OptionButtonJugadorBet" type="OptionButton" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712401]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="LabelMercadoBetTitle" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Tipo de Mercado:"
+
+[node name="OptionButtonMercadoBet" type="OptionButton" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712402]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="LineEditMontoBet" type="LineEdit" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712403]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+placeholder_text = "Monto a apostar (ej: 50)"
+
+[node name="LabelGananciaBet" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712404]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Ganancia Potencial: $0.00 (Cuota: 2.50)"
+horizontal_alignment = 1
+
+[node name="LabelMensajeBet" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712405]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ButtonApostarBet" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/BettingVBox" unique_id=98712406]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+text = "REALIZAR APUESTA"
 
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/SoloButton" to="." method="_on_solo_button_down"]
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/Host" to="." method="_on_host_button_down"]
