@@ -42,6 +42,7 @@ public partial class Maze : Node3D
 	[ExportGroup("Texture Options")]
 	[Export] public Texture2D WallTexture;
 	[Export] public Texture2D FloorTexture;
+	[Export] public Texture2D CeilingTexture;
 
 	[ExportGroup("Multiplayer Seed")]
 	[Export] public int MazeSeed = 12345;
@@ -191,9 +192,10 @@ public partial class Maze : Node3D
 		ceilingMesh.RotationDegrees = new Vector3(180, 0, 0);
 
 		var mat = new StandardMaterial3D();
-		if (WallTexture != null)
+		Texture2D ceilingTex = CeilingTexture ?? WallTexture;
+		if (ceilingTex != null)
 		{
-			mat.AlbedoTexture = WallTexture;
+			mat.AlbedoTexture = ceilingTex;
 			mat.Uv1Scale = new Vector3(Width / 2.0f, Height / 2.0f, 1.0f);
 		}
 		else
