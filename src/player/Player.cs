@@ -25,7 +25,7 @@ public partial class Player : CharacterBody3D {
 	[Export] private float _fallPoseTime = 0.3f;
 	[Export] private BoneAttachment3D _rightHand;
 	[Export] private SkeletonIK3D _leftArmIK;
-	[Export] private Vector3 _rightHandGripRotation = new Vector3(-90f, 0f, 0f);
+	[Export] private Vector3 _rightHandGripRotation = Vector3.Zero;
 	[Export] private Vector3 _rightHandGripPosition = Vector3.Zero;
 
 	// Estado interno
@@ -39,6 +39,7 @@ public partial class Player : CharacterBody3D {
 	// Sincronización multijugador remota
 	private Vector3 _syncedPosition = Vector3.Zero;
 	private float _syncedRotationY = 0.0f;
+	private float _syncedPitch = 0.0f;
 	private Vector2 _syncedDir = Vector2.Zero;
 	private bool _syncedIsOnFloor = true;
 	private bool _hasReceivedFirstTransformSync = false;
@@ -50,12 +51,14 @@ public partial class Player : CharacterBody3D {
 	private AnimationTree _animTree;
 
 	// Determina si esta instancia tiene el control local (soporta offline y multijugador)
-	private bool _IsLocallyControlled() {
+	public bool IsLocallyControlled() {
 		var mp = Multiplayer;
 		if (mp == null || !mp.HasMultiplayerPeer() || mp.MultiplayerPeer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Disconnected) 
 			return true;
 		return IsMultiplayerAuthority();
 	}
+
+	private bool _IsLocallyControlled() => IsLocallyControlled();
 
 	public override void _Ready() {        
 		// Registrar en grupo global para ser detectado por el mapa u otros sistemas
@@ -243,7 +246,9 @@ public partial class Player : CharacterBody3D {
 
 					weapon3D.Position = Vector3.Zero;
 					weapon3D.RotationDegrees = _rightHandGripRotation;
-					weapon3D.Scale = Vector3.One * 0.01f;
+					float itemScale = (itemId == "sks_rifle" || itemId.Contains("rifle")) ? 0.02f : 0.005f;
+					weapon3D.Scale = Vector3.One * itemScale;
+					weapon3D.Visible = !_IsLocallyControlled();
 
 					_isHoldingWeapon = true;
 					if (_animTree != null) {
@@ -292,7 +297,9 @@ public partial class Player : CharacterBody3D {
 
 		weaponNode.Position = Vector3.Zero;
 		weaponNode.RotationDegrees = _rightHandGripRotation;
-		weaponNode.Scale = Vector3.One * 0.01f;
+		float nodeScale = (weaponNode.Name.ToString().ToLower().Contains("rifle") || weaponNode.Name.ToString().ToLower().Contains("sks")) ? 0.02f : 0.005f;
+		weaponNode.Scale = Vector3.One * nodeScale;
+		weaponNode.Visible = !_IsLocallyControlled();
 
 		_isHoldingWeapon = true;
 		if (_animTree != null) {
@@ -333,6 +340,12 @@ public partial class Player : CharacterBody3D {
 		// Alternar Mapa (Tecla M)
 		if (@event is InputEventKey mapKey && mapKey.Pressed && !mapKey.Echo && mapKey.Keycode == Key.M) {
 			ToggleMap();
+		}
+
+		// Debug: Otorgar set de armas y municiones al presionar la tecla 'º'
+		if (@event is InputEventKey debugKey && debugKey.Pressed && !debugKey.Echo && 
+			(debugKey.Keycode == Key.Section || debugKey.Keycode == Key.Quoteleft || debugKey.Keycode == Key.Asciitilde || debugKey.Unicode == 'º' || debugKey.Unicode == 'ª' || (int)debugKey.Keycode == 186 || (int)debugKey.Keycode == 167)) {
+			DebugGiveWeaponsAndAmmo();
 		}
 
 		// Rotación de Cámara por Mouse
@@ -449,9 +462,10 @@ public partial class Player : CharacterBody3D {
 			MoveAndSlide();
 
 			UpdateAnimations(_newDir, IsOnFloor(), Velocity);
+			UpdateWeaponAimPitch(delta, _pitch);
 
 			if (Multiplayer != null && Multiplayer.HasMultiplayerPeer() && Multiplayer.MultiplayerPeer.GetConnectionStatus() != MultiplayerPeer.ConnectionStatus.Disconnected) {
-				Rpc(nameof(RpcSyncTransform), GlobalPosition, Rotation.Y, _newDir, IsOnFloor(), Velocity.Y);
+				Rpc(nameof(RpcSyncTransform), GlobalPosition, Rotation.Y, _pitch, _newDir, IsOnFloor(), Velocity.Y);
 			}
 		}
 		else {
@@ -463,13 +477,26 @@ public partial class Player : CharacterBody3D {
 				Rotation = currentRot;
 			}
 			UpdateAnimations(_syncedDir, _syncedIsOnFloor, Velocity);
+			UpdateWeaponAimPitch(delta, _syncedPitch);
+		}
+	}
+
+	private void UpdateWeaponAimPitch(double delta, float targetPitch) {
+		if (_rightHand == null) _rightHand = GetNodeOrNull<BoneAttachment3D>("CharacterVisual/rig/Skeleton3D/RightHand");
+		if (_rightHand == null) return;
+
+		Node3D mountPoint = _rightHand.GetNodeOrNull<Node3D>("HandOffset") ?? _rightHand;
+		if (mountPoint != null && _isHoldingWeapon) {
+			Vector3 targetRot = _rightHandGripRotation + new Vector3(Mathf.RadToDeg(targetPitch), 0f, 0f);
+			mountPoint.RotationDegrees = mountPoint.RotationDegrees.Lerp(targetRot, (float)delta * 15.0f);
 		}
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
-	private void RpcSyncTransform(Vector3 pos, float rotY, Vector2 animDir, bool isOnFloor, float velY) {
+	private void RpcSyncTransform(Vector3 pos, float rotY, float pitch, Vector2 animDir, bool isOnFloor, float velY) {
 		_syncedPosition = pos;
 		_syncedRotationY = rotY;
+		_syncedPitch = pitch;
 		_syncedDir = animDir;
 		_syncedIsOnFloor = isOnFloor;
 
@@ -538,6 +565,25 @@ public partial class Player : CharacterBody3D {
 	public void SetMeshVisible(bool visible) {
 		if (_characterVisual == null) _characterVisual = GetNodeOrNull<Node3D>("CharacterVisual") ?? GetNodeOrNull<Node3D>("MeshInstance3D");
 		if (_characterVisual != null) _characterVisual.Visible = visible;
+	}
+
+	private void DebugGiveWeaponsAndAmmo() {
+		var inventory = GetNodeOrNull<Node>("Inventory");
+		var itemRegistry = GetNodeOrNull<Node>("/root/ItemRegistry") ?? GetTree().Root.GetNodeOrNull<Node>("ItemRegistry");
+		if (inventory == null || itemRegistry == null) {
+			GD.PrintErr("[DEBUG º] Inventory o ItemRegistry no encontrados.");
+			return;
+		}
+
+		string[] itemIds = new string[] { "tokarev_pistol", "sks_rifle", "cuchillo", "bala", "bala", "bala", "medkit_large" };
+		foreach (string id in itemIds) {
+			Variant itemData = itemRegistry.Call("get_data", id);
+			if (itemData.VariantType != Variant.Type.Nil && itemData.AsGodotObject() != null) {
+				int amount = id == "bala" ? 30 : 1;
+				inventory.Call("add_item", itemData.AsGodotObject(), amount);
+			}
+		}
+		GD.Print("[DEBUG] Tecla 'º': Otorgado set de armas (Pistola, Rifle, Cuchillo, Municiones y Botiquín) al inventario.");
 	}
 
 	#endregion

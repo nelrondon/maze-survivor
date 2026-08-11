@@ -185,9 +185,23 @@ func reload() -> void:
 		can_shoot = true
 	)
 
+var _target_sway_rot: Vector3 = Vector3.ZERO
+
+func _process(delta: float) -> void:
+	if not visible:
+		return
+	rotation.x = lerp_angle(rotation.x, _target_sway_rot.x, delta * 12.0)
+	rotation.y = lerp_angle(rotation.y, _target_sway_rot.y, delta * 12.0)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		_target_sway_rot.y = clamp(-event.relative.x * 0.0006, -0.09, 0.09)
+		_target_sway_rot.x = clamp(-event.relative.y * 0.0006, -0.09, 0.09)
+		get_tree().create_timer(0.08).timeout.connect(func():
+			_target_sway_rot = Vector3.ZERO
+		)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_R:
 			reload()

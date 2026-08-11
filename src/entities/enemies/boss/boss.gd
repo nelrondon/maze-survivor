@@ -84,8 +84,9 @@ func _physics_process(delta):
 			var flat_pos = Vector3(global_position.x, 0, global_position.z)
 			var flat_target = Vector3(player_target.global_position.x, 0, player_target.global_position.z)
 			var dir = flat_pos.direction_to(flat_target)
+			var target_3d_point = player_target.global_position + Vector3(0, 1.2, 0)
 			if dir.length() > 0.01:
-				var look_transform = transform.looking_at(global_position + dir, Vector3.UP)
+				var look_transform = transform.looking_at(target_3d_point, Vector3.UP)
 				transform = transform.interpolate_with(look_transform, movement.rotation_speed * delta)
 				if flat_pos.distance_to(flat_target) > movement.arrival_distance:
 					target_vel = dir * attack_lunge_speed

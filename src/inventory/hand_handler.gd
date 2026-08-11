@@ -91,13 +91,23 @@ func _mount(scene: PackedScene, slot: InventorySlot) -> void:
 		return
 	_current_viewmodel = instance as ViewModelBase
 	_hand_mount.add_child(_current_viewmodel)
+
+	var player: Node = get_parent()
+	var is_local: bool = true
+	if player != null:
+		if player.has_method("IsLocallyControlled"):
+			is_local = player.call("IsLocallyControlled")
+		elif player.has_method("_IsLocallyControlled"):
+			is_local = player.call("_IsLocallyControlled")
+
+	_current_viewmodel.visible = is_local
+
 	_sync_viewmodel_data(slot)
 	_current_viewmodel.equip()
-	var player: Node = get_parent()
-	if player.has_method("SetIsHoldingWeapon"):
+	if player != null and player.has_method("SetIsHoldingWeapon"):
 		player.call("SetIsHoldingWeapon", true)
 	if slot != null and not slot.is_empty() and slot.item_data != null:
-		if player.has_method("SyncEquippedWeapon"):
+		if player != null and player.has_method("SyncEquippedWeapon"):
 			player.call("SyncEquippedWeapon", slot.item_data.id)
 
 
