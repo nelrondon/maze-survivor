@@ -268,18 +268,6 @@ public partial class LobbyHandler : Control
 		startGame();
 	}
 
-	public async void _on_copy_ip_button_down()
-	{
-		string ip = _cachedHostIp;
-		if (string.IsNullOrEmpty(ip))
-		{
-			ip = await GetPublicIPv4AddressAsync();
-		}
-		string roomCode = RoomCodeManager.IpToRoomCode(ip);
-		DisplayServer.ClipboardSet(roomCode);
-		SetLobbyState(false, false, $"¡Código {roomCode} ({ip}) copiado al portapapeles!");
-	}
-
 	public async void _on_host_button_down()
 	{
 		_joiningAsSpectator = false;

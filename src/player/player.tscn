@@ -36,12 +36,12 @@ properties/0/replication_mode = 2
 properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
-properties/11/path = NodePath("AnimationTree:parameters/MeleeAttack/active")
-properties/11/spawn = true
-properties/11/replication_mode = 1
-properties/12/path = NodePath("AnimationTree:parameters/MeleeAttack/request")
-properties/12/spawn = true
-properties/12/replication_mode = 1
+properties/2/path = NodePath("AnimationTree:parameters/MeleeAttack/active")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("AnimationTree:parameters/MeleeAttack/request")
+properties/3/spawn = true
+properties/3/replication_mode = 1
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_o28un"]
 animation = &"CharLib/meleeattack"

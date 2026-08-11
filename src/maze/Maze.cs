@@ -21,7 +21,7 @@ public partial class Maze : Node3D
 	[Export] public PackedScene KeyScene;
 	[Export] public PackedScene DoorScene;
 	[Export] public PackedScene BackpackScene;
-	[Export] public int BackpackCount = 150;
+	[Export] public int BackpackCount = 20;
 
 	[ExportGroup("Trampas")]
 	[Export] public PackedScene SpikeTrapScene;
@@ -55,6 +55,7 @@ public partial class Maze : Node3D
 
 	public override void _Ready()
 	{
+		AddToGroup("Maze");
 		_random = new Random(MazeSeed);
 
 		if (Width % 2 == 0) Width++;

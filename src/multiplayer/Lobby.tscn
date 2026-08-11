@@ -4,15 +4,15 @@
 [ext_resource type="Texture2D" uid="uid://dqg7yga72i88q" path="res://assets/ui/logo/LOGO_MAZE_SURVIVOR.png" id="2_logo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
-bg_color = Color(0.04, 0.06, 0.1, 1)
+bg_color = Color(0.12, 0.02, 0.04, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.07, 0.1, 0.16, 0.9)
+bg_color = Color(0.18, 0.03, 0.05, 0.92)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0, 0.9, 0.7, 0.4)
+border_color = Color(0.9, 0.15, 0.15, 0.6)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -21,36 +21,36 @@ shadow_color = Color(0, 0, 0, 0.5)
 shadow_size = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.08, 0.14, 0.22, 0.95)
+bg_color = Color(0.46666667, 0.05, 0.08, 0.95)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0, 0.9, 0.7, 0.4)
+border_color = Color(0.85, 0.15, 0.2, 0.6)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0, 0.55, 0.45, 1)
+bg_color = Color(0.35, 0.02, 0.04, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0, 0.75, 0.6, 1)
+bg_color = Color(0.75, 0.08, 0.12, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0, 1, 0.8, 1)
+border_color = Color(1, 0.2, 0.25, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
-shadow_color = Color(0, 0.9, 0.7, 0.4)
+shadow_color = Color(0.9, 0.15, 0.15, 0.5)
 shadow_size = 6
 
 [node name="Lobby" type="Control" unique_id=1762284812 groups=["Players"]]
@@ -83,16 +83,6 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 14
 alignment = 1
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=672538628]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
-theme_override_colors/font_shadow_color = Color(0, 0.9, 0.7, 0.3)
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 32
-text = "MAZE SURVIVOR"
-horizontal_alignment = 1
 
 [node name="LogoContainer" type="CenterContainer" parent="CenterContainer/VBoxContainer" unique_id=808080808]
 layout_mode = 2
@@ -128,7 +118,7 @@ theme_override_constants/separation = 6
 [node name="StatusLabel" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox" unique_id=1541123074]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
 text = "Status: Disconnected"
 
 [node name="ConnectionContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox" unique_id=910521163]
@@ -157,17 +147,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 text = "HOST (CREAR SERVIDOR)"
-
-[node name="CopyIpButton" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=987654323]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 34)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0.05, 0.1, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-text = "COPIAR CÓDIGO DE SALA"
 
 [node name="Join" type="Button" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer" unique_id=441146064]
 unique_name_in_owner = true
@@ -266,7 +245,7 @@ theme_override_constants/separation = 6
 [node name="PlayerListTitle" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=836716744]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
 text = "Jugadores Conectados:"
 
 [node name="PlayerList" type="ItemList" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1117480212]
@@ -277,7 +256,7 @@ size_flags_vertical = 3
 [node name="SpectatorListTitle" type="Label" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1242311576]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.9, 0.7, 1)
+theme_override_colors/font_color = Color(0.95, 0.25, 0.25, 1)
 text = "Espectadores:"
 
 [node name="SpectatorList" type="ItemList" parent="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/RightVBox" unique_id=1516426011]
@@ -287,7 +266,6 @@ size_flags_vertical = 3
 
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/SoloButton" to="." method="_on_solo_button_down"]
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/Host" to="." method="_on_host_button_down"]
-[connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/CopyIpButton" to="." method="_on_copy_ip_button_down"]
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/Join" to="." method="_on_join_button_down"]
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/JoinSpectator" to="." method="_on_join_spectator_button_down"]
 [connection signal="button_down" from="CenterContainer/VBoxContainer/PanelContainer/MarginContainer/MainHBox/LeftVBox/ConnectionContainer/BackToMenu" to="." method="_on_back_to_menu_button_down"]

@@ -97,7 +97,7 @@ stream = ExtResource("5_0koic")
 libraries/ = SubResource("AnimationLibrary_5gv3x")
 
 [node name="tokarev" parent="." unique_id=2064131346 instance=ExtResource("1_j33d7")]
-transform = Transform3D(0.09963205, 0.0073647136, -0.004383577, -0.007033837, 0.09948661, 0.00727597, 0.004896927, -0.006940865, 0.099638574, -0.008769274, 0.038963135, -0.0038064122)
+transform = Transform3D(0.49816025, 0.036823568, -0.021917885, -0.035169185, 0.49743305, 0.03637985, 0.024484635, -0.034704325, 0.49819287, -0.008769274, 0.038963135, -0.0038064122)
 
 [node name="AudioStreamPlayer3D2" type="AudioStreamPlayer3D" parent="." unique_id=1454799215]
 transform = Transform3D(0.05882353, 0, 0, 0, 0.05882353, 0, 0, 0, 0.05882353, 0, -0.00011724584, 0)

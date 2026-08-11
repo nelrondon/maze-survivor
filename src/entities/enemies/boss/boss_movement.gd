@@ -27,19 +27,32 @@ var _patrol_repath_timer: float = 0.0
 
 @onready var boss: CharacterBody3D = get_parent()
 @onready var patrol_wait_timer = $"../PatrolWaitTimer"
-@onready var maze = get_tree().get_first_node_in_group("Maze")
+var maze: Node = null
 
 signal reached_target
+
+func _get_maze() -> Node:
+	if maze == null or not is_instance_valid(maze):
+		maze = get_tree().get_first_node_in_group("Maze")
+		if maze == null and get_tree().root != null:
+			maze = get_tree().root.find_child("ActiveGameScene", true, false)
+			if maze == null:
+				maze = get_tree().root.find_child("Maze", true, false)
+	return maze
 
 func _ready():
 	initial_pos = boss.global_position
 	current_speed = patrol_speed
 	patrol_wait_timer.timeout.connect(_on_patrol_wait_timeout)
 
-	if maze == null:
-		push_warning("BossMovement: no se encontró ningún nodo en el grupo 'Maze'.")
+	if _get_maze() != null:
+		choose_new_destination()
+	else:
+		call_deferred("_check_maze_deferred")
 
-	choose_new_destination()
+func _check_maze_deferred():
+	if _get_maze() != null:
+		choose_new_destination()
 
 func move(delta: float, state: int, target: Node3D) -> void:
 	if not boss.is_on_floor():
@@ -193,9 +206,10 @@ func choose_new_destination():
 	_request_path_to(raw_point)
 
 func _request_path_to(world_pos: Vector3) -> void:
-	if maze == null:
+	var m = _get_maze()
+	if m == null or not m.has_method("FindPath"):
 		return
-	current_path = maze.FindPath(boss.global_position, world_pos)
+	current_path = m.FindPath(boss.global_position, world_pos)
 	path_index = 0
 
 func reset_patrol_origin():
