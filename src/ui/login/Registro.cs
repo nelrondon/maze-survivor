@@ -1,21 +1,48 @@
-﻿using Godot;
+using Godot;
 using System;
+using System.Threading.Tasks;
 
 public partial class Registro : Control
 {
-	private Button botonIniciarSesion;
+	private LineEdit inputNombre;
+	private LineEdit inputCedula;
+	private LineEdit inputEmail;
+	private LineEdit inputUsername;
+	private LineEdit inputPassword;
+	private Label labelMensaje;
+
+	private Button botonRegistrarse;
 	private Button botonVolverMenu;
 
 	public override void _Ready()
 	{
-		// 1. Obtener nodos omitiendo los LineEdit según la jerarquía de la escena
-		botonIniciarSesion = GetNode<Button>("CenterContainer/VBoxContainer/Button");
-		botonVolverMenu    = GetNode<Button>("CenterContainer/VBoxContainer/Button2");
+		inputNombre   = GetNodeOrNull<LineEdit>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LineEdit") 
+		             ?? GetNodeOrNull<LineEdit>("CenterContainer/VBoxContainer/LineEdit");
 
-		// 2. Conectar los eventos Pressed
-		if (botonIniciarSesion != null)
+		inputCedula   = GetNodeOrNull<LineEdit>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LineEdit2") 
+		             ?? GetNodeOrNull<LineEdit>("CenterContainer/VBoxContainer/LineEdit2");
+
+		inputEmail    = GetNodeOrNull<LineEdit>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LineEdit3") 
+		             ?? GetNodeOrNull<LineEdit>("CenterContainer/VBoxContainer/LineEdit3");
+
+		inputUsername = GetNodeOrNull<LineEdit>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LineEdit4") 
+		             ?? GetNodeOrNull<LineEdit>("CenterContainer/VBoxContainer/LineEdit4");
+
+		inputPassword = GetNodeOrNull<LineEdit>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LineEdit5") 
+		             ?? GetNodeOrNull<LineEdit>("CenterContainer/VBoxContainer/LineEdit5");
+
+		labelMensaje  = GetNodeOrNull<Label>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/LabelMensaje") 
+		             ?? GetNodeOrNull<Label>("CenterContainer/VBoxContainer/LabelMensaje");
+
+		botonRegistrarse = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button") 
+		                ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button");
+
+		botonVolverMenu   = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button2") 
+		                ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button2");
+
+		if (botonRegistrarse != null)
 		{
-			botonIniciarSesion.Pressed += OnBotonIniciarSesionPressed;
+			botonRegistrarse.Pressed += OnBotonRegistrarsePressed;
 		}
 
 		if (botonVolverMenu != null)
@@ -24,15 +51,49 @@ public partial class Registro : Control
 		}
 	}
 
-	// --- MÉTODOS DE NAVEGACIÓN ---
-
-	// Botón 1: "INICIAR SESIÓN" -> Cambia a la escena de Login / Sesión
-	private void OnBotonIniciarSesionPressed()
+	private async void OnBotonRegistrarsePressed()
 	{
-		GetTree().ChangeSceneToFile("res://src/ui/login/login.tscn");
+		string nombre   = inputNombre?.Text?.Trim();
+		string cedula   = inputCedula?.Text?.Trim();
+		string email    = inputEmail?.Text?.Trim();
+		string username = inputUsername?.Text?.Trim();
+		string password = inputPassword?.Text?.Trim();
+
+		if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
+		{
+			MostrarMensaje("Ingresa al menos Correo, Usuario y Contraseña.", true);
+			return;
+		}
+
+		MostrarMensaje("Registrando usuario...", false);
+		if (botonRegistrarse != null) botonRegistrarse.Disabled = true;
+
+		var (success, error) = await SupabaseManager.Instance.SignUpAsync(email, password, string.IsNullOrEmpty(nombre) ? username : nombre, username, "jugador");
+
+
+		if (botonRegistrarse != null) botonRegistrarse.Disabled = false;
+
+		if (success)
+		{
+			MostrarMensaje("¡Registro exitoso! Iniciando sesión...", false);
+			await Task.Delay(1000);
+			GetTree().ChangeSceneToFile("res://src/ui/login/sesion.tscn");
+		}
+		else
+		{
+			MostrarMensaje($"Error: {error}", true);
+		}
 	}
 
-	// Botón 2: "VOLVER AL MENÚ" -> Regresa al Menú Principal
+	private void MostrarMensaje(string text, bool esError)
+	{
+		if (labelMensaje != null)
+		{
+			labelMensaje.Text = text;
+			labelMensaje.Modulate = esError ? new Color(1, 0.4f, 0.4f) : new Color(0.4f, 1, 0.4f);
+		}
+	}
+
 	private void OnBotonVolverMenuPressed()
 	{
 		GetTree().ChangeSceneToFile("res://src/ui/login/menu.tscn");

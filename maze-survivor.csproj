@@ -12,4 +12,7 @@
   <ItemGroup Condition="Exists('use_mcp.local')">
     <EmbeddedResource Include="addons/godot_mcp/extensions.catalog.json" LogicalName="Godot-MCP.extensions.catalog.json" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Supabase" Version="1.6.0" />
+  </ItemGroup>
 </Project>

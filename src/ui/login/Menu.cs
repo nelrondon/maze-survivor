@@ -3,49 +3,63 @@ using System;
 
 public partial class Menu : Control
 {
-	private Button _botonJugar;
-	private Button _botonSalir;
+	private Button botonIrLogin;
+	private Button botonIrRegistro;
+	private Button botonIrReglas;
+	private Button botonSalir;
 
 	public override void _Ready()
 	{
-		_botonJugar = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button") 
-			?? GetNodeOrNull<Button>("%Button") 
-			?? (FindChild("Button", true, false) as Button);
+		botonIrLogin    = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button") 
+		               ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button");
 
-		_botonSalir = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button2") 
-			?? GetNodeOrNull<Button>("%Button2") 
-			?? (FindChild("Button2", true, false) as Button);
+		botonIrRegistro = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button2") 
+		               ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button2");
 
-		if (_botonJugar != null)
+		botonIrReglas   = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button3") 
+		               ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button3");
+
+		botonSalir      = GetNodeOrNull<Button>("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Button4") 
+		               ?? GetNodeOrNull<Button>("CenterContainer/VBoxContainer/Button4");
+
+		if (botonIrLogin != null)
 		{
-			_botonJugar.Pressed += OnBotonJugarPressed;
-			GD.Print("[Menu] Botón JUGAR conectado exitosamente.");
-		}
-		else
-		{
-			GD.PrintErr("[Menu] ERROR: No se encontró el botón JUGAR.");
+			botonIrLogin.Pressed += OnBotonIrLoginPressed;
 		}
 
-		if (_botonSalir != null)
+		if (botonIrRegistro != null)
 		{
-			_botonSalir.Pressed += OnBotonSalirPressed;
-			GD.Print("[Menu] Botón SALIR conectado exitosamente.");
+			botonIrRegistro.Pressed += OnBotonIrRegistroPressed;
 		}
-		else
+
+		if (botonIrReglas != null)
 		{
-			GD.PrintErr("[Menu] ERROR: No se encontró el botón SALIR.");
+			botonIrReglas.Pressed += OnBotonIrReglasPressed;
+		}
+
+		if (botonSalir != null)
+		{
+			botonSalir.Pressed += OnBotonSalirPressed;
 		}
 	}
 
-	private void OnBotonJugarPressed()
+	private void OnBotonIrLoginPressed()
 	{
-		GD.Print("[Menu] Transicionando a la escena del Lobby...");
-		GetTree().ChangeSceneToFile("res://src/multiplayer/Lobby.tscn");
+		GetTree().ChangeSceneToFile("res://src/ui/login/login.tscn");
+	}
+
+	private void OnBotonIrRegistroPressed()
+	{
+		GetTree().ChangeSceneToFile("res://src/ui/login/registro.tscn");
+	}
+
+	private void OnBotonIrReglasPressed()
+	{
+		GetTree().ChangeSceneToFile("res://src/ui/login/reglas.tscn");
 	}
 
 	private void OnBotonSalirPressed()
 	{
-		GD.Print("[Menu] Saliendo del juego...");
 		GetTree().Quit();
 	}
 }

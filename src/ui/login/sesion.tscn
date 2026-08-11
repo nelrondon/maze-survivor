@@ -1,16 +1,57 @@
-﻿[gd_scene format=3 uid="uid://dq6rn3qej05h7"]
+[gd_scene format=3 uid="uid://dq6rn3qej05h7"]
 
 [ext_resource type="Texture2D" path="res://icon.svg" id="1_wplry"]
 [ext_resource type="Script" path="res://src/ui/login/Sesion.cs" id="1_wqgd8"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syemq"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.12, 0.02, 0.04, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6wcbk"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.18, 0.03, 0.05, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.15, 0.15, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tjjhq"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.46666667, 0.05, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.15, 0.2, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.75, 0.08, 0.12, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0.9, 0.15, 0.15, 0.5)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.35, 0.02, 0.04, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Control" type="Control" unique_id=1064523860]
 layout_mode = 3
@@ -19,85 +60,84 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
 script = ExtResource("1_wqgd8")
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1640198770]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=418929873]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="CenterContainer/VBoxContainer" unique_id=1095482375]
-custom_minimum_size = Vector2(100, 50)
-layout_mode = 2
-texture = ExtResource("1_wplry")
-
-[node name="CenterContainer2" type="CenterContainer" parent="." unique_id=1387481250]
+[node name="Background" type="Panel" parent="."]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -444.0
-offset_right = -19.0
-offset_bottom = 124.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer2" unique_id=493082708]
-layout_mode = 2
-
-[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer2/VBoxContainer" unique_id=1129254009]
-custom_minimum_size = Vector2(300, 20)
-layout_mode = 2
-text = "USERNAME"
-
-[node name="RichTextLabel2" type="RichTextLabel" parent="CenterContainer2/VBoxContainer" unique_id=781300837]
-custom_minimum_size = Vector2(400, 20)
-layout_mode = 2
-text = "Nombre del sobreviviente | ID: 12345678"
-
-[node name="CenterContainer3" type="CenterContainer" parent="." unique_id=78060649]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1640198770]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -118.0
-offset_right = 150.0
-offset_bottom = 118.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer3" unique_id=923759218]
-custom_minimum_size = Vector2(0, 50)
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(440, 420)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=418929873]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="AvatarContainer" type="CenterContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=2039898101]
-custom_minimum_size = Vector2(300, 60)
+[node name="TextureRect" type="TextureRect" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/AvatarContainer" unique_id=1095482375]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_syemq")
-text = "ENTRAR COMO JUGADOR"
+texture = ExtResource("1_wplry")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Control" type="Control" parent="CenterContainer3/VBoxContainer" unique_id=1843739341]
-custom_minimum_size = Vector2(0, 20)
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1129254009]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+bbcode_enabled = true
+text = "[center][b][font_size=24]USERNAME[/font_size][/b][/center]"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=781300837]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Nombre del sobreviviente | ID: 12345678[/center]"
+
+[node name="Spacer" type="Control" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="Button2" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=86797253]
-custom_minimum_size = Vector2(0, 60)
+[node name="Button" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2039898101]
+custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_6wcbk")
-text = "ENTRAR COMO EXPECTADOR"
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+text = "JUGAR"
 
-[node name="Control2" type="Control" parent="CenterContainer3/VBoxContainer" unique_id=700364840]
-custom_minimum_size = Vector2(0, 20)
+[node name="Button2" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1492393379]
+custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
-
-[node name="Button3" type="Button" parent="CenterContainer3/VBoxContainer" unique_id=1492393379]
-custom_minimum_size = Vector2(0, 60)
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_tjjhq")
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "CERRAR SESIÓN"

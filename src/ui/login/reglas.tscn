@@ -1,9 +1,56 @@
-﻿[gd_scene format=3 uid="uid://mcy0mlubk56y"]
+[gd_scene format=3 uid="uid://mcy0mlubk56y"]
 
 [ext_resource type="Script" path="res://src/ui/login/Reglas.cs" id="1_axl31"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fdm2o"]
-bg_color = Color(0.46666667, 0, 0.05882353, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.12, 0.02, 0.04, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.18, 0.03, 0.05, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.15, 0.15, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.46666667, 0.05, 0.08, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.15, 0.2, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.75, 0.08, 0.12, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.2, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0.9, 0.15, 0.15, 0.5)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.35, 0.02, 0.04, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Control" type="Control" unique_id=1439369861]
 layout_mode = 3
@@ -14,39 +61,65 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_axl31")
 
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=125799805]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -400.0
-offset_right = 200.0
-offset_bottom = 400.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=704458243]
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(440, 480)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/VBoxContainer" unique_id=1886017255]
-custom_minimum_size = Vector2(400, 300)
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
 layout_mode = 2
-text = "REGLAS DEL JUEGO
-\"JUGADOR\"
-PAGA TU ENTRADA E INTENTA A SOBREVIVIR AL LABERINTO
-APRENDE CUANDO UTILIZAR TUS ARMAS
-Y ESCAPA EN EL MENOR TIEMPO POSIBLE
-PARA QUE TE LLEVES LA RECOMPENSA :)
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 28
 
-\"EXPECTADOR\"
-ELIGE AL MEJOR SOBREVIVIENTE
-Y SE EL MAGNATE DE LAS APUESTAS"
-
-[node name="Button" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1762406292]
-custom_minimum_size = Vector2(300, 50)
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=704458243]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_fdm2o")
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.2, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0.8, 0.1, 0.1, 0.4)
+theme_override_font_sizes/font_size = 22
+text = "REGLAS DEL JUEGO"
+horizontal_alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1886017255]
+custom_minimum_size = Vector2(380, 260)
+layout_mode = 2
+bbcode_enabled = true
+text = "[b][color=#ff4d4d]\"JUGADOR\"[/color][/b]
+Paga tu entrada e intenta sobrevivir al laberinto.
+Aprende cuándo utilizar tus armas y escapa en el menor tiempo posible para llevarte la recompensa.
+
+[b][color=#ff4d4d]\"ESPECTADOR\"[/color][/b]
+Elige al mejor sobreviviente y sé el magnate de las apuestas."
+
+[node name="Button" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1762406292]
+custom_minimum_size = Vector2(260, 46)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 text = "VOLVER AL MENÚ"
